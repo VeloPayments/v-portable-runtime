@@ -15,7 +15,7 @@ Current Features
 Building
 ========
 
-The [`vc-toolchain`][vc-toolchain-url] project needs to be installed to the
+The [`vc-toolchain`][vc-toolchain-url] project needs to be installed in the
 `/opt/vctoolchain` subdirectory.  If a different installation directory is used,
 then the `TOOLCHAIN_DIR` environment variable should be set to that directory
 instead.
@@ -34,7 +34,7 @@ must be included in the `GTEST_DIR` environment variable.  For instance:
     #build with unit tests - also builds checked libraries
     GTEST_DIR="path/to/google/test" make test
 
-The resulting library will be available under the `_build` subdirectory, which
+The resulting library will be available under the `build` subdirectory, which
 will be created as part of the build process.
 
 This library also supports model checking via [CBMC][cbmc-url].  To run the
