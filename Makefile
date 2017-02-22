@@ -162,7 +162,7 @@ $(CORTEXMHARD_RELEASE_BUILD_DIR)/%.o: $(SRCDIR)/%.c
 	$(CORTEXMHARD_RELEASE_CC) $(CORTEXMHARD_RELEASE_CFLAGS) -c -o $@ $<
 
 test: $(TEST_DIRS) host.lib.checked $(TESTLIBVPR)
-	$(TESTLIBVPR)
+	LD_LIBRARY_PATH=$(TOOLCHAIN_DIR)/host/lib:$(TOOLCHAIN_DIR)/host/lib64:$(LD_LIBRARY_PATH) $(TESTLIBVPR)
 
 clean:
 	rm -rf $(BUILD_DIR)
@@ -170,7 +170,7 @@ clean:
 $(TESTLIBVPR): $(HOST_CHECKED_OBJECTS) $(TEST_OBJECTS) $(GTEST_OBJ)
 	find $(TEST_BUILD_DIR) -name "*.gcda" -exec rm {} \; -print
 	rm -f gtest-all.gcda
-	$(HOST_RELEASE_CXX) $(TEST_CXXFLAGS) -static-libstdc++ -fprofile-arcs \
+	$(HOST_RELEASE_CXX) $(TEST_CXXFLAGS) -fprofile-arcs \
 	    -o $@ $(TEST_OBJECTS) \
 	    $(HOST_CHECKED_OBJECTS) $(GTEST_OBJ) -lpthread \
 	    -L $(TOOLCHAIN_DIR)/host/lib64 -lstdc++
