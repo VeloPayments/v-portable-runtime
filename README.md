@@ -44,7 +44,7 @@ must be in the current `PATH`.
     #run model checks
     make model-check
 
-[cmbc-url]: http://www.cprover.org/cbmc/
+[cbmc-url]: http://www.cprover.org/cbmc/
 
 Continuous Integration Recommendations
 --------------------------------------
