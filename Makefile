@@ -2,9 +2,13 @@ LIB_NAME=libvpr.a
 BUILD_DIR=$(CURDIR)/build
 HOST_CHECKED_BUILD_DIR=$(BUILD_DIR)/host/checked
 
+MODEL_CHECK_DIR?=../vcmodel
+
+include $(MODEL_CHECK_DIR)/model_check.mk
+
 #library source files
 SRCDIR=$(PWD)/src
-DIRS=$(SRCDIR)
+DIRS=$(SRCDIR) $(SRCDIR)/disposable
 SOURCES=$(foreach d,$(DIRS),$(wildcard $(d)/*.c))
 STRIPPED_SOURCES=$(patsubst $(SRCDIR)/%,%,$(SOURCES))
 
@@ -70,7 +74,7 @@ CORTEXMHARD_RELEASE_AR=$(TOOLCHAIN_DIR)/cortex-m4-hardfp/bin/arm-none-eabi-ar
 CORTEXMHARD_RELEASE_RANLIB=$(TOOLCHAIN_DIR)/cortex-m4-hardfp/bin/arm-none-eabi-ranlib
 
 #platform compiler flags
-COMMON_CFLAGS=-I $(PWD)/include -Wall -Werror -Wextra
+COMMON_CFLAGS=$(MODEL_CHECK_INCLUDES) -I $(PWD)/include -Wall -Werror -Wextra
 HOST_CHECKED_CFLAGS=$(COMMON_CFLAGS) -O0 -fprofile-arcs -ftest-coverage
 HOST_RELEASE_CFLAGS=$(COMMON_CFLAGS) -O2
 COMMON_CXXFLAGS=-I $(PWD)/include -Wall -Werror -Wextra
