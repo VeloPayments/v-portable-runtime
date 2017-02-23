@@ -11,6 +11,9 @@ SRCDIR=$(PWD)/src
 DIRS=$(SRCDIR) $(SRCDIR)/disposable
 SOURCES=$(foreach d,$(DIRS),$(wildcard $(d)/*.c))
 STRIPPED_SOURCES=$(patsubst $(SRCDIR)/%,%,$(SOURCES))
+MODELDIR=$(PWD)/model
+MODEL_DIRS=$(MODELDIR) $(MODELDIR)/disposable
+MODEL_SOURCES=$(foreach d,$(MODEL_DIRS),$(wildcard $(d)/*.c))
 
 #library test files
 TESTDIR=$(PWD)/test
@@ -22,6 +25,10 @@ TEST_SOURCES=$(foreach d,$(TESTDIRS),$(wildcard $(d)/*.cpp))
 STRIPPED_TEST_SOURCES=$(patsubst $(TESTDIR)/%,%,$(TEST_SOURCES))
 TEST_OBJECTS=$(patsubst %.cpp,$(TEST_BUILD_DIR)/%.o,$(STRIPPED_TEST_SOURCES))
 TESTLIBVPR=$(HOST_CHECKED_BUILD_DIR)/testlibvpr
+
+#model check targets
+MODEL_TARGETS=$(patsubst %.c,%.model,$(MODEL_SOURCES))
+#.PHONY: $(MODEL_TARGETS)
 
 #platform options
 CORTEXMSOFT_RELEASE_BUILD_DIR=$(BUILD_DIR)/cortex-m4-softfp/release
@@ -74,7 +81,8 @@ CORTEXMHARD_RELEASE_AR=$(TOOLCHAIN_DIR)/cortex-m4-hardfp/bin/arm-none-eabi-ar
 CORTEXMHARD_RELEASE_RANLIB=$(TOOLCHAIN_DIR)/cortex-m4-hardfp/bin/arm-none-eabi-ranlib
 
 #platform compiler flags
-COMMON_CFLAGS=$(MODEL_CHECK_INCLUDES) -I $(PWD)/include -Wall -Werror -Wextra
+COMMON_INCLUDES=$(MODEL_CHECK_INCLUDES) -I $(PWD)/include
+COMMON_CFLAGS=$(COMMON_INCLUDES) -Wall -Werror -Wextra
 HOST_CHECKED_CFLAGS=$(COMMON_CFLAGS) -O0 -fprofile-arcs -ftest-coverage
 HOST_RELEASE_CFLAGS=$(COMMON_CFLAGS) -O2
 COMMON_CXXFLAGS=-I $(PWD)/include -Wall -Werror -Wextra
@@ -96,8 +104,8 @@ CORTEXMHARD_RELEASE_CXXFLAGS=-std=gnu++14 $(COMMON_CXXFLAGS) -O2 \
     -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mapcs
 
 #phony targets
-.PHONY: ALL clean test host.lib.checked host.lib.release cortexmsoft.lib.release
-.PHONY: cortexmhard.lib.release
+.PHONY: ALL clean test model-check host.lib.checked host.lib.release
+.PHONY: cortexmsoft.lib.release cortexmhard.lib.release
 
 #main build target
 ALL: host.lib.checked host.lib.release cortexmsoft.lib.release
@@ -178,3 +186,8 @@ $(TESTLIBVPR): $(HOST_CHECKED_OBJECTS) $(TEST_OBJECTS) $(GTEST_OBJ)
 	    -o $@ $(TEST_OBJECTS) \
 	    $(HOST_CHECKED_OBJECTS) $(GTEST_OBJ) -lpthread \
 	    -L $(TOOLCHAIN_DIR)/host/lib64 -lstdc++
+
+model-check: $(MODEL_TARGETS)
+
+%.model: %.c
+	cbmc $(COMMON_INCLUDES) $(CBMC_OPTS) $(MODEL_CHECK_SOURCES) $(SOURCES) $<
