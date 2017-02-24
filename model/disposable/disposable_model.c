@@ -7,6 +7,7 @@
  */
 
 #include <stdlib.h>
+#include <cbmc/model_assert.h>
 #include <vpr/disposable.h>
 
 /**
@@ -25,6 +26,9 @@ int main(int argc, char* argv[])
      * doesn't. */
     if (x != NULL)
     {
+        /* clear the structure */
+        memset(x, 0, sizeof(disposable_t));
+
         /* set the dispose method */
         x->dispose = &custom_dispose;
 
