@@ -13,6 +13,7 @@ SOURCES=$(foreach d,$(DIRS),$(wildcard $(d)/*.c))
 STRIPPED_SOURCES=$(patsubst $(SRCDIR)/%,%,$(SOURCES))
 MODELDIR=$(PWD)/model
 MODEL_DIRS=$(MODELDIR) $(MODELDIR)/disposable $(MODELDIR)/allocator
+FAIL_MODEL_SOURCES=$(foreach d,$(MODEL_DIRS),$(wildcard $(d)/fail_*.c))
 MODEL_SOURCES=$(foreach d,$(MODEL_DIRS),$(wildcard $(d)/*.c))
 
 #library test files
@@ -27,7 +28,11 @@ TEST_OBJECTS=$(patsubst %.cpp,$(TEST_BUILD_DIR)/%.o,$(STRIPPED_TEST_SOURCES))
 TESTLIBVPR=$(HOST_CHECKED_BUILD_DIR)/testlibvpr
 
 #model check targets
-MODEL_TARGETS=$(patsubst %.c,%.model,$(MODEL_SOURCES))
+MODEL_TARGETS= \
+    $(patsubst %.c,%.model, \
+        $(filter-out $(FAIL_MODEL_SOURCES), $(MODEL_SOURCES)))
+FAIL_MODEL_TARGETS= \
+    $(patsubst %.c,%.failmodel,$(FAIL_MODEL_SOURCES))
 #.PHONY: $(MODEL_TARGETS)
 
 #platform options
@@ -187,7 +192,16 @@ $(TESTLIBVPR): $(HOST_CHECKED_OBJECTS) $(TEST_OBJECTS) $(GTEST_OBJ)
 	    $(HOST_CHECKED_OBJECTS) $(GTEST_OBJ) -lpthread \
 	    -L $(TOOLCHAIN_DIR)/host/lib64 -lstdc++
 
-model-check: $(MODEL_TARGETS)
+model-check: $(MODEL_TARGETS) $(FAIL_MODEL_TARGETS)
 
 %.model: %.c
 	cbmc $(COMMON_INCLUDES) $(CBMC_OPTS) $(MODEL_CHECK_SOURCES) $(SOURCES) $<
+
+%.failmodel: %.c
+	( \
+	 cbmc $(COMMON_INCLUDES) $(CBMC_OPTS) $(MODEL_CHECK_SOURCES) $(SOURCES) $<;\
+	 if [ $$? -eq 0 ]; then \
+        echo "This model should have failed.  Error!"; \
+	    false; \
+     fi )
+	@echo "This is okay.  Failure in a fail_model is expected."
