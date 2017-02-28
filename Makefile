@@ -12,7 +12,7 @@ DIRS=$(SRCDIR) $(SRCDIR)/disposable $(SRCDIR)/allocator
 SOURCES=$(foreach d,$(DIRS),$(wildcard $(d)/*.c))
 STRIPPED_SOURCES=$(patsubst $(SRCDIR)/%,%,$(SOURCES))
 MODELDIR=$(PWD)/model
-MODEL_DIRS=$(MODELDIR) $(MODELDIR)/disposable
+MODEL_DIRS=$(MODELDIR) $(MODELDIR)/disposable $(MODELDIR)/allocator
 MODEL_SOURCES=$(foreach d,$(MODEL_DIRS),$(wildcard $(d)/*.c))
 
 #library test files

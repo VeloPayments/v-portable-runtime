@@ -74,6 +74,9 @@ void malloc_allocator_options_init(allocator_options_t* options)
     /* use realloc() for reallocate. */
     options->allocator_reallocate = &allocate_realloc;
 
+    /* force context to NULL */
+    options->context = NULL;
+
     /* context should be set to NULL. */
     MODEL_ASSERT(options->context == NULL);
 }
