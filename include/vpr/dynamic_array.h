@@ -130,7 +130,7 @@ typedef struct dynamic_array
     /**
      * The options used to create this array.
      */
-    dynamic_array_options_t options;
+    dynamic_array_options_t* options;
 
     /**
      * The reserved size, in elements.
