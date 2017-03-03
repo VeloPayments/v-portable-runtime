@@ -5,6 +5,7 @@ HOST_CHECKED_BUILD_DIR=$(BUILD_DIR)/host/checked
 MODEL_CHECK_DIR?=../vcmodel
 
 include $(MODEL_CHECK_DIR)/model_check.mk
+include custom_models.mk
 
 #library source files
 SRCDIR=$(PWD)/src
@@ -15,6 +16,7 @@ STRIPPED_SOURCES=$(patsubst $(SRCDIR)/%,%,$(SOURCES))
 MODELDIR=$(PWD)/model
 MODEL_DIRS=$(MODELDIR) $(MODELDIR)/allocator $(MODELDIR)/compare \
     $(MODELDIR)/disposable $(MODELDIR)/dynamic_array
+CUSTOM_MODEL_SOURCES=$(foreach d,$(MODEL_DIRS),$(wildcard $(d)/custom_*.c))
 FAIL_MODEL_SOURCES=$(foreach d,$(MODEL_DIRS),$(wildcard $(d)/fail_*.c))
 MODEL_SOURCES=$(foreach d,$(MODEL_DIRS),$(wildcard $(d)/*.c))
 
@@ -33,9 +35,12 @@ TESTLIBVPR=$(HOST_CHECKED_BUILD_DIR)/testlibvpr
 #model check targets
 MODEL_TARGETS= \
     $(patsubst %.c,%.model, \
-        $(filter-out $(FAIL_MODEL_SOURCES), $(MODEL_SOURCES)))
+        $(filter-out $(FAIL_MODEL_SOURCES) $(CUSTOM_MODEL_SOURCES), \
+                     $(MODEL_SOURCES)))
 FAIL_MODEL_TARGETS= \
     $(patsubst %.c,%.failmodel,$(FAIL_MODEL_SOURCES))
+CUSTOM_MODEL_TARGETS= \
+    $(patsubst %.c,%.custmodel,$(CUSTOM_MODEL_SOURCES))
 #.PHONY: $(MODEL_TARGETS)
 
 #platform options
@@ -195,7 +200,7 @@ $(TESTLIBVPR): $(HOST_CHECKED_OBJECTS) $(TEST_OBJECTS) $(GTEST_OBJ)
 	    $(HOST_CHECKED_OBJECTS) $(GTEST_OBJ) -lpthread \
 	    -L $(TOOLCHAIN_DIR)/host/lib64 -lstdc++
 
-model-check: $(MODEL_TARGETS) $(FAIL_MODEL_TARGETS)
+model-check: $(MODEL_TARGETS) $(FAIL_MODEL_TARGETS) $(CUSTOM_MODEL_TARGETS)
 
 %.model: %.c
 	cbmc $(COMMON_INCLUDES) $(CBMC_OPTS) $(MODEL_CHECK_SOURCES) $(SOURCES) $<
