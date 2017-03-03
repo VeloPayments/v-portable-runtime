@@ -8,18 +8,20 @@ include $(MODEL_CHECK_DIR)/model_check.mk
 
 #library source files
 SRCDIR=$(PWD)/src
-DIRS=$(SRCDIR) $(SRCDIR)/disposable $(SRCDIR)/allocator $(SRCDIR)/compare
+DIRS=$(SRCDIR) $(SRCDIR)/allocator $(SRCDIR)/compare $(SRCDIR)/disposable \
+    $(SRCDIR)/dynamic_array
 SOURCES=$(foreach d,$(DIRS),$(wildcard $(d)/*.c))
 STRIPPED_SOURCES=$(patsubst $(SRCDIR)/%,%,$(SOURCES))
 MODELDIR=$(PWD)/model
-MODEL_DIRS=$(MODELDIR) $(MODELDIR)/disposable $(MODELDIR)/allocator \
-    $(MODELDIR)/compare
+MODEL_DIRS=$(MODELDIR) $(MODELDIR)/allocator $(MODELDIR)/compare \
+    $(MODELDIR)/disposable $(MODELDIR)/dynamic_array
 FAIL_MODEL_SOURCES=$(foreach d,$(MODEL_DIRS),$(wildcard $(d)/fail_*.c))
 MODEL_SOURCES=$(foreach d,$(MODEL_DIRS),$(wildcard $(d)/*.c))
 
 #library test files
 TESTDIR=$(PWD)/test
-TESTDIRS=$(TESTDIR) $(TESTDIR)/allocator $(TESTDIR)/compare
+TESTDIRS=$(TESTDIR) $(TESTDIR)/allocator $(TESTDIR)/compare \
+    $(TESTDIR)/dynamic_array
 TEST_BUILD_DIR=$(HOST_CHECKED_BUILD_DIR)/test
 TEST_DIRS=$(filter-out $(TESTDIR), \
     $(patsubst $(TESTDIR)/%,$(TEST_BUILD_DIR)/%,$(TESTDIRS)))

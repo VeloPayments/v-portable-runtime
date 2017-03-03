@@ -9,8 +9,9 @@ making too many assumptions about how the underlying system operates.
 Current Features
 -----------------
 
-* Portable Memory Allocation Library.
 * Disposable interface.
+* Portable Memory Allocation Library.
+* Dynamic Arrays.
 
 Building
 ========
