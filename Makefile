@@ -15,7 +15,7 @@ SOURCES=$(foreach d,$(DIRS),$(wildcard $(d)/*.c))
 STRIPPED_SOURCES=$(patsubst $(SRCDIR)/%,%,$(SOURCES))
 MODELDIR=$(PWD)/model
 MODEL_DIRS=$(MODELDIR) $(MODELDIR)/allocator $(MODELDIR)/compare \
-    $(MODELDIR)/disposable $(MODELDIR)/dynamic_array
+    $(MODELDIR)/disposable
 CUSTOM_MODEL_SOURCES= \
     $(foreach d,$(MODEL_DIRS), \
         $(patsubst $(PWD)/%,%,$(wildcard $(d)/custom_*.c)))
