@@ -14,6 +14,7 @@
 
 int main(int argc, char* argv[])
 {
+#if 0
     allocator_options_t alloc_opts;
     dynamic_array_options_t options;
     dynamic_array_t array;
@@ -40,6 +41,7 @@ int main(int argc, char* argv[])
 
     //dispose of allocator
     dispose((disposable_t*)&alloc_opts);
+#endif
 
     return 0;
 }
