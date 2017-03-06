@@ -47,9 +47,6 @@ int dynamic_array_options_init_ex(
     MODEL_ASSERT(dispose_method != 0);
     MODEL_ASSERT(compare_method != 0);
 
-    //clear the options structure for future compatibility.
-    memset(options, 0, sizeof(dynamic_array_options_t));
-
     //use our dispose method to dispose of these options
     options->hdr.dispose = &darr_simple_dispose;
     //use the user-supplied allocator options
