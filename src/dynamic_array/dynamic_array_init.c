@@ -101,7 +101,4 @@ void darr_dispose(void* parray)
 
     //release the memory
     release(array->options->alloc_opts, array->array);
-
-    //clear the structure
-    memset(array, 0, sizeof(dynamic_array_t));
 }
