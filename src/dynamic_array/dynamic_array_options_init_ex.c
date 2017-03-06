@@ -66,13 +66,11 @@ int dynamic_array_options_init_ex(
 }
 
 /**
- * Dispose of the options structure.  This method just clears the structure.
+ * Dispose of the options structure.  Nothing special needs to be done.
  *
  * \param poptions          Opaque pointer to the options structure.
  */
-static void darr_simple_dispose(void* poptions)
+static void darr_simple_dispose(void* UNUSED(poptions))
 {
     MODEL_ASSERT(poptions != NULL);
-
-    memset(poptions, 0, sizeof(dynamic_array_options_t));
 }
