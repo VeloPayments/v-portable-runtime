@@ -59,9 +59,6 @@ void malloc_allocator_options_init(allocator_options_t* options)
 {
     MODEL_ASSERT(options != NULL);
 
-    /* clear the options structure for forward compatibility. */
-    memset(options, 0, sizeof(allocator_options_t));
-
     /* use our internal dispose method for disposing of this structure. */
     options->hdr.dispose = (dispose_method_t)&malloc_allocator_options_dispose;
 
