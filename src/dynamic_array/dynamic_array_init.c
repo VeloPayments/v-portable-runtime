@@ -51,8 +51,6 @@ int dynamic_array_init(
     MODEL_ASSERT(options->alloc_opts != NULL);
     MODEL_ASSERT(options->dynamic_array_element_copy != NULL);
 
-    //initialize the array
-    memset(array, 0, sizeof(dynamic_array_t));
     array->hdr.dispose = &darr_dispose;
     array->options = options;
     array->reserved_elements = reserve;
