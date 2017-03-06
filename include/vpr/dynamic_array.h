@@ -273,11 +273,13 @@ int dynamic_array_sort(dynamic_array_t* array);
  * be used for key-value pairs.
  *
  * \param array             The array to be sorted.
+ * \param compare_method    Optional comparison method override.
  * \param elem              The element to use for searching.
  *
  * \returns zero if successful, non-zero on failure.
  */
-void* dynamic_array_linear_search(dynamic_array_t* array, const void* elem);
+void* dynamic_array_linear_search(
+    dynamic_array_t* array, compare_method_t compare_method, const void* elem);
 
 /**
  * Perform a binary search for an element matching the given key in this
