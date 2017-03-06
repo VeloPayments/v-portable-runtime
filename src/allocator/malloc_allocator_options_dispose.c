@@ -9,6 +9,7 @@
 #include <string.h>
 #include <vpr/allocator.h>
 #include <vpr/allocator/malloc_allocator.h>
+#include <vpr/parameters.h>
 
 /**
  * This method disposes of the underlying allocator provided by the given
@@ -21,10 +22,7 @@
  * \param options       The allocation options structure to dispose.  Owned
  *                      by the caller.
  */
-void malloc_allocator_options_dispose(allocator_options_t* options)
+void malloc_allocator_options_dispose(allocator_options_t* UNUSED(options))
 {
     MODEL_ASSERT(options != NULL);
-
-    /* there is no special handling required here.  Just clear the struct. */
-    memset(options, 0, sizeof(allocator_options_t));
 }
