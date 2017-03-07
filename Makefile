@@ -9,13 +9,13 @@ include custom_models.mk
 
 #library source files
 SRCDIR=$(PWD)/src
-DIRS=$(SRCDIR) $(SRCDIR)/allocator $(SRCDIR)/compare $(SRCDIR)/disposable \
-    $(SRCDIR)/dynamic_array
+DIRS=$(SRCDIR) $(SRCDIR)/abstract_factory $(SRCDIR)/allocator \
+    $(SRCDIR)/compare $(SRCDIR)/disposable $(SRCDIR)/dynamic_array
 SOURCES=$(foreach d,$(DIRS),$(wildcard $(d)/*.c))
 STRIPPED_SOURCES=$(patsubst $(SRCDIR)/%,%,$(SOURCES))
 MODELDIR=$(PWD)/model
-MODEL_DIRS=$(MODELDIR) $(MODELDIR)/allocator $(MODELDIR)/compare \
-    $(MODELDIR)/disposable $(MODELDIR)/dynamic_array
+MODEL_DIRS=$(MODELDIR) $(MODELDIR)/abstract_factory $(MODELDIR)/allocator \
+    $(MODELDIR)/compare $(MODELDIR)/disposable $(MODELDIR)/dynamic_array
 CUSTOM_MODEL_SOURCES= \
     $(foreach d,$(MODEL_DIRS), \
         $(patsubst $(PWD)/%,%,$(wildcard $(d)/custom_*.c)))
@@ -28,8 +28,8 @@ MODEL_SOURCES= \
 
 #library test files
 TESTDIR=$(PWD)/test
-TESTDIRS=$(TESTDIR) $(TESTDIR)/allocator $(TESTDIR)/compare \
-    $(TESTDIR)/dynamic_array
+TESTDIRS=$(TESTDIR) $(TESTDIR)/abstract_factory $(TESTDIR)/allocator \
+    $(TESTDIR)/compare $(TESTDIR)/dynamic_array
 TEST_BUILD_DIR=$(HOST_CHECKED_BUILD_DIR)/test
 TEST_DIRS=$(filter-out $(TESTDIR), \
     $(patsubst $(TESTDIR)/%,$(TEST_BUILD_DIR)/%,$(TESTDIRS)))

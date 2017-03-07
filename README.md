@@ -12,6 +12,7 @@ Current Features
 * Disposable interface.
 * Portable Memory Allocation Library.
 * Dynamic Arrays.
+* Abstract Factory.
 
 Building
 ========
