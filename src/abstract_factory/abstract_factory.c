@@ -188,7 +188,8 @@ static int feature_match(
             &re->interface,
             sizeof(uint32_t));
     }
-    else if (rx->implementation != re->implementation)
+    else if (re->implementation != 0 &&
+        rx->implementation != re->implementation)
     {
         return compare_uint32(&rx->implementation,
             &re->implementation,
