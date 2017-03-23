@@ -202,7 +202,7 @@ static int feature_match(
     {
         //mask our features against the features provided by rx.  If all
         //features we've requested match, then this implementation will work.
-        return re->implementation_features ==
+        return re->implementation_features -
             (rx->implementation_features & re->implementation_features);
     }
 }
