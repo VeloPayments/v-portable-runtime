@@ -88,6 +88,9 @@ static void abstract_factory_init_one_shot()
         dynamic_array_init(
             &abstract_factory_array_options, &abstract_factory_registry,
             50, 0, NULL);
+
+        //we are now instantiated
+        abstract_factory_instantiated = true;
     }
 }
 
