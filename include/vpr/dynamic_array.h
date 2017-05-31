@@ -248,12 +248,12 @@ int dynamic_array_grow(dynamic_array_t* array, size_t reserve);
 int dynamic_array_append(dynamic_array_t* array, void* element);
 
 /**
- * Sort the given dynamic array.  This method performs a simple heapsort using
+ * Sort the given dynamic array.  This method performs a simple merge sort using
  * the comparison method defined in the options structure.
  *
- * If successful, then the array will be sorted.  Note that heapsort is not a
- * stable sort, so elements that compare as equal may change relative positions
- * as a result of this sort.
+ * If successful, then the array will be sorted.  Note that this merge sort
+ * implementation should not be considered a stable sort, so elements that
+ * compare as equal may change relative positions as a result of this sort.
  *
  * \param array             The array to be sorted.
  *
