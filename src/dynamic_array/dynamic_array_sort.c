@@ -128,13 +128,14 @@ static int merge_sort(
         goto dispose_lhs;
     }
 
-    /* recursively sort the left-hand and right-hand side arrays */
+    /* recursively sort the left-hand side array */
     if (0 != merge_sort(options, in, lhs_out, lhs_size))
     {
         retval = 1;
         goto dispose_all;
     }
 
+    /* recursively sort the right-hand side array */
     if (0 != merge_sort(options, in + lhs_size * options->element_size, rhs_out, rhs_size))
     {
         retval = 1;
@@ -143,7 +144,7 @@ static int merge_sort(
 
     /* now merge the two sorted arrays */
     size_t lhs_idx = 0, rhs_idx = 0, out_idx = 0;
-    while (lhs_idx < lhs_size && rhs_idx < lhs_size)
+    while (lhs_idx < lhs_size && rhs_idx < rhs_size)
     {
         uint8_t* lhs = lhs_out + lhs_idx * options->element_size;
         uint8_t* rhs = rhs_out + rhs_idx * options->element_size;
