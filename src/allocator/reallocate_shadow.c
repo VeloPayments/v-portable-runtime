@@ -1,7 +1,7 @@
 /**
- * \file reallocate.c
+ * \file reallocate_shadow.c
  *
- * Implementation of allocator.reallocate.
+ * Shadow library implementation of allocator.reallocate.
  *
  * \copyright 2017 Velo Payments, Inc.  All rights reserved.
  */
@@ -10,8 +10,8 @@
 #include <vpr/allocator.h>
 #include <string.h>
 
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_allocator_shadowed
+/* only use for shadow library. */
+#ifdef MODEL_CHECK_vpr_allocator_shadowed
 
 /**
  * Reallocate memory using the given allocator_options_t structure.
@@ -65,4 +65,4 @@ void* reallocate(allocator_options_t* options, void* mem, size_t old_size,
     }
 }
 
-#endif /*!defined(MODEL_CHECK_vpr_allocator_shadowed)*/
+#endif /*defined(MODEL_CHECK_vpr_allocator_shadowed)*/

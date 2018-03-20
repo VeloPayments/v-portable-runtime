@@ -1,16 +1,16 @@
 /**
- * \file release.c
+ * \file release_shadow.c
  *
- * Implementation of allocator.release.
+ * Shadow library implementation of allocator.release.
  *
- * \copyright 2017 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2017-2018 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
 #include <vpr/allocator.h>
 
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_allocator_shadowed
+/* only use for shadow library. */
+#ifdef MODEL_CHECK_vpr_allocator_shadowed
 
 /**
  * Release memory using the given allocator_options_t structure.
@@ -26,4 +26,4 @@ void release(allocator_options_t* options, void* mem)
     options->allocator_release(options->context, mem);
 }
 
-#endif /*!defined(MODEL_CHECK_vpr_allocator_shadowed)*/
+#endif /*defined(MODEL_CHECK_vpr_allocator_shadowed)*/

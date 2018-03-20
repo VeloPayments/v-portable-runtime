@@ -14,17 +14,8 @@ DIRS=$(SRCDIR) $(SRCDIR)/abstract_factory $(SRCDIR)/allocator \
 SOURCES=$(foreach d,$(DIRS),$(wildcard $(d)/*.c))
 STRIPPED_SOURCES=$(patsubst $(SRCDIR)/%,%,$(SOURCES))
 MODELDIR=$(PWD)/model
-MODEL_DIRS=$(MODELDIR) $(MODELDIR)/abstract_factory $(MODELDIR)/allocator \
-    $(MODELDIR)/compare $(MODELDIR)/disposable $(MODELDIR)/dynamic_array
-CUSTOM_MODEL_SOURCES= \
-    $(foreach d,$(MODEL_DIRS), \
-        $(patsubst $(PWD)/%,%,$(wildcard $(d)/custom_*.c)))
-FAIL_MODEL_SOURCES= \
-    $(foreach d,$(MODEL_DIRS), \
-        $(patsubst $(PWD)/%,%,$(wildcard $(d)/fail_*.c)))
-MODEL_SOURCES= \
-    $(foreach d,$(MODEL_DIRS), \
-        $(patsubst $(PWD)/%,%,$(wildcard $(d)/*.c)))
+MODEL_MAKEFILES?= \
+    $(foreach file,$(wildcard models/*.mk),$(notdir $(file)))
 
 #library test files
 TESTDIR=$(PWD)/test
@@ -206,16 +197,7 @@ $(TESTLIBVPR): $(HOST_CHECKED_OBJECTS) $(TEST_OBJECTS) $(GTEST_OBJ)
 	    $(HOST_CHECKED_OBJECTS) $(GTEST_OBJ) -lpthread \
 	    -L $(TOOLCHAIN_DIR)/host/lib64 -lstdc++
 
-model-check: $(MODEL_TARGETS) $(FAIL_MODEL_TARGETS) $(CUSTOM_MODEL_TARGETS)
-
-%.model: %.c
-	cbmc $(COMMON_INCLUDES) $(CBMC_OPTS) $(MODEL_CHECK_SOURCES) $(SOURCES) $<
-
-%.failmodel: %.c
-	( \
-	 cbmc $(COMMON_INCLUDES) $(CBMC_OPTS) $(MODEL_CHECK_SOURCES) $(SOURCES) $<;\
-	 if [ $$? -eq 0 ]; then \
-        echo "This model should have failed.  Error!"; \
-	    false; \
-     fi )
-	@echo "This is okay.  Failure in a fail_model is expected."
+model-check:
+	for n in $(MODEL_MAKEFILES); do \
+	    (cd models && $(MAKE) -f $$n) \
+	done

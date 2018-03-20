@@ -1,7 +1,7 @@
 /**
- * \file allocate.c
+ * \file allocate_shadow.c
  *
- * Implementation of allocator.allocate.
+ * Shadow library implementation of allocator.allocate.
  *
  * \copyright 2017-2018 Velo Payments, Inc.  All rights reserved.
  */
@@ -9,8 +9,8 @@
 #include <cbmc/model_assert.h>
 #include <vpr/allocator.h>
 
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_allocator_shadowed
+/* only use for shadow library. */
+#ifdef MODEL_CHECK_vpr_allocator_shadowed
 
 /**
  * Allocate memory using the given allocator_options_t structure.
@@ -26,4 +26,4 @@ void* allocate(allocator_options_t* options, size_t size)
     return options->allocator_allocate(options->context, size);
 }
 
-#endif /*!defined(MODEL_CHECK_vpr_allocator_shadowed)*/
+#endif /*defined(MODEL_CHECK_vpr_allocator_shadowed)*/

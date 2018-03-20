@@ -102,6 +102,13 @@ typedef struct allocator_options
 } allocator_options_t;
 
 /**
+ * This macro defines the model check property for a valid allocator options
+ * structure.
+ */
+#define MODEL_PROP_VALID_ALLOCATOR_OPTIONS(options) \
+    (NULL != (options) && NULL != (options)->hdr.dispose && NULL != (options)->allocator_allocate && NULL != (options)->allocator_release && (NULL != (options)->allocator_reallocate || NULL == (options)->allocator_reallocate))
+
+/**
  * Allocate memory using the given allocator_options_t structure.
  *
  * \param options       Allocator options to use when allocating memory.
