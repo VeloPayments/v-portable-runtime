@@ -198,6 +198,4 @@ $(TESTLIBVPR): $(HOST_CHECKED_OBJECTS) $(TEST_OBJECTS) $(GTEST_OBJ)
 	    -L $(TOOLCHAIN_DIR)/host/lib64 -lstdc++
 
 model-check:
-	for n in $(MODEL_MAKEFILES); do \
-	    (cd models && $(MAKE) -f $$n) \
-	done
+	$(foreach n, $(MODEL_MAKEFILES), (cd models && $(MAKE) -f $(n)) &&) true
