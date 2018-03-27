@@ -106,7 +106,7 @@ typedef struct allocator_options
  * structure.
  */
 #define MODEL_PROP_VALID_ALLOCATOR_OPTIONS(options) \
-    (NULL != (options) && NULL != (options)->hdr.dispose && NULL != (options)->allocator_allocate && NULL != (options)->allocator_release && (NULL != (options)->allocator_reallocate || NULL == (options)->allocator_reallocate))
+    (NULL != (options) && MODEL_PROP_VALID_DISPOSABLE(&((options)->hdr)) && NULL != (options)->allocator_allocate && NULL != (options)->allocator_release && (NULL != (options)->allocator_reallocate || NULL == (options)->allocator_reallocate))
 
 /**
  * Allocate memory using the given allocator_options_t structure.

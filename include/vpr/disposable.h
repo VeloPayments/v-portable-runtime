@@ -30,6 +30,12 @@ typedef struct disposable
 } disposable_t;
 
 /**
+ * This macro defines the model check property for a valid disposable structure.
+ */
+#define MODEL_PROP_VALID_DISPOSABLE(options) \
+    (NULL != options && NULL != (options)->dispose)
+
+/**
  * Dispose of a disposable structure.  Call its dispose method.
  *
  * \param disp      Disposable structure to be disposed.
