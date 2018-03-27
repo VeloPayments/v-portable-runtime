@@ -1,9 +1,10 @@
 /**
- * \file malloc_allocator_options_init.c
+ * \file malloc_allocator_options_init_shadow.c
  *
- * Implementation of malloc_allocator.malloc_allocator_options_init.
+ * Shadow library implementation of
+ * malloc_allocator.malloc_allocator_options_init.
  *
- * \copyright 2017 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2017-2018 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
@@ -13,8 +14,8 @@
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/parameters.h>
 
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_malloc_allocator_shadowed
+/* this is the shadow implementation. */
+#ifdef MODEL_CHECK_vpr_malloc_allocator_shadowed
 
 /**
  * Internal allocation method.
@@ -84,4 +85,4 @@ void malloc_allocator_options_init(allocator_options_t* options)
     MODEL_ASSERT(options->context == NULL);
 }
 
-#endif /*!defined(MODEL_CHECK_vpr_malloc_allocator_shadowed)*/
+#endif /*defined(MODEL_CHECK_vpr_malloc_allocator_shadowed)*/

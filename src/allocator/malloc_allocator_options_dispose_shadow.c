@@ -1,7 +1,9 @@
 /**
  * \file malloc_allocator_options_dispose.c
  *
- * \copyright 2017 Velo Payments, Inc.  All rights reserved.
+ * Shadow library implementation of malloc_allocator_options_dispose.
+ *
+ * \copyright 2017-2018 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
@@ -11,8 +13,8 @@
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/parameters.h>
 
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_malloc_allocator_shadowed
+/* this is the shadow implementation. */
+#ifdef MODEL_CHECK_vpr_malloc_allocator_shadowed
 
 /**
  * This method disposes of the underlying allocator provided by the given
@@ -34,4 +36,4 @@ void malloc_allocator_options_dispose(allocator_options_t* options)
     MODEL_EXEMPT(memset(options, 0, sizeof(allocator_options_t)));
 }
 
-#endif /*!defined(MODEL_CHECK_vpr_malloc_allocator_shadowed)*/
+#endif /*defined(MODEL_CHECK_vpr_malloc_allocator_shadowed)*/
