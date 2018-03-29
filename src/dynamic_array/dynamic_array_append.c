@@ -38,7 +38,7 @@ int dynamic_array_append(dynamic_array_t* array, void* element)
     //we need at least one reserved slot for this append to work
     if (array->elements >= array->reserved_elements)
     {
-        return 1;
+        return VPR_ERROR_DYNAMIC_ARRAY_APPEND_NO_RESERVE;
     }
 
     //copy the element to the end of the array
@@ -54,5 +54,5 @@ int dynamic_array_append(dynamic_array_t* array, void* element)
     //as a post-condition, the element size should not exceed the reserved size
     MODEL_ASSERT(array->elements <= array->reserved_elements);
 
-    return 0;
+    return VPR_STATUS_SUCCESS;
 }

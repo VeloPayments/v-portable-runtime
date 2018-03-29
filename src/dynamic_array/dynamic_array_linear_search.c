@@ -56,7 +56,8 @@ void* dynamic_array_linear_search(
     {
         uint8_t* lhs = byteArray + i * array->options->element_size;
 
-        if (0 == compare_method(lhs, elem, array->options->element_size))
+        if (VPR_COMPARE_EQUAL ==
+            compare_method(lhs, elem, array->options->element_size))
         {
             //result found
             return lhs;

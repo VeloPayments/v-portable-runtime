@@ -35,7 +35,7 @@ int dynamic_array_grow(dynamic_array_t* array, size_t reserve)
     //we can't shrink the array.
     if (reserve <= array->reserved_elements)
     {
-        return 1;
+        return VPR_ERROR_DYNAMIC_ARRAY_GROW_INVALID_ARGUMENT;
     }
 
     //the resize strategy is simple: we allocate a buffer large enough for the
@@ -57,7 +57,7 @@ int dynamic_array_grow(dynamic_array_t* array, size_t reserve)
     //return a failure if memory allocation failed.
     if (new_buffer == NULL)
     {
-        return 2;
+        return VPR_ERROR_DYNAMIC_ARRAY_GROW_ALLOCATION_FAILED;
     }
 
     //our pointers are now valid, and by contract, both old_buffer and
@@ -92,5 +92,5 @@ int dynamic_array_grow(dynamic_array_t* array, size_t reserve)
     //free the old array
     release(array->options->alloc_opts, old_buffer);
 
-    return 0;
+    return VPR_STATUS_SUCCESS;
 }

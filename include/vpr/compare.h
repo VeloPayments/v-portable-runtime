@@ -20,6 +20,18 @@ extern "C" {
 #endif  //__cplusplus
 
 /**
+ * \defgroup Comparison constants for the Velo Portable Runtime.
+ *
+ * @{
+ */
+#define VPR_COMPARE_GREATER 1
+#define VPR_COMPARE_LESS -1
+#define VPR_COMPARE_EQUAL 0
+/**
+ * @}
+ */
+
+/**
  * The comparison method to use when comparing two elements in this array.
  *
  * \param x             The left-hand element.

@@ -60,7 +60,7 @@ int dynamic_array_init(
     //if memory allocation failed, return an error.
     if (array->array == NULL)
     {
-        return 1;
+        return VPR_ERROR_DYNAMIC_ARRAY_INIT_ALLOCATION_FAILED;
     }
 
     //instantiate each value in the array with our copy data
@@ -73,7 +73,7 @@ int dynamic_array_init(
     }
 
     //success
-    return 0;
+    return VPR_STATUS_SUCCESS;
 }
 
 /**

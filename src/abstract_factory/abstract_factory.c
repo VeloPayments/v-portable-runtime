@@ -74,7 +74,7 @@ void abstract_factory_register(abstract_factory_registration_t* impl)
         abstract_factory_registry.reserved_elements)
     {
         dynamic_array_grow(&abstract_factory_registry,
-            abstract_factory_registry.reserved_elements + 50);
+            abstract_factory_registry.reserved_elements + VPR_ABSTRACT_FACTORY_REGISTRY_ELEMENT_GROW_SIZE);
     }
 
     /* register this instance */
@@ -95,7 +95,7 @@ static void abstract_factory_init_one_shot()
         malloc_allocator_options_init(&abstract_factory_alloc_options);
 
         /* initialize the array options */
-        if (0 !=
+        if (VPR_STATUS_SUCCESS !=
             dynamic_array_options_init(
                 &abstract_factory_array_options,
                 &abstract_factory_alloc_options,
@@ -104,10 +104,10 @@ static void abstract_factory_init_one_shot()
             return;
 
         /* initialize the array */
-        if (0 !=
+        if (VPR_STATUS_SUCCESS !=
             dynamic_array_init(
                 &abstract_factory_array_options, &abstract_factory_registry,
-                50, 0, NULL))
+                VPR_ABSTRACT_FACTORY_REGISTRY_ELEMENT_DEFAULT_SIZE, 0, NULL))
             return;
 
         /* we are now instantiated */

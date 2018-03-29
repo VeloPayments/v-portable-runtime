@@ -32,9 +32,9 @@ int compare_uint32(const void* x, const void* y, size_t UNUSED(size))
     //uint32_t to int without a narrowing conversion.  Therefore, we must
     //compare these values the long way.
     if (xv > yv)
-        return 1;
+        return VPR_COMPARE_GREATER;
     else if (xv < yv)
-        return -1;
+        return VPR_COMPARE_LESS;
     else
-        return 0;
+        return VPR_COMPARE_EQUAL;
 }

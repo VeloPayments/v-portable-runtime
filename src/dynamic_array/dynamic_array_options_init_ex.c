@@ -62,7 +62,7 @@ int dynamic_array_options_init_ex(
     //set the context
     options->context = context;
 
-    return 0;
+    return VPR_STATUS_SUCCESS;
 }
 
 /**

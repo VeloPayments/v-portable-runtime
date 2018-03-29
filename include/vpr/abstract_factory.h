@@ -30,6 +30,9 @@ extern "C" {
 #include <stdlib.h>
 #include <vpr/disposable.h>
 
+#define VPR_ABSTRACT_FACTORY_REGISTRY_ELEMENT_DEFAULT_SIZE 50
+#define VPR_ABSTRACT_FACTORY_REGISTRY_ELEMENT_GROW_SIZE 50
+
 /**
  * \brief instance implementation registration.
  *

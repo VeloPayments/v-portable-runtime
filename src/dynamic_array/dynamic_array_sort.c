@@ -44,15 +44,16 @@ int dynamic_array_sort(dynamic_array_t* array)
     dynamic_array_t output;
     retval = dynamic_array_init(
         array->options, &output, array->reserved_elements, 0, NULL);
-    if (0 != retval)
+    if (VPR_STATUS_SUCCESS != retval)
     {
         return retval;
     }
 
     /* perform the merge sort */
-    if (0 != merge_sort(array->options, array->array, output.array, array->elements))
+    retval = merge_sort(
+        array->options, array->array, output.array, array->elements);
+    if (VPR_STATUS_SUCCESS != retval)
     {
-        retval = 1;
         goto dispose_output;
     }
 
@@ -65,7 +66,7 @@ int dynamic_array_sort(dynamic_array_t* array)
     output.elements = array->elements;
 
     /* success */
-    retval = 0;
+    retval = VPR_STATUS_SUCCESS;
 
 dispose_output:
     /* dispose of the output array to reclaim memory. */
@@ -88,7 +89,7 @@ dispose_output:
 static int merge_sort(
     dynamic_array_options_t* options, void* input, void* output, size_t size)
 {
-    int retval = 1;
+    int retval = VPR_ERROR_DYNAMIC_ARRAY_SORT_GENERAL;
     uint8_t* in = (uint8_t*)input;
     uint8_t* out = (uint8_t*)output;
 
@@ -105,7 +106,7 @@ static int merge_sort(
                 options->element_size);
         }
 
-        return 0;
+        return VPR_STATUS_SUCCESS;
     }
 
     /* compute the left-hand and right-hand array sizes */
@@ -117,28 +118,29 @@ static int merge_sort(
         lhs_size * options->element_size);
     if (lhs_out == NULL)
     {
-        return 1;
+        return VPR_ERROR_DYNAMIC_ARRAY_SORT_ALLOCATION_FAILED;
     }
 
     uint8_t* rhs_out = (uint8_t*)allocate(options->alloc_opts,
         rhs_size * options->element_size);
     if (rhs_out == NULL)
     {
-        retval = 1;
+        retval = VPR_ERROR_DYNAMIC_ARRAY_SORT_ALLOCATION_FAILED;
         goto dispose_lhs;
     }
 
     /* recursively sort the left-hand side array */
-    if (0 != merge_sort(options, in, lhs_out, lhs_size))
+    retval = merge_sort(options, in, lhs_out, lhs_size);
+    if (VPR_STATUS_SUCCESS != retval)
     {
-        retval = 1;
         goto dispose_all;
     }
 
     /* recursively sort the right-hand side array */
-    if (0 != merge_sort(options, in + lhs_size * options->element_size, rhs_out, rhs_size))
+    retval = merge_sort(
+        options, in + lhs_size * options->element_size, rhs_out, rhs_size);
+    if (VPR_STATUS_SUCCESS != retval)
     {
-        retval = 1;
         goto dispose_all;
     }
 
@@ -215,7 +217,7 @@ static int merge_sort(
     MODEL_ASSERT(rhs_idx == rhs_size);
 
     /* success */
-    retval = 0;
+    retval = VPR_STATUS_SUCCESS;
 
     /* clean up output buffers */
 dispose_all:

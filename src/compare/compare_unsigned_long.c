@@ -31,9 +31,9 @@ int compare_unsigned_long(const void* x, const void* y, size_t UNUSED(size))
     //we can't use subtraction because of the narrowing conversion from unsigned
     //long to int.  Therefore, we need to perform at most two comparisons.
     if (xv > yv)
-        return 1;
+        return VPR_COMPARE_GREATER;
     if (xv < yv)
-        return -1;
+        return VPR_COMPARE_LESS;
     else
-        return 0;
+        return VPR_COMPARE_EQUAL;
 }

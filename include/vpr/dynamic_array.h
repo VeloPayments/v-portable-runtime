@@ -14,6 +14,7 @@
 #include <vpr/allocator.h>
 #include <vpr/compare.h>
 #include <vpr/disposable.h>
+#include <vpr/error_codes.h>
 #include <stdbool.h>
 #include <stdlib.h>
 

@@ -30,9 +30,9 @@ int compare_bool(const void* x, const void* y, size_t UNUSED(size))
 
     //boolean values are a special case.
     if (xv == yv)
-        return 0;
+        return VPR_COMPARE_EQUAL;
     else if (xv)
-        return 1;
+        return VPR_COMPARE_GREATER;
     else
-        return -1;
+        return VPR_COMPARE_LESS;
 }

@@ -29,9 +29,9 @@ int compare_int(const void* x, const void* y, size_t UNUSED(size))
     int yv = *((int*)y);
 
     if (xv > yv)
-        return 1;
+        return VPR_COMPARE_GREATER;
     else if (xv < yv)
-        return -1;
+        return VPR_COMPARE_LESS;
     else
-        return 0;
+        return VPR_COMPARE_EQUAL;
 }
