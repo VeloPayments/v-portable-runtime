@@ -14,11 +14,20 @@
 #include <vpr/dynamic_array.h>
 #include <vpr/parameters.h>
 
+/* this is the real implementation. */
+#ifndef MODEL_CHECK_vpr_abstract_factory_shadowed
+
 /**
  * Instantiation flag.  This flag maintains whether the abstract factory has
  * been instantiated or not.  It must be set to false.
  */
 static bool abstract_factory_instantiated = false;
+
+/**
+ * Failure flag.  This flag is set if setting up the abstract factory failed,
+ * and it will cause all abstract factory logic to short circuit to failure.
+ */
+static bool abstract_factory_failure = true;
 
 /**
  * Allocator to use for the abstract factory.
@@ -53,10 +62,14 @@ void abstract_factory_register(abstract_factory_registration_t* impl)
 {
     abstract_factory_init_one_shot();
 
-    //the factory should now be instantiated if it wasn't before.
-    MODEL_ASSERT(abstract_factory_instantiated);
+    /* the factory should now be instantiated if it wasn't before. */
+    MODEL_ASSERT(abstract_factory_instantiated || abstract_factory_failure);
 
-    //grow the registry if we need more space
+    /* if we are in failure mode, fail. */
+    if (abstract_factory_failure)
+        return;
+
+    /* grow the registry if we need more space */
     if (abstract_factory_registry.elements ==
         abstract_factory_registry.reserved_elements)
     {
@@ -64,7 +77,7 @@ void abstract_factory_register(abstract_factory_registration_t* impl)
             abstract_factory_registry.reserved_elements + 50);
     }
 
-    //register this instance
+    /* register this instance */
     dynamic_array_append(&abstract_factory_registry, impl);
 }
 
@@ -75,21 +88,30 @@ static void abstract_factory_init_one_shot()
 {
     if (!abstract_factory_instantiated)
     {
-        //initialize the allocator options
+        /* set us up in failure case by default */
+        abstract_factory_failure = true;
+
+        /* initialize the allocator options */
         malloc_allocator_options_init(&abstract_factory_alloc_options);
 
-        //initialize the array options
-        dynamic_array_options_init(
-            &abstract_factory_array_options, &abstract_factory_alloc_options,
-            sizeof(abstract_factory_registration_t),
-            &interface_impl_feature_compare);
+        /* initialize the array options */
+        if (0 !=
+            dynamic_array_options_init(
+                &abstract_factory_array_options,
+                &abstract_factory_alloc_options,
+                sizeof(abstract_factory_registration_t),
+                &interface_impl_feature_compare))
+            return;
 
-        //initialize the array
-        dynamic_array_init(
-            &abstract_factory_array_options, &abstract_factory_registry,
-            50, 0, NULL);
+        /* initialize the array */
+        if (0 !=
+            dynamic_array_init(
+                &abstract_factory_array_options, &abstract_factory_registry,
+                50, 0, NULL))
+            return;
 
-        //we are now instantiated
+        /* we are now instantiated */
+        abstract_factory_failure = false;
         abstract_factory_instantiated = true;
     }
 }
@@ -147,10 +169,11 @@ static int interface_impl_feature_compare(
 abstract_factory_registration_t*
 abstract_factory_find(uint32_t interface, uint32_t features)
 {
-    MODEL_ASSERT(abstract_factory_instantiated);
+    MODEL_ASSERT(abstract_factory_instantiated || abstract_factory_failure);
 
-    //this method can't be run until factories have been registered.
-    if (!abstract_factory_instantiated)
+    /* this method can't be run until factories have been registered, or if
+     * registration setup failed. */
+    if (!abstract_factory_instantiated || abstract_factory_failure)
     {
         return NULL;
     }
@@ -206,3 +229,5 @@ static int feature_match(
             (rx->implementation_features & re->implementation_features);
     }
 }
+
+#endif /*!defined(MODEL_CHECK_vpr_abstract_factory_shadowed)*/
