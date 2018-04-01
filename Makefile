@@ -29,6 +29,9 @@ STRIPPED_TEST_SOURCES=$(patsubst $(TESTDIR)/%,%,$(TEST_SOURCES))
 TEST_OBJECTS=$(patsubst %.cpp,$(TEST_BUILD_DIR)/%.o,$(STRIPPED_TEST_SOURCES))
 TESTLIBVPR=$(HOST_CHECKED_BUILD_DIR)/testlibvpr
 
+#documentation configuration
+DOC_BUILD_DIR=$(BUILD_DIR)/apidocs
+
 #model check targets
 MODEL_TARGETS= \
     $(patsubst %.c,%.model, \
@@ -116,10 +119,16 @@ CORTEXMHARD_RELEASE_CXXFLAGS=-std=gnu++14 $(COMMON_CXXFLAGS) -O2 \
 #phony targets
 .PHONY: ALL clean test model-check host.lib.checked host.lib.release
 .PHONY: cortexmsoft.lib.release cortexmhard.lib.release
+.PHONY: docs
 
 #main build target
 ALL: host.lib.checked host.lib.release cortexmsoft.lib.release
 ALL: cortexmhard.lib.release
+
+#Documentation target
+docs:
+	mkdir -p $(DOC_BUILD_DIR)
+	doxygen doxygen.cfg
 
 #host targets
 host.lib.checked: $(HOST_CHECKED_DIRS) $(HOST_CHECKED_LIB)
