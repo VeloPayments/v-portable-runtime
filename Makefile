@@ -128,7 +128,7 @@ ALL: cortexmhard.lib.release
 #Documentation target
 docs:
 	mkdir -p $(DOC_BUILD_DIR)
-	doxygen doxygen.cfg
+	$(TOOLCHAIN_DIR)/host/bin/doxygen doxygen.cfg
 
 #host targets
 host.lib.checked: $(HOST_CHECKED_DIRS) $(HOST_CHECKED_LIB)
