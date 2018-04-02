@@ -17,7 +17,7 @@ extern "C" {
 /**
  * \defgroup VPRErrorCodes Error codes for the Velo Portable Runtime.
  *
- * \brief These error codes are returned by VPR functions.
+ * \brief These status and error codes are returned by VPR functions.
  *
  * @{
  */
