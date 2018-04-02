@@ -1,7 +1,7 @@
 /**
  * \file error_codes.h
  *
- * Error codes for vpr.
+ * \brief Error codes for vpr.
  *
  * \copyright 2017 Velo Payments, Inc.  All rights reserved.
  */
@@ -16,6 +16,8 @@ extern "C" {
 
 /**
  * \defgroup VPRErrorCodes Error codes for the Velo Portable Runtime.
+ *
+ * \brief These error codes are returned by VPR functions.
  *
  * @{
  */

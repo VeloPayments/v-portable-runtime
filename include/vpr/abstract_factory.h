@@ -1,13 +1,15 @@
 /**
  * \file abstract_factory.h
  *
- * The abstract factory provides a registration and instantiation pattern for
- * interface implementations.  Internally, this factory uses a dynamic array to
- * maintain implementations.  The ideal use of this pattern is to perform
- * registration on startup / library load, and then use the abstract factory to
- * create instances of a given interface.  In this way, some compile and
- * link-time optimization can be used to select the correct implementation of a
- * given interface for a given platform.
+ * \brief The abstract factory provides a registration and instantiation pattern
+ * for interface implementations.
+ *
+ * Internally, this factory uses a dynamic array to maintain implementations.
+ * The ideal use of this pattern is to perform registration on startup / library
+ * load, and then use the abstract factory to create instances of a given
+ * interface.  In this way, some compile and link-time optimization can be used
+ * to select the correct implementation of a given interface for a given
+ * platform.
  *
  * The abstract factory is not used directly by user code.  Instead,
  * it enables higher-level libraries such as the crypto library, to select the

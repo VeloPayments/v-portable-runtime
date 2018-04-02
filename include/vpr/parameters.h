@@ -1,7 +1,7 @@
 /**
  * \file parameters.h
  *
- * Helper macros to deal with parameter contracts.
+ * \brief Helper macros to deal with parameter contracts.
  *
  * \copyright 2017 Velo Payments, Inc.  All rights reserved.
  */

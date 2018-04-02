@@ -1,6 +1,8 @@
 /**
  * \file dynamic_array.h
  *
+ * \brief Array container for C.
+ *
  * The dynamic array provides a simple wrapper around a naked C style array that
  * provides model checking for array bounds, controlled initialization,
  * controlled resizing, sorting, and binary searching.

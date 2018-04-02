@@ -1,6 +1,8 @@
 /**
  * \file malloc_allocator.h
  *
+ * \brief Allocator using the system malloc() and free() methods.
+ *
  * This header provides malloc_allocator_options_init(), which initializes an
  * allocator_options_t structure so that it can be used with malloc().
  *

@@ -1,7 +1,7 @@
 /**
  * \file disposable.h
  *
- * Disposable interface for data structures.
+ * \brief Disposable interface for data structures.
  *
  * When working with the disposable pattern, it is expected that the dispose
  * method for the given structure releases any resources connected with that

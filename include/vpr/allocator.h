@@ -1,8 +1,8 @@
 /**
  * \file allocator.h
  *
- * The allocator provides a user-customizable mechanism for managing allocation
- * concerns.
+ * \brief The allocator provides a user-customizable mechanism for managing
+ * allocation concerns.
  *
  * \copyright 2017 Velo Payments, Inc.  All rights reserved.
  */

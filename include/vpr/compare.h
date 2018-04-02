@@ -27,9 +27,14 @@ extern "C" {
 #endif  //__cplusplus
 
 /**
- * \defgroup ComparisonResults. Comparison constants for the Velo Portable
- * Runtime.
+ * \defgroup ComparisonResults Comparison constants for VPR.
  *
+ * \brief These constants are returned by a subset of the comparison functions
+ * below.
+ *
+ * It is expected that application code compare against zero for proper
+ * functionality.  Less-than is x < 0.  Greater-than is x > 0.  Equal-to is x ==
+ * 0.
  * @{
  */
 
