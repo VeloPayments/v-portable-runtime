@@ -53,8 +53,11 @@ static void* allocate_realloc(void* UNUSED(context), void* mem,
 void malloc_allocator_options_dispose(allocator_options_t* options);
 
 /**
- * This method initializes the provided allocator_options_t structure so that
- * it uses malloc() and free() for managing memory.
+ * \brief This method initializes the provided allocator_options_t structure so
+ * that it uses malloc() and free() for managing memory.
+ *
+ * After malloc_allocator_options_init() is called, the caller owns the
+ * ::allocator_options_t structure and must dispose of it by calling dispose().
  *
  * \param options       The allocation options structure to initialize.  Owned
  *                      by the caller.

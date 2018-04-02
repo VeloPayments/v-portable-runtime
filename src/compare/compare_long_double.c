@@ -11,7 +11,7 @@
 #include <vpr/parameters.h>
 
 /**
- * Compare two long doubles.
+ * \brief Compare two long doubles.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.

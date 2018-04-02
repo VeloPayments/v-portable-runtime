@@ -11,7 +11,7 @@
 #include <vpr/parameters.h>
 
 /**
- * Compare two bool values.
+ * \brief Compare two bool values.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.

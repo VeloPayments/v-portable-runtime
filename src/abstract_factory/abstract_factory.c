@@ -27,7 +27,7 @@ static bool abstract_factory_instantiated = false;
  * Failure flag.  This flag is set if setting up the abstract factory failed,
  * and it will cause all abstract factory logic to short circuit to failure.
  */
-static bool abstract_factory_failure = true;
+static bool abstract_factory_failure = false;
 
 /**
  * Allocator to use for the abstract factory.
@@ -51,7 +51,7 @@ static int interface_impl_feature_compare(const void*, const void*, size_t);
 static int feature_match(const void*, const void*, size_t);
 
 /**
- * Register an implementation in the abstract factory.
+ * \brief Register an implementation in the abstract factory.
  *
  * Note: this method is NOT threadsafe.  All registrations should happen before
  * any other abstract factory methods are used by other threads.
@@ -66,15 +66,21 @@ void abstract_factory_register(abstract_factory_registration_t* impl)
     MODEL_ASSERT(abstract_factory_instantiated || abstract_factory_failure);
 
     /* if we are in failure mode, fail. */
-    if (abstract_factory_failure)
+    if (!abstract_factory_instantiated || abstract_factory_failure)
         return;
 
     /* grow the registry if we need more space */
     if (abstract_factory_registry.elements ==
         abstract_factory_registry.reserved_elements)
     {
-        dynamic_array_grow(&abstract_factory_registry,
-            abstract_factory_registry.reserved_elements + VPR_ABSTRACT_FACTORY_REGISTRY_ELEMENT_GROW_SIZE);
+        /* if we can't grow the abstract factory, then registration fails. */
+        if (VPR_STATUS_SUCCESS !=
+            dynamic_array_grow(
+                &abstract_factory_registry,
+                abstract_factory_registry.reserved_elements + 50))
+        {
+            return;
+        }
     }
 
     /* register this instance */
@@ -86,7 +92,7 @@ void abstract_factory_register(abstract_factory_registration_t* impl)
  */
 static void abstract_factory_init_one_shot()
 {
-    if (!abstract_factory_instantiated)
+    if (!abstract_factory_failure && !abstract_factory_instantiated)
     {
         /* set us up in failure case by default */
         abstract_factory_failure = true;
@@ -157,7 +163,7 @@ static int interface_impl_feature_compare(
 }
 
 /**
- * Look up an implementation of a given interface that includes the given
+ * \brief Look up an implementation of a given interface that includes the given
  * features.
  *
  * \param interface     The interface ID to look up.

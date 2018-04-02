@@ -15,9 +15,14 @@
 static void darr_simple_dispose(void*);
 
 /**
- * Initialize dynamic array options for a custom data type.  This method allows
- * the user to override the copy and dispose methods to manage non-POD data
- * types and complex data structures.
+ * \brief Initialize dynamic array options for a custom data type.
+ *
+ * This method allows the user to override the copy and dispose methods to
+ * manage non-POD data types and complex data structures.
+ *
+ * When the function completes succeffully, the caller owns this
+ * ::dynamic_array_t instance and must dispose of it by calling dispose() when
+ * it is no longer needed.
  *
  * \param options           The dynamic array options to initialize.
  * \param alloc_opts        The allocator options to use.
@@ -26,11 +31,11 @@ static void darr_simple_dispose(void*);
  *                          methods.
  * \param copy_method       The method to use to copy elements.
  * \param dispose_method    The method to use to dispose elements.
- * \param compare_method    The comparison method to use for sorting, or NULL.
+ * \param compare_method    The comparison method to use for sorting.
  *
- * \returns zero if successful, non-zero on failure.  On success, the caller
- * owns the dynamic array options structure and must call dispose() on the
- * structure to free any associated memory.
+ * \returns a status code indicating success or failure.
+ *      - \ref VPR_STATUS_SUCCESS if successful.
+ *      - a non-zero status code on failure.
  */
 int dynamic_array_options_init_ex(
     dynamic_array_options_t* options, allocator_options_t* alloc_opts,

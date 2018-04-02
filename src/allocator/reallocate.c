@@ -14,7 +14,7 @@
 #ifndef MODEL_CHECK_vpr_allocator_shadowed
 
 /**
- * Reallocate memory using the given allocator_options_t structure.
+ * \brief Reallocate memory using the given allocator_options_t structure.
  *
  * If allocator_reallocate is defined, then this method is used.  Otherwise, a
  * new memory region of the given size is allocated, and MIN(old_bytes,
@@ -27,7 +27,8 @@
  * \param new_size      The newly requested size.
  *
  * \returns the updated memory region, which should be assumed to be new_size
- *          bytes in size.
+ *          bytes in size.  If reallocation fails, then 0 is returned, and
+ *          the previous memory region is still valid.
  */
 void* reallocate(allocator_options_t* options, void* mem, size_t old_size,
     size_t new_size)

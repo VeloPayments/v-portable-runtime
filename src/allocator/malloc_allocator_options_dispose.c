@@ -15,14 +15,13 @@
 #ifndef MODEL_CHECK_vpr_malloc_allocator_shadowed
 
 /**
- * This method disposes of the underlying allocator provided by the given
- * allocator_options_t structure that was initialized by
- * malloc_allocator_options_init.
+ * \brief This method initializes the provided allocator_options_t structure so
+ * that it uses malloc() and free() for managing memory.
  *
- * \note this dispose method DOES NOT FREE the options structure.  This
- *       structure is owned by the caller.
+ * After malloc_allocator_options_init() is called, the caller owns the
+ * ::allocator_options_t structure and must dispose of it by calling dispose().
  *
- * \param options       The allocation options structure to dispose.  Owned
+ * \param options       The allocation options structure to initialize.  Owned
  *                      by the caller.
  */
 void malloc_allocator_options_dispose(allocator_options_t* options)

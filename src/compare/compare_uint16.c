@@ -11,7 +11,7 @@
 #include <vpr/parameters.h>
 
 /**
- * Compare two uint16_t values.
+ * \brief Compare two uint16_t values.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.

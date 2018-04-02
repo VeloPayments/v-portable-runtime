@@ -13,10 +13,12 @@
 #ifndef MODEL_CHECK_vpr_allocator_shadowed
 
 /**
- * Allocate memory using the given allocator_options_t structure.
+ * \brief Allocate memory using the given allocator_options_t structure.
  *
  * \param options       Allocator options to use when allocating memory.
  * \param size          Size of memory region to allocate, in bytes.
+ *
+ * \returns a pointer to a memory region of the given size or NULL on failure.
  */
 void* allocate(allocator_options_t* options, size_t size)
 {

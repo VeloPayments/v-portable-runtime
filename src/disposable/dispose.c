@@ -13,7 +13,9 @@
 #ifndef MODEL_CHECK_vpr_dispose_shadowed
 
 /**
- * Dispose of a disposable structure.  Call its dispose method.
+ * \brief Dispose of a disposable structure.
+ *
+ * Call its dispose method.
  *
  * \param disp      Disposable structure to be disposed.
  */

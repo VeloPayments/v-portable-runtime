@@ -16,8 +16,10 @@ static int merge_sort(
     dynamic_array_options_t* options, void* input, void* output, size_t size);
 
 /**
- * Sort the given dynamic array.  This method performs a simple merge sort using
- * the comparison method defined in the options structure.
+ * \brief Sort the given dynamic array.
+ *
+ * This method performs a simple merge sort using the comparison method defined
+ * in the options structure.
  *
  * If successful, then the array will be sorted.  Note that this merge sort
  * implementation should not be considered a stable sort, so elements that
@@ -25,7 +27,12 @@ static int merge_sort(
  *
  * \param array             The array to be sorted.
  *
- * \returns zero if successful, non-zero on failure.
+ * \returns a status code indicating success or failure.
+ *      - \ref VPR_STATUS_SUCCESS if successful.
+ *      - \ref VPR_ERROR_DYNAMIC_ARRAY_INIT_ALLOCATION_FAILED if memory
+ *             allocation failed when creating a dynamic array for sorting.
+ *      - \ref VPR_ERROR_DYNAMIC_ARRAY_SORT_ALLOCATION_FAILED if memory
+ *             allocation failed during the merge sort.
  */
 int dynamic_array_sort(dynamic_array_t* array)
 {

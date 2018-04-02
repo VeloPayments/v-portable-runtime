@@ -13,7 +13,7 @@
 #ifdef MODEL_CHECK_vpr_allocator_shadowed
 
 /**
- * Release memory using the given allocator_options_t structure.
+ * \brief Release memory using the given allocator_options_t structure.
  *
  * \param options       Allocator options to use when allocating memory.
  * \param mem           The memory to release.

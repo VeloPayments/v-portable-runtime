@@ -12,10 +12,12 @@
 #include <vpr/parameters.h>
 
 /**
- * Append an element to the end of the dynamic array.  If the reserved size is
- * not large enough for this operation, then it will fail.  Users should grow
- * the array using dynamic_array_grow() to change the size of this structure
- * prior to calling this method if the reserved space has been exhausted.
+ * \brief Append an element to the end of the dynamic array.
+ *
+ * If the reserved size is not large enough for this operation, then it will
+ * fail.  Users should grow the array using dynamic_array_grow() to change the
+ * size of this structure prior to calling this method if the reserved space has
+ * been exhausted.
  *
  * If successful, then a copy of this element will be placed at the end of this
  * array using the defined copy method.
@@ -23,7 +25,10 @@
  * \param array             The array.
  * \param element           The element to append to this array.
  *
- * \returns zero if successful, non-zero on failure.
+ * \returns a status code indicating success or failure.
+ *          - \ref VPR_STATUS_SUCCESS if successful.
+ *          - \ref VPR_ERROR_DYNAMIC_ARRAY_APPEND_NO_RESERVE if there is no
+ *                 reserve room left for appending this element.
  */
 int dynamic_array_append(dynamic_array_t* array, void* element)
 {

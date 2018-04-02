@@ -16,21 +16,26 @@ static void darr_simple_elem_copy(void*, void*, const void*, size_t);
 static void darr_simple_elem_dispose(void*, void*);
 
 /**
- * Initialize dynamic array options for a POD data type.  This method should not
- * be used to initialize arrays with data types that cannot be copied directly
- * (e.g. with memcpy()).  An optional argument overrides the comparison method.
- * If this argument is set to NULL, then memcmp() will be used.  Please see
- * vpr/compare.h for a set of pre-defined comparison methods for most builtin C
- * types.
+ * \brief Initialize dynamic array options for a POD data type.
+ *
+ * This method should not be used to initialize arrays with data types that
+ * cannot be copied directly (e.g. with memcpy()).  An optional argument
+ * overrides the comparison method.* If this argument is set to NULL, then
+ * memcmp() will be used.  Please see vpr/compare.h for a set of pre-defined
+ * comparison methods for most builtin C types. 0
+ *
+ * When the function completes successfully, the caller owns this
+ * ::dynamic_array_t instance and must dispose of it by calling dispose() when
+ * it is no longer needed.
  *
  * \param options           The dynamic array options to initialize.
  * \param alloc_opts        The allocator options to use.
  * \param element_size      The size of an individual element.
  * \param compare_method    The comparison method to use for sorting, or NULL.
  *
- * \returns zero if successful, non-zero on failure.  On success, the caller
- * owns the dynamic array options structure and must call dispose() on the
- * structure to free any associated memory.
+ * \returns a status code indicating success or failure.
+ *      - VPR_STATUS_SUCCESS if successful.
+ *      - a non-zero code on failure.
  */
 int dynamic_array_options_init(
     dynamic_array_options_t* options, allocator_options_t* alloc_opts,

@@ -1,8 +1,15 @@
 /**
  * \file compare.h
  *
- * Some pre-defined comparison methods and a standard function pointer type for
- * comparison methods.
+ * \brief Some pre-defined comparison methods and a standard function pointer
+ * type for comparison methods.
+ *
+ * The purpose of these methods is to provide a generic comparison function
+ * pointer type for container types that either require sorting or provide the
+ * ability to be sorted, such as \ref dynamic_array_t.  These sort methods are
+ * link-time optimized, meaning that if the static library is used, only the
+ * sort methods that are used by the application will be linked to the
+ * application.
  *
  * \copyright 2017 Velo Payments, Inc.  All rights reserved.
  */
@@ -20,19 +27,32 @@ extern "C" {
 #endif  //__cplusplus
 
 /**
- * \defgroup Comparison constants for the Velo Portable Runtime.
+ * \defgroup ComparisonResults. Comparison constants for the Velo Portable
+ * Runtime.
  *
  * @{
  */
+
+/**
+ * \brief lhs > rhs.
+ */
 #define VPR_COMPARE_GREATER 1
+
+/**
+ * \brief lhs < rhs.
+ */
 #define VPR_COMPARE_LESS -1
+
+/**
+ * \brief lhs == rhs.
+ */
 #define VPR_COMPARE_EQUAL 0
 /**
  * @}
  */
 
 /**
- * The comparison method to use when comparing two elements in this array.
+ * \brief The comparison method to use when comparing two elements in this array.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -43,7 +63,7 @@ extern "C" {
 typedef int (*compare_method_t)(const void* x, const void* y, size_t size);
 
 /**
- * Compare two signed characters.
+ * \brief Compare two signed characters.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -54,7 +74,7 @@ typedef int (*compare_method_t)(const void* x, const void* y, size_t size);
 int compare_char(const void* x, const void* y, size_t size);
 
 /**
- * Compare two unsigned characters.
+ * \brief Compare two unsigned characters.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -65,7 +85,7 @@ int compare_char(const void* x, const void* y, size_t size);
 int compare_unsigned_char(const void* x, const void* y, size_t size);
 
 /**
- * Compare two signed shorts.
+ * \brief Compare two signed shorts.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -76,7 +96,7 @@ int compare_unsigned_char(const void* x, const void* y, size_t size);
 int compare_short(const void* x, const void* y, size_t size);
 
 /**
- * Compare two unsigned shorts.
+ * \brief Compare two unsigned shorts.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -87,7 +107,7 @@ int compare_short(const void* x, const void* y, size_t size);
 int compare_unsigned_short(const void* x, const void* y, size_t size);
 
 /**
- * Compare two signed ints.
+ * \brief Compare two signed ints.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -98,7 +118,7 @@ int compare_unsigned_short(const void* x, const void* y, size_t size);
 int compare_int(const void* x, const void* y, size_t size);
 
 /**
- * Compare two unsigned ints.
+ * \brief Compare two unsigned ints.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -109,7 +129,7 @@ int compare_int(const void* x, const void* y, size_t size);
 int compare_unsigned_int(const void* x, const void* y, size_t size);
 
 /**
- * Compare two signed longs.
+ * \brief Compare two signed longs.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -120,7 +140,7 @@ int compare_unsigned_int(const void* x, const void* y, size_t size);
 int compare_long(const void* x, const void* y, size_t size);
 
 /**
- * Compare two unsigned longs.
+ * \brief Compare two unsigned longs.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -131,7 +151,7 @@ int compare_long(const void* x, const void* y, size_t size);
 int compare_unsigned_long(const void* x, const void* y, size_t size);
 
 /**
- * Compare two signed long longs.
+ * \brief Compare two signed long longs.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -142,7 +162,7 @@ int compare_unsigned_long(const void* x, const void* y, size_t size);
 int compare_long_long(const void* x, const void* y, size_t size);
 
 /**
- * Compare two unsigned long longs.
+ * \brief Compare two unsigned long longs.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -153,7 +173,7 @@ int compare_long_long(const void* x, const void* y, size_t size);
 int compare_unsigned_long_long(const void* x, const void* y, size_t size);
 
 /**
- * Compare two floats.
+ * \brief Compare two floats.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -164,7 +184,7 @@ int compare_unsigned_long_long(const void* x, const void* y, size_t size);
 int compare_float(const void* x, const void* y, size_t size);
 
 /**
- * Compare two doubles.
+ * \brief Compare two doubles.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -175,7 +195,7 @@ int compare_float(const void* x, const void* y, size_t size);
 int compare_double(const void* x, const void* y, size_t size);
 
 /**
- * Compare two long doubles.
+ * \brief Compare two long doubles.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -186,7 +206,7 @@ int compare_double(const void* x, const void* y, size_t size);
 int compare_long_double(const void* x, const void* y, size_t size);
 
 /**
- * Compare two int8_t values.
+ * \brief Compare two int8_t values.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -197,7 +217,7 @@ int compare_long_double(const void* x, const void* y, size_t size);
 int compare_int8(const void* x, const void* y, size_t size);
 
 /**
- * Compare two uint8_t values.
+ * \brief Compare two uint8_t values.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -208,7 +228,7 @@ int compare_int8(const void* x, const void* y, size_t size);
 int compare_uint8(const void* x, const void* y, size_t size);
 
 /**
- * Compare two int16_t values.
+ * \brief Compare two int16_t values.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -219,7 +239,7 @@ int compare_uint8(const void* x, const void* y, size_t size);
 int compare_int16(const void* x, const void* y, size_t size);
 
 /**
- * Compare two uint16_t values.
+ * \brief Compare two uint16_t values.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -230,7 +250,7 @@ int compare_int16(const void* x, const void* y, size_t size);
 int compare_uint16(const void* x, const void* y, size_t size);
 
 /**
- * Compare two int32_t values.
+ * \brief Compare two int32_t values.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -241,7 +261,7 @@ int compare_uint16(const void* x, const void* y, size_t size);
 int compare_int32(const void* x, const void* y, size_t size);
 
 /**
- * Compare two uint32_t values.
+ * \brief Compare two uint32_t values.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -252,7 +272,7 @@ int compare_int32(const void* x, const void* y, size_t size);
 int compare_uint32(const void* x, const void* y, size_t size);
 
 /**
- * Compare two int64_t values.
+ * \brief Compare two int64_t values.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -263,7 +283,7 @@ int compare_uint32(const void* x, const void* y, size_t size);
 int compare_int64(const void* x, const void* y, size_t size);
 
 /**
- * Compare two uint64_t values.
+ * \brief Compare two uint64_t values.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
@@ -274,7 +294,7 @@ int compare_int64(const void* x, const void* y, size_t size);
 int compare_uint64(const void* x, const void* y, size_t size);
 
 /**
- * Compare two bool values.
+ * \brief Compare two bool values.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.

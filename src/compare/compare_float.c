@@ -11,7 +11,7 @@
 #include <vpr/parameters.h>
 
 /**
- * Compare two floats.
+ * \brief Compare two floats.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.

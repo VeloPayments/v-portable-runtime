@@ -20,22 +20,23 @@ extern "C" {
 #endif  //__cplusplus
 
 /**
- * \brief allocator options.
+ * \brief This structure contains the options that can be overridden by the user
+ * to customize allocator behavior.
  *
- * This structure contains the options that can be overridden by the user to
- * customize allocator behavior.  Code making use of the RPR allocator can use
- * these routines, but is not necessarily required to use all of them except for
- * allocator_allocate and allocator_release.
+ * Code making use of the VPR allocator can use these routines, but is not
+ * necessarily required to use all of them except for
+ * allocator_options_t::allocator_allocate() and
+ * allocator_options_t::allocator_release().
  */
 typedef struct allocator_options
 {
     /**
-     * This structure is disposable.
+     * \brief This structure is disposable.
      */
     disposable_t hdr;
 
     /**
-     * Allocate memory.
+     * \brief Allocate memory.
      *
      * \param context       The user-defined context for this call.
      * \param size          The amount of memory to be allocated, in bytes.
@@ -46,10 +47,10 @@ typedef struct allocator_options
     void* (*allocator_allocate)(void* context, size_t size);
 
     /**
-     * Release (free) memory previously allocated, or decrement reference, or do
-     * nothing, depending upon allocator implementation.
+     * \brief Release (free) memory previously allocated, or decrement
+     * reference, or do nothing, depending upon allocator implementation.
      *
-     * \note Users of allocator_options_t should assume malloc()/free()
+     * \note Users of ::allocator_options_t should assume malloc()/free()
      *       semantics when using allocator_allocate() and allocator_free().
      *       This ensures the maximum level of portability, even if
      *       allocator_release() calls may be NO-OPs when a collector or bump
@@ -61,7 +62,7 @@ typedef struct allocator_options
     void (*allocator_release)(void* context, void* mem);
 
     /**
-     * Optional reallocate method.
+     * \brief Optional reallocate method.
      *
      * Resize the given memory region to the new size, returning the updated
      * memory region.  This method will attempt to resize the memory region if
@@ -102,22 +103,24 @@ typedef struct allocator_options
 } allocator_options_t;
 
 /**
- * This macro defines the model check property for a valid allocator options
- * structure.
+ * \brief This macro defines the model check property for a valid allocator
+ * options structure.
  */
 #define MODEL_PROP_VALID_ALLOCATOR_OPTIONS(options) \
     (NULL != (options) && MODEL_PROP_VALID_DISPOSABLE(&((options)->hdr)) && NULL != (options)->allocator_allocate && NULL != (options)->allocator_release && (NULL != (options)->allocator_reallocate || NULL == (options)->allocator_reallocate))
 
 /**
- * Allocate memory using the given allocator_options_t structure.
+ * \brief Allocate memory using the given allocator_options_t structure.
  *
  * \param options       Allocator options to use when allocating memory.
  * \param size          Size of memory region to allocate, in bytes.
+ *
+ * \returns a pointer to a memory region of the given size or NULL on failure.
  */
 void* allocate(allocator_options_t* options, size_t size);
 
 /**
- * Release memory using the given allocator_options_t structure.
+ * \brief Release memory using the given allocator_options_t structure.
  *
  * \param options       Allocator options to use when allocating memory.
  * \param mem           The memory to release.
@@ -125,7 +128,7 @@ void* allocate(allocator_options_t* options, size_t size);
 void release(allocator_options_t* options, void* mem);
 
 /**
- * Reallocate memory using the given allocator_options_t structure.
+ * \brief Reallocate memory using the given allocator_options_t structure.
  *
  * If allocator_reallocate is defined, then this method is used.  Otherwise, a
  * new memory region of the given size is allocated, and MIN(old_bytes,

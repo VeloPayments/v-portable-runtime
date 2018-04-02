@@ -12,14 +12,23 @@
 #include <vpr/parameters.h>
 
 /**
- * Request that the reserve size of the dynamic array be increased.  This method
- * will attempt to grow the size of the array to the requested size.
+ * \brief Request that the reserve size of the dynamic array be increased.
+ *
+ * This method will attempt to grow the size of the array to the requested size.
+ * When this function completes successfully, the reserve size is increased to
+ * the given value.
  *
  * \param array             The array to grow.
  * \param reserve           The new reserve size for this array.
  *
- * \returns zero if successful, non-zero on failure.  On success, the reserve
- * size is increased to the given value.
+ * \returns a status code indicating success or failure.
+ *      - \ref VPR_STATUS_SUCCESS if successful.
+ *      - \ref VPR_ERROR_DYNAMIC_ARRAY_GROW_INVALID_ARGUMENT if one of the
+ *             provided arguments is invalid or if an attempt is made to shrink
+ *             the ::dynamic_array_t instance.
+ *      - \ref VPR_ERROR_DYNAMIC_ARRAY_GROW_ALLOCATION_FAILED if an attempt to
+ *             allocate a larger array for growing the ::dynamic_array_t
+ *             instance fails.
  */
 int dynamic_array_grow(dynamic_array_t* array, size_t reserve)
 {

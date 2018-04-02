@@ -12,11 +12,13 @@
 #include <vpr/parameters.h>
 
 /**
- * Perform a linear search for an element matching the given key in this
- * array.  Note that a linear search will work regardless of whether the array
- * is sorted or not, but it will have a worst-case performance of O(n).  The
- * pointer to the first matching item in the array is returned on success, and
- * NULL is returned on failure.
+ * \brief Perform a linear search for an element matching the given key in this
+ * array.
+ *
+ * Note that a linear search will work regardless of whether the array is sorted
+ * or not, but it will have a worst-case performance of O(n).  The pointer to
+ * the first matching item in the array is returned on success, and NULL is
+ * returned on failure.
  *
  * The search method uses the comparison method defined in the array options.
  * How the comparison occurs is up to the comparison method, so this search can
@@ -26,7 +28,10 @@
  * \param compare_method    Optional comparison method override.
  * \param elem              The element to use for searching.
  *
- * \returns zero if successful, non-zero on failure.
+ * \returns a pointer value.
+ *      - the first element matching the provided element given the compare
+ *        method on success.
+ *      - NULL if no matching element found.
  */
 void* dynamic_array_linear_search(
     dynamic_array_t* array, compare_method_t compare_method, const void* elem)

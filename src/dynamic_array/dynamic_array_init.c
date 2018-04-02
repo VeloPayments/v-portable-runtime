@@ -15,11 +15,17 @@
 static void darr_dispose(void*);
 
 /**
- * Initialize a dynamic array.  This method allows for the creation of a dynamic
- * array that has a reserved size and an optional initial instantiated size.  If
- * the copy element is specified and the instantiated size is greater than zero,
- * then the first N elements will be available in the dynamic array and will be
- * initialized using the copy element.
+ * \brief Initialize a dynamic array.
+ *
+ * This method allows for the creation of a dynamic array that has a reserved
+ * size and an optional initial instantiated size.  If the copy element is
+ * specified and the instantiated size is greater than zero, then the first N
+ * elements will be available in the dynamic array and will be initialized using
+ * the copy element.
+ *
+ * When the function completes succeffully, the caller owns this
+ * ::dynamic_array_t instance and must dispose of it by calling dispose() when
+ * it is no longer needed.
  *
  * \param options           The dynamic array options to use for this instance.
  * \param array             The array to initialize.
@@ -30,9 +36,10 @@ static void darr_dispose(void*);
  * \param copy              The optional copy element used for filling the
  *                          initial instances.
  *
- * \returns zero if successful, non-zero on failure.  On success, the caller
- * owns this dynamic array and must dispose of it by calling dispose() when it
- * is no longer needed.
+ * \returns a status code indicating success or failure.
+ *      - \ref VPR_STATUS_SUCCESS if successful.
+ *      - \ref VPR_ERROR_DYNAMIC_ARRAY_INIT_ALLOCATION_FAILED if memory
+ *             allocation failed when creating this dynamic array.
  */
 int dynamic_array_init(
     dynamic_array_options_t* options, dynamic_array_t* array,

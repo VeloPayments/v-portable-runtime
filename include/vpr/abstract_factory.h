@@ -1,7 +1,7 @@
 /**
  * \file abstract_factory.h
  *
- * Abstract factory provides a registration and instantiation pattern for
+ * The abstract factory provides a registration and instantiation pattern for
  * interface implementations.  Internally, this factory uses a dynamic array to
  * maintain implementations.  The ideal use of this pattern is to perform
  * registration on startup / library load, and then use the abstract factory to
@@ -34,10 +34,10 @@ extern "C" {
 #define VPR_ABSTRACT_FACTORY_REGISTRY_ELEMENT_GROW_SIZE 50
 
 /**
- * \brief instance implementation registration.
+ * \brief This structure contains the details for a specific implementation
+ * registration for a given instance.
  *
- * This structure contains the details for a specific implementation
- * registration for a given instance.  This is what is stored in the abstract
+ * This is what is stored in the abstract
  * factory.  The abstract factory, in turn, uses these details to select either
  * any implementation of a given interface, the best implementation of a given
  * interface, or a specific implementation of a given interface.
@@ -45,34 +45,34 @@ extern "C" {
 typedef struct abstract_factory_registration
 {
     /**
-     * The interface that this registration implements.
+     * \brief The interface that this registration implements.
      */
     uint32_t interface;
 
     /**
-     * The implementation ID for this registration.
+     * \brief The implementation ID for this registration.
      */
     uint32_t implementation;
 
     /**
-     * Features provided by this implementation.  Interface-specific.
+     * \brief Features provided by this implementation.  Interface-specific.
      */
     uint32_t implementation_features;
 
     /**
-     * An opaque pointer to the factory for this registration.
+     * \brief An opaque pointer to the factory for this registration.
      */
     void* factory;
 
     /**
-     * An opaque context pointer to use when calling the factory method.
+     * \brief An opaque context pointer to use when calling the factory method.
      */
     void* context;
 
 } abstract_factory_registration_t;
 
 /**
- * Register an implementation in the abstract factory.
+ * \brief Register an implementation in the abstract factory.
  *
  * Note: this method is NOT threadsafe.  All registrations should happen before
  * any other abstract factory methods are used by other threads.
@@ -82,7 +82,7 @@ typedef struct abstract_factory_registration
 void abstract_factory_register(abstract_factory_registration_t* impl);
 
 /**
- * Look up an implementation of a given interface that includes the given
+ * \brief Look up an implementation of a given interface that includes the given
  * features.
  *
  * \param interface     The interface ID to look up.

@@ -11,7 +11,7 @@
 #include <vpr/parameters.h>
 
 /**
- * Compare two signed characters.
+ * \brief Compare two signed characters.
  *
  * \param x             The left-hand element.
  * \param y             The right-hand element.
