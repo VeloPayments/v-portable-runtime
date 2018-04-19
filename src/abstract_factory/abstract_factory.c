@@ -51,6 +51,25 @@ static int interface_impl_feature_compare(const void*, const void*, size_t);
 static int feature_match(const void*, const void*, size_t);
 
 /**
+ * \brief Tear down the abstract factory.
+ *
+ * This can be called on application exit to reclaim memory used by the abstract
+ * factory.
+ */
+void abstract_factory_dispose()
+{
+    /* the factory should now be instantiated if it wasn't before. */
+    MODEL_ASSERT(abstract_factory_instantiated || abstract_factory_failure);
+
+    /* if we are in failure mode, fail. */
+    if (!abstract_factory_instantiated || abstract_factory_failure)
+        return;
+
+    dispose((disposable_t*)&abstract_factory_registry);
+    dispose((disposable_t*)&abstract_factory_array_options);
+}
+
+/**
  * \brief Register an implementation in the abstract factory.
  *
  * Note: this method is NOT threadsafe.  All registrations should happen before
@@ -73,18 +92,23 @@ void abstract_factory_register(abstract_factory_registration_t* impl)
     if (abstract_factory_registry.elements ==
         abstract_factory_registry.reserved_elements)
     {
+/* CBMC can't currently handle dynamic array growing. */
+#ifndef CBMC
         /* if we can't grow the abstract factory, then registration fails. */
         if (VPR_STATUS_SUCCESS !=
             dynamic_array_grow(
                 &abstract_factory_registry,
-                abstract_factory_registry.reserved_elements + 50))
+                abstract_factory_registry.reserved_elements + VPR_ABSTRACT_FACTORY_REGISTRY_ELEMENT_GROW_SIZE))
         {
             return;
         }
+#else /* !CBMC */
+        return;
+#endif
     }
 
     /* register this instance */
-    dynamic_array_append(&abstract_factory_registry, impl);
+    dynamic_array_append(&abstract_factory_registry, &impl);
 }
 
 /**
@@ -105,7 +129,7 @@ static void abstract_factory_init_one_shot()
             dynamic_array_options_init(
                 &abstract_factory_array_options,
                 &abstract_factory_alloc_options,
-                sizeof(abstract_factory_registration_t),
+                sizeof(abstract_factory_registration_t*),
                 &interface_impl_feature_compare))
             return;
 
@@ -137,9 +161,9 @@ static int interface_impl_feature_compare(
 {
     MODEL_ASSERT(x != NULL);
     MODEL_ASSERT(y != NULL);
-    MODEL_ASSERT(size == sizeof(abstract_factory_registration_t));
+    MODEL_ASSERT(size == sizeof(abstract_factory_registration_t*));
 
-    abstract_factory_registration_t* rx = (abstract_factory_registration_t*)x;
+    abstract_factory_registration_t* rx = *(abstract_factory_registration_t**)x;
     abstract_factory_registration_t* ry = (abstract_factory_registration_t*)y;
 
     if (rx->interface != ry->interface)
@@ -190,8 +214,16 @@ abstract_factory_find(uint32_t interface, uint32_t features)
     elem.implementation = 0;
     elem.implementation_features = features;
 
-    return dynamic_array_linear_search(
-        &abstract_factory_registry, &feature_match, &elem);
+    /* get the pointer to the matching registration. */
+    abstract_factory_registration_t** ret = (abstract_factory_registration_t**)
+        dynamic_array_linear_search(
+            &abstract_factory_registry, &feature_match, &elem);
+
+    /* if the pointer is not null, dereference it. */
+    if (ret != NULL)
+        return *ret;
+
+    return NULL;
 }
 
 /**
@@ -208,9 +240,9 @@ static int feature_match(
 {
     MODEL_ASSERT(x != NULL);
     MODEL_ASSERT(elem != NULL);
-    MODEL_ASSERT(size == sizeof(abstract_factory_registration_t));
+    MODEL_ASSERT(size == sizeof(abstract_factory_registration_t*));
 
-    abstract_factory_registration_t* rx = (abstract_factory_registration_t*)x;
+    abstract_factory_registration_t* rx = *(abstract_factory_registration_t**)x;
     abstract_factory_registration_t* re =
         (abstract_factory_registration_t*)elem;
 
@@ -229,10 +261,10 @@ static int feature_match(
     }
     else
     {
-        //mask our features against the features provided by rx.  If all
-        //features we've requested match, then this implementation will work.
-        return re->implementation_features -
-            (rx->implementation_features & re->implementation_features);
+        /* return the difference in features */
+        return compare_uint32(&rx->implementation_features,
+            &re->implementation_features,
+            sizeof(uint32_t));
     }
 }
 

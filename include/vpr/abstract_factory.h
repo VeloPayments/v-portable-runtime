@@ -96,6 +96,14 @@ void abstract_factory_register(abstract_factory_registration_t* impl);
 abstract_factory_registration_t*
 abstract_factory_find(uint32_t interface, uint32_t features);
 
+/**
+ * \brief Tear down the abstract factory.
+ *
+ * This can be called on application exit to reclaim memory used by the abstract
+ * factory.
+ */
+void abstract_factory_dispose();
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }

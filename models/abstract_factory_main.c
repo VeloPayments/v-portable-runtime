@@ -10,34 +10,39 @@ typedef struct impl_test
 
 static void register_foo();
 static void register_bar();
-static impl_test_t* lookup_foo();
-static impl_test_t* lookup_bar();
+static abstract_factory_registration_t* lookup_foo();
+static abstract_factory_registration_t* lookup_bar();
+
+#define FOO_IMPL 7
+static impl_test_t global_foo;
+static abstract_factory_registration_t global_foo_impl;
+#define BAR_IMPL 8
+impl_test_t global_bar;
+static abstract_factory_registration_t global_bar_impl;
 
 int main(int argc, char* argv[])
 {
     register_foo();
     register_bar();
 
-    impl_test_t* foo_impl = lookup_foo();
-    impl_test_t* bar_impl = lookup_bar();
+    abstract_factory_registration_t* foo_reg = lookup_foo();
+    abstract_factory_registration_t* bar_reg = lookup_bar();
 
-    /* if setup of the abstract factory failed, then both foo and bar impls will
-     * be bad. */
-    if (NULL == foo_impl && NULL == bar_impl)
+    /* if dynamic memory allocation fails, both entries will be NULL. */
+    if (NULL == foo_reg && NULL == bar_reg)
         return 0;
 
     /* otherwise, we should be successful. */
-    MODEL_ASSERT(NULL != foo_impl);
-    MODEL_ASSERT(!strncmp(foo_impl->name, "foo", 4));
-    MODEL_ASSERT(NULL != bar_impl);
-    MODEL_ASSERT(!strncmp(bar_impl->name, "bar", 4));
+    MODEL_ASSERT(NULL != foo_reg);
+    impl_test_t* foo_impl = (impl_test_t*)foo_reg->context;
+    MODEL_ASSERT(NULL != bar_reg);
+    impl_test_t* bar_impl = (impl_test_t*)bar_reg->context;
+
+    /* clean up the abstract factory instance. */
+    abstract_factory_dispose();
 
     return 0;
 }
-
-#define FOO_IMPL 7
-static impl_test_t global_foo;
-static abstract_factory_registration_t global_foo_impl;
 
 static void register_foo()
 {
@@ -47,24 +52,22 @@ static void register_foo()
     global_foo_impl.implementation_features = FOO_IMPL;
     global_foo_impl.factory = 0;
     global_foo_impl.context = &global_foo;
+    abstract_factory_register(&global_foo_impl);
 }
 
-static impl_test_t* lookup_foo()
+static abstract_factory_registration_t* lookup_foo()
 {
     abstract_factory_registration_t* reg = NULL;
 
     reg = abstract_factory_find(TEST_INTERFACE, FOO_IMPL);
     if (NULL != reg)
     {
-        return reg->context;
+        MODEL_ASSERT(reg->implementation == FOO_IMPL);
+        return reg;
     }
 
     return NULL;
 }
-
-#define BAR_IMPL 8
-impl_test_t global_bar;
-static abstract_factory_registration_t global_bar_impl;
 
 static void register_bar()
 {
@@ -74,16 +77,18 @@ static void register_bar()
     global_bar_impl.implementation_features = BAR_IMPL;
     global_bar_impl.factory = 0;
     global_bar_impl.context = &global_bar;
+    abstract_factory_register(&global_bar_impl);
 }
 
-static impl_test_t* lookup_bar()
+static abstract_factory_registration_t* lookup_bar()
 {
     abstract_factory_registration_t* reg = NULL;
 
     reg = abstract_factory_find(TEST_INTERFACE, BAR_IMPL);
     if (NULL != reg)
     {
-        return reg->context;
+        MODEL_ASSERT(reg->implementation == BAR_IMPL);
+        return reg;
     }
 
     return NULL;
