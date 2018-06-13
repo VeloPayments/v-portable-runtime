@@ -7,6 +7,9 @@ MODEL_CHECK_DIR?=../vcmodel
 include $(MODEL_CHECK_DIR)/model_check.mk
 include custom_models.mk
 
+#OpenBSD compatibility
+PWD?=$(shell pwd)
+
 #library source files
 SRCDIR=$(PWD)/src
 DIRS=$(SRCDIR) $(SRCDIR)/abstract_factory $(SRCDIR)/allocator \
