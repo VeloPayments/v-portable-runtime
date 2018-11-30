@@ -23,6 +23,7 @@ struct mock_allocator_context
     mock_allocator_context()
         : allocate_retval(nullptr)
         , reallocate_retval(nullptr)
+        , control_retval(VPR_STATUS_SUCCESS)
     {
     }
 
@@ -31,12 +32,15 @@ struct mock_allocator_context
     list<tuple<void*, void*>> release_calls;
     void* reallocate_retval;
     list<tuple<void*, void*, size_t, size_t>> reallocate_calls;
+    list<tuple<void*, uint32_t, void*>> control_calls;
+    int control_retval;
 };
 
 /* forward decls for mock allocator methods */
 static void* mock_allocator_allocate(void*, size_t);
 static void mock_allocator_release(void*, void*);
 static void* mock_allocator_reallocate(void*, void*, size_t, size_t);
+static int mock_allocator_control(void*, uint32_t, void*);
 static void mock_allocator_options_dispose(allocator_options_t* options);
 
 /**
@@ -51,6 +55,7 @@ void mock_allocator_options_init(allocator_options_t* options,
     options->allocator_release = &mock_allocator_release;
     options->allocator_reallocate = use_reallocate ? &mock_allocator_reallocate
                                                    : nullptr;
+    options->allocator_control = &mock_allocator_control;
     options->context = (void*)(new mock_allocator_context);
 }
 
@@ -101,6 +106,19 @@ static void* mock_allocator_reallocate(void* context, void* mem,
         make_tuple(context, mem, old_size, new_size));
 
     return ctx->reallocate_retval;
+}
+
+/**
+ * Mock control call.
+ */
+static int mock_allocator_control(void* context, uint32_t key, void* value)
+{
+    auto ctx = (mock_allocator_context*)context;
+
+    ctx->control_calls.push_back(
+        make_tuple(context, key, value));
+
+    return ctx->control_retval;
 }
 
 /**
@@ -239,6 +257,47 @@ bool mock_allocator_reallocate_called(allocator_options_t* options)
     {
         ret = true;
         ctx->reallocate_calls.pop_front();
+    }
+
+    return ret;
+}
+
+/**
+ * Returns true if allocator_control was called with the given arguments.
+ */
+bool mock_allocator_control_called(allocator_options_t* options, uint32_t key,
+    void* value)
+{
+    bool ret = false;
+    auto ctx = (mock_allocator_context*)options->context;
+
+    if (ctx->control_calls.size() > 0)
+    {
+        auto call = ctx->control_calls.front();
+
+        if (get<0>(call) == options->context && get<1>(call) == key && get<2>(call) == value)
+        {
+            ret = true;
+        }
+
+        ctx->control_calls.pop_front();
+    }
+
+    return ret;
+}
+
+/**
+ * Returns true if allocator_control was called with *ANY* arguments.
+ */
+bool mock_allocator_control_called(allocator_options_t* options)
+{
+    bool ret = false;
+    auto ctx = (mock_allocator_context*)options->context;
+
+    if (ctx->control_calls.size() > 0)
+    {
+        ret = true;
+        ctx->control_calls.pop_front();
     }
 
     return ret;

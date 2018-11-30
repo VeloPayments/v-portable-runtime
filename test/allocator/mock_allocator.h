@@ -56,4 +56,15 @@ bool mock_allocator_reallocate_called(allocator_options_t* options, void* mem,
  */
 bool mock_allocator_reallocate_called(allocator_options_t* options);
 
+/**
+ * Returns true if allocator_control was called with the given arguments.
+ */
+bool mock_allocator_control_called(allocator_options_t* options, uint32_t key,
+    void* value);
+
+/**
+ * Returns true if allocator_control was called with *ANY* arguments.
+ */
+bool mock_allocator_control_called(allocator_options_t* options);
+
 #endif  //TEST_ALLOCATOR_MOCK_ALLOCATOR_HEADER_GUARD

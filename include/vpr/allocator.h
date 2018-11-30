@@ -11,6 +11,7 @@
 #define VPR_ALLOCATOR_HEADER_GUARD
 
 #include <vpr/disposable.h>
+#include <vpr/error_codes.h>
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -94,6 +95,21 @@ typedef struct allocator_options
         size_t new_size);
 
     /**
+     * \brief Make an allocator control call.
+     *
+     * \param context       User-defined context for this call.
+     * \param key           The control key being called.
+     * \param value         The optional value parameter for this control cal.
+     *
+     * \returns a status code indicating success or failure.
+     *      - \ref VPR_STATUS_SUCCESS if successful.
+     *      - \ref VPR_ERROR_ALLOCATOR_CONTROL_INVALID_KEY if the control key is
+     *        invalid for the underlying allocator.
+     *      - a non-zero error specific to a given control call on failure.
+     */
+    int (*allocator_control)(void* context, uint32_t key, void* value);
+
+    /**
      * \brief user context for allocator options.
      *
      * This context is passed to each of the above functions when called.
@@ -107,7 +123,7 @@ typedef struct allocator_options
  * options structure.
  */
 #define MODEL_PROP_VALID_ALLOCATOR_OPTIONS(options) \
-    (NULL != (options) && MODEL_PROP_VALID_DISPOSABLE(&((options)->hdr)) && NULL != (options)->allocator_allocate && NULL != (options)->allocator_release && (NULL != (options)->allocator_reallocate || NULL == (options)->allocator_reallocate))
+    (NULL != (options) && MODEL_PROP_VALID_DISPOSABLE(&((options)->hdr)) && NULL != (options)->allocator_allocate && NULL != (options)->allocator_release && (NULL != (options)->allocator_reallocate || NULL == (options)->allocator_reallocate) && NULL != (options)->allocator_control)
 
 /**
  * \brief Allocate memory using the given allocator_options_t structure.
@@ -146,6 +162,21 @@ void release(allocator_options_t* options, void* mem);
  */
 void* reallocate(allocator_options_t* options, void* mem, size_t old_size,
     size_t new_size);
+
+/**
+ * \brief Make an allocator control call.
+ *
+ * \param options       Allocator options to use for this control call.
+ * \param key           The control key being called.
+ * \param value         The optional value parameter for this control cal.
+ *
+ * \returns a status code indicating success or failure.
+ *      - \ref VPR_STATUS_SUCCESS if successful.
+ *      - \ref VPR_ERROR_ALLOCATOR_CONTROL_INVALID_KEY if the control key is
+ *        invalid for the underlying allocator.
+ *      - a non-zero error specific to a given control call on failure.
+ */
+int allocator_control(allocator_options_t* options, uint32_t key, void* value);
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
