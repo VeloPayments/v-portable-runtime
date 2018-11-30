@@ -71,6 +71,12 @@ extern "C" {
 #define VPR_ERROR_ALLOCATOR_CONTROL_INVALID_KEY 0x1106
 
 /**
+ * \brief This error code is returned by bump_allocator_options_init() when the
+ * backing buffer is too small.
+ */
+#define VPR_ERROR_BUMP_ALLOCATOR_TINY_BUFFER 0x1107
+
+/**
  * @}
  */
 
