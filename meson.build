@@ -11,12 +11,12 @@ force_velo_toolchain = get_option('force_velo_toolchain')
 if force_velo_toolchain                                                              
   cc = meson.get_compiler('c')                                                       
   cc_version = run_command(cc.cmd_array() + ['--version'], check : true).stdout()
-  if not cc_version.contains('velo')                                                 
+  if not cc_version.contains('(velo)')                                                 
     error('force_velo_toolchain is set and you arn\'t using the velo toolchain.')    
   endif                                                                                                                                                                                       
   cpp = meson.get_compiler('cpp')
   cpp_version = run_command(cc.cmd_array() + ['--version'], check : true).stdout()
-  if not cpp_version.contains('velo')
+  if not cpp_version.contains('(velo)')
     error('force_velo_toolchain is set and you arn\'t using the velo toolchain.')
   endif
 else
