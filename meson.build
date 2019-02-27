@@ -2,7 +2,8 @@ project(
   'vpr', 
   'c', 
   'cpp',
-  default_options : ['c_std=c11', 'cpp_std=c++14']
+  default_options : ['c_std=c11', 'cpp_std=c++14'],
+  meson_version : '>=0.49.0'
 )
 
 force_velo_toolchain = get_option('force_velo_toolchain')
