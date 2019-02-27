@@ -29,7 +29,7 @@ add_project_arguments('-Wall', '-Werror', '-Wextra', language : 'cpp')
 src = run_command('find', './src', '-name', '*.c', check : true).stdout().strip().split('\n')
 test_src = run_command('find', './test', '-name', '*.cpp', check : true).stdout().strip().split('\n')
 
-gtest = dependency('gtest', main : true, required : true)
+gtest = dependency('gtest', main : true, required : true, fallback : ['gtest','gtest_dep'])
 
 vcmodel = dependency(
   'vcmodel',
