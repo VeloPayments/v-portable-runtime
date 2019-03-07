@@ -1,4 +1,0 @@
-/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/CMakeFiles/vpr.dir
-/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/CMakeFiles/vpr_test.dir
