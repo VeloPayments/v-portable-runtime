@@ -14,6 +14,7 @@ add_library(vpr
         include/vpr/compare.h
         include/vpr/disposable.h
         include/vpr/dynamic_array.h
+        include/vpr/doubly_linked_list.h
         include/vpr/parameters.h
         src/abstract_factory/abstract_factory.c
         src/allocator/allocate.c
@@ -50,7 +51,9 @@ add_library(vpr
         src/dynamic_array/dynamic_array_linear_search.c
         src/dynamic_array/dynamic_array_options_init.c
         src/dynamic_array/dynamic_array_options_init_ex.c
-        src/dynamic_array/dynamic_array_sort.c)
+        src/dynamic_array/dynamic_array_sort.c
+        src/doubly_linked_list/doubly_linked_list_init.c
+        src/doubly_linked_list/doubly_linked_list_options_init.c)
 add_executable(vpr_test
         test/allocator/mock_allocator.cpp
         test/allocator/mock_allocator.h

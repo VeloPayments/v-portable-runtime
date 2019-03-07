@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="vpr"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="vpr">
+				<Option output="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/libvpr.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/include"/>
+					<Add directory="/include"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 vpr"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="vpr/fast">
+				<Option output="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/libvpr.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/include"/>
+					<Add directory="/include"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 vpr/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="vpr_test">
+				<Option output="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/vpr_test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/include"/>
+					<Add directory="/include"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 vpr_test"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="vpr_test/fast">
+				<Option output="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/vpr_test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/include"/>
+					<Add directory="/include"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 vpr_test/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/include/vpr/abstract_factory.h">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/include/vpr/allocator.h">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/include/vpr/allocator/malloc_allocator.h">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/include/vpr/compare.h">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/include/vpr/disposable.h">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/include/vpr/dynamic_array.h">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/include/vpr/parameters.h">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/abstract_factory/abstract_factory.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/allocator/allocate.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/allocator/malloc_allocator_options_dispose.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/allocator/malloc_allocator_options_init.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/allocator/reallocate.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/allocator/release.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_bool.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_char.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_double.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_float.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_int.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_int16.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_int32.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_int64.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_int8.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_long.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_long_double.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_long_long.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_short.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_uint16.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_uint32.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_uint64.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_uint8.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_unsigned_char.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_unsigned_int.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_unsigned_long.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_unsigned_long_long.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/compare/compare_unsigned_short.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/disposable/dispose.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/dynamic_array/dynamic_array_append.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/dynamic_array/dynamic_array_grow.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/dynamic_array/dynamic_array_init.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/dynamic_array/dynamic_array_linear_search.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/dynamic_array/dynamic_array_options_init.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/dynamic_array/dynamic_array_options_init_ex.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/src/dynamic_array/dynamic_array_sort.c">
+			<Option target="vpr"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/allocator/mock_allocator.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/allocator/mock_allocator.h">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/allocator/test_allocate.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/allocator/test_malloc_allocator_options_init.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/allocator/test_reallocate.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/allocator/test_release.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_bool.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_char.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_double.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_float.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_int.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_int16.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_int32.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_int64.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_int8.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_long.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_long_double.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_long_long.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_short.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_uint16.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_uint32.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_uint64.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_uint8.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_unsigned_char.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_unsigned_int.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_unsigned_long.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_unsigned_long_long.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/compare/test_compare_unsigned_short.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/dynamic_array/test_dynamic_array_append.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/dynamic_array/test_dynamic_array_grow.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/dynamic_array/test_dynamic_array_init.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/dynamic_array/test_dynamic_array_linear_search.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/dynamic_array/test_dynamic_array_sort.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/test/testmain.cpp">
+			<Option target="vpr_test"/>
+		</Unit>
+		<Unit filename="/home/james/velo/vjblockchain/lib/vcblockchain/lib/vpr/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
