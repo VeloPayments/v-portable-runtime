@@ -49,7 +49,7 @@ int doubly_linked_list_options_init(
 }
 
 /**
- * The copy method to use when copying elements in this array.
+ * The copy method to use when copying elements in this linked list.
  *
  * \param context       User-defined context for controlling the copy
  *                      method.
@@ -65,11 +65,12 @@ static void dll_simple_elem_copy(
 }
 
 /**
- * The dispose method to use when disposing an element in this array.
+ * The dispose method to use when disposing an element in this linked list.
  *
  * \param context       User-defined context to use for the dispose method.
  * \param elem          The element to be disposed.
  */
-static void dll_simple_elem_dispose(void* UNUSED(context), void* UNUSED(elem))
+static void dll_simple_elem_dispose(void* UNUSED(context), void* elem)
 {
+    free(elem);
 }

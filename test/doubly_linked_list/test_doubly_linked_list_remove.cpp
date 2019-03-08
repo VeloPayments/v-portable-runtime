@@ -104,9 +104,6 @@ void build_doubly_linked_list(doubly_linked_list_t* dll, int* data, int n)
 
     for (int i = 0; i < n; i++)
     {
-        doubly_linked_list_element_t* element = (doubly_linked_list_element_t*)
-            malloc(sizeof(doubly_linked_list_element_t));
-        element->data = (void*)(data + i);
-        doubly_linked_list_insert_end(dll, element);
+        doubly_linked_list_insert_end(dll, &data[i]);
     }
 }

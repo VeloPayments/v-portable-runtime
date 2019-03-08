@@ -40,24 +40,28 @@ int doubly_linked_list_init(
  *
  * \param pdll        An opaque pointer to the doubly linked list
  */
-void dll_dispose(void* UNUSED(pdll))
+void dll_dispose(void* pdll)
 {
-    //    MODEL_ASSERT(pdll != NULL);
-    //    doubly_linked_list_t* dll = (doubly_linked_list_t*)pdll;
-    //    MODEL_ASSERT(dll->options != NULL);
-    //    MODEL_ASSERT(dll->options->alloc_opts != NULL);
-    //    MODEL_ASSERT(array->options->dynamic_array_element_dispose != NULL);
-    //    MODEL_ASSERT(array->array != NULL);
-    //    MODEL_ASSERT(array->elements <= array->reserved_elements);
+    MODEL_ASSERT(pdll != NULL);
+    doubly_linked_list_t* dll = (doubly_linked_list_t*)pdll;
+    MODEL_ASSERT(dll->options != NULL);
+    MODEL_ASSERT(dll->options->alloc_opts != NULL);
+    MODEL_ASSERT(dll->options->doubly_linked_list_element_dispose != NULL);
 
-    //dispose of each element in the array
-    /*uint8_t* barr = (uint8_t*)array->array;
-    for (size_t i = 0; i < array->elements; ++i)
+    //dispose of each element in the list
+    doubly_linked_list_element_t* element = dll->first;
+    while (element != NULL)
     {
-        array->options->dynamic_array_element_dispose(
-                array->options->context, barr + i*array->options->element_size);
-    }*/
 
-    //release the memory
-    //release(dll->options->alloc_opts, array->array);
+        // this call frees the memory for the data pointed to by the element
+        dll->options->doubly_linked_list_element_dispose(
+            dll->options->context, element->data);
+
+        // free the space for the element itself, being careful to
+        // advance our pointer first
+        doubly_linked_list_element_t* curr = element;
+        element = element->next;
+
+        release(dll->options->alloc_opts, curr);
+    }
 }

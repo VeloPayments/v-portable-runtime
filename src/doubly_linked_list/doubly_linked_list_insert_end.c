@@ -1,25 +1,23 @@
 #include <cbmc/model_assert.h>
 #include <vpr/doubly_linked_list.h>
 
-int doubly_linked_list_insert_end(doubly_linked_list_t* dll,
-    doubly_linked_list_element_t* last_element)
+int doubly_linked_list_insert_end(doubly_linked_list_t* dll, void* data)
 {
 
     MODEL_ASSERT(dll != NULL);
     MODEL_ASSERT(dll->elements >= 0);
     MODEL_ASSERT(dll->options != NULL);
     MODEL_ASSERT(dll->options->alloc_opts != NULL);
-    MODEL_ASSERT(new_element->data != NULL);
-
+    MODEL_ASSERT(data != NULL);
 
     /* is this the first element in the list? */
     if (dll->last == NULL)
     {
-        doubly_linked_list_insert_beginning(dll, last_element);
+        doubly_linked_list_insert_beginning(dll, data);
     }
     else
     {
-        doubly_linked_list_insert_after(dll, dll->last, last_element);
+        doubly_linked_list_insert_after(dll, dll->last, data);
     }
 
     //success

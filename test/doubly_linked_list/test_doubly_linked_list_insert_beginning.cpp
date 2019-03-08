@@ -36,42 +36,36 @@ TEST_F(doubly_linked_list_insert_beginning_test, basic_test)
     EXPECT_EQ(doubly_linked_list_init(&options, &dll), 0);
 
     int data = 356;
-    doubly_linked_list_element_t element;
-    element.data = &data;
 
-    EXPECT_EQ(doubly_linked_list_insert_beginning(&dll, &element), 0);
+    EXPECT_EQ(doubly_linked_list_insert_beginning(&dll, &data), 0);
 
     // the number of elements should be 1, with
     // the first and last pointers pointing this element
     EXPECT_EQ(dll.elements, 1UL);
-    EXPECT_EQ(dll.first, &element);
-    EXPECT_EQ(dll.last, &element);
+    EXPECT_EQ(dll.first, dll.last);
 
     // the pointers on the initial element should be set to NULL
-    EXPECT_EQ(element.prev, nullptr);
-    EXPECT_EQ(element.next, nullptr);
+    EXPECT_EQ(dll.first->prev, nullptr);
+    EXPECT_EQ(dll.first->next, nullptr);
 
     // and the data should be as expected
-    EXPECT_EQ(*(int*)(dll.first->data), 356);
+    EXPECT_EQ(*(int*)(dll.first->data), data);
 
     // insert something new at the beginning
     int data2 = 205;
-    doubly_linked_list_element_t element2;
-    element2.data = &data2;
+    EXPECT_EQ(doubly_linked_list_insert_beginning(&dll, &data2), 0);
 
-    EXPECT_EQ(doubly_linked_list_insert_beginning(&dll, &element2), 0);
-
-    // the number of elements should be 2, with the first element
-    // pointing to this element and the last element pointing to the previous element
+    // the number of elements should be 2, with the first element being the
+    // second data item and the last element being the first data item
     EXPECT_EQ(dll.elements, 2UL);
-    EXPECT_EQ(dll.first, &element2);
-    EXPECT_EQ(dll.last, &element);
+    EXPECT_EQ(*(long*)(dll.first->data), data2);
+    EXPECT_EQ(*(long*)(dll.last->data), data);
 
     // test the links on each element
-    EXPECT_EQ(element2.prev, nullptr);
-    EXPECT_EQ(element2.next, &element);
-    EXPECT_EQ(element.prev, &element2);
-    EXPECT_EQ(element.next, nullptr);
+    EXPECT_EQ(dll.first->prev, nullptr);
+    EXPECT_EQ(dll.first->next, dll.last);
+    EXPECT_EQ(dll.last->prev, dll.first);
+    EXPECT_EQ(dll.last->next, nullptr);
 
     //dispose of our list
     dispose((disposable_t*)&dll);

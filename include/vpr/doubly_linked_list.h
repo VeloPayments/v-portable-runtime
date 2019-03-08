@@ -212,19 +212,15 @@ int doubly_linked_list_options_init_ex(
 int doubly_linked_list_init(
     doubly_linked_list_options_t* options, doubly_linked_list_t* dll);
 
-int doubly_linked_list_insert_beginning(doubly_linked_list_t* dll,
-    doubly_linked_list_element_t* first_element);
+int doubly_linked_list_insert_beginning(doubly_linked_list_t* dll, void* data);
 
-int doubly_linked_list_insert_end(doubly_linked_list_t* dll,
-    doubly_linked_list_element_t* first_element);
+int doubly_linked_list_insert_end(doubly_linked_list_t* dll, void* data);
 
 int doubly_linked_list_insert_before(doubly_linked_list_t* dll,
-    doubly_linked_list_element_t* element,
-    doubly_linked_list_element_t* new_element);
+    doubly_linked_list_element_t* element, void* data);
 
 int doubly_linked_list_insert_after(doubly_linked_list_t* dll,
-    doubly_linked_list_element_t* element,
-    doubly_linked_list_element_t* new_element);
+    doubly_linked_list_element_t* element, void* data);
 
 int doubly_linked_list_remove(doubly_linked_list_t* dll,
     doubly_linked_list_element_t* element);

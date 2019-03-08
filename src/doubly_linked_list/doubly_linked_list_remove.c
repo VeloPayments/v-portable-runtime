@@ -37,8 +37,6 @@ int doubly_linked_list_remove(doubly_linked_list_t* dll,
         element->next->prev = element->prev;
     }
 
-    // TODO: dispose
-
     //success
     return VPR_STATUS_SUCCESS;
 }
