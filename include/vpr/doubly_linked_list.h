@@ -209,19 +209,115 @@ int doubly_linked_list_options_init_ex(
     doubly_linked_list_element_copy_t copy_method,
     doubly_linked_list_element_dispose_t dispose_method);
 
+/**
+ * \brief Initialize a doubly linked list.
+ *
+ * This method allows for the creation of a doubly linked list.  Once initialized,
+ * the list will have zero elements, and the first and last pointers will
+ * be set to null.
+ *
+ * When the function completes successfully, the caller owns this
+ * ::doubly_linked_list_t instance and must dispose of it by calling dispose() when
+ * it is no longer needed.
+ *
+ * \param options           The doubly linked list options to use for this instance.
+ * \param dll               The doubly linked list to initialize.
+ *
+ * \returns a status code indicating success or failure.
+ *      - \ref VPR_STATUS_SUCCESS if successful.
+ */
 int doubly_linked_list_init(
     doubly_linked_list_options_t* options, doubly_linked_list_t* dll);
 
+/**
+ * \brief Insert a new element at the beginning of a doubly linked list.
+ *
+ * If successful, then a copy of this data will be made using the defined
+ * copy method, then encapsulated in an element and placed at the beginning of
+ * this linked list.
+ *
+ * \param dll               The doubly linked list
+ * \param data              An opaque pointer to some data that should be
+ *                          encapsulated in a new element and inserted at the
+ *                          beginning of the linked list.
+ *
+ * \returns a status code indicating success or failure.
+ *          - \ref VPR_STATUS_SUCCESS if successful.
+ */
 int doubly_linked_list_insert_beginning(doubly_linked_list_t* dll, void* data);
 
+/**
+ * \brief Insert a new element at the end of a doubly linked list.
+ *
+ * If successful, then a copy of this data will be made using the defined
+ * copy method, then encapsulated in an element and placed at the end of this
+ * linked list.
+ *
+ * \param dll               The doubly linked list
+ * \param data              An opaque pointer to some data that should be
+ *                          encapsulated in a new element and inserted at the
+ *                          end of the linked list.
+ *
+ * \returns a status code indicating success or failure.
+ *          - \ref VPR_STATUS_SUCCESS if successful.
+ */
 int doubly_linked_list_insert_end(doubly_linked_list_t* dll, void* data);
 
+/**
+ * \brief Insert a new element before a specified element in a doubly linked
+ * list.
+ *
+ * If successful, then a copy of this data will be made using the defined
+ * copy method, then encapsulated in an element and placed before the specified
+ * element in the linked list.
+ *
+ * \param dll               The doubly linked list
+ * \param element           The existing element, which will succeed the
+ *                          new element.
+ * \param data              An opaque pointer to some data that should be
+ *                          encapsulated in a new element and inserted in the
+ *                          list.
+ *
+ * \returns a status code indicating success or failure.
+ *          - \ref VPR_STATUS_SUCCESS if successful.
+ */
 int doubly_linked_list_insert_before(doubly_linked_list_t* dll,
     doubly_linked_list_element_t* element, void* data);
 
+/**
+ * \brief Insert a new element after a specified element in a doubly linked
+ * list.
+ *
+ * If successful, then a copy of this data will be made using the defined
+ * copy method, then encapsulated in an element and placed after the specified
+ * element in the linked list.
+ *
+ * \param dll               The doubly linked list
+ * \param element           The existing element, which will precede the
+ *                          new element.
+ * \param data              An opaque pointer to some data that should be
+ *                          encapsulated in a new element and inserted in the
+ *                          list.
+ *
+ * \returns a status code indicating success or failure.
+ *          - \ref VPR_STATUS_SUCCESS if successful.
+ */
 int doubly_linked_list_insert_after(doubly_linked_list_t* dll,
     doubly_linked_list_element_t* element, void* data);
 
+/**
+ * \brief Remove an element from a doubly linked list.
+ *
+ * If successful, the specified element is removed from the linked list.  The
+ * caller assumes responsibility for the element and the data referenced by the
+ * element.
+ *
+ * \param dll               The doubly linked list.
+ * \param element           The element to remove
+ *
+ * \returns a status code indicating success or failure.
+ *          - \ref VPR_STATUS_SUCCESS if successful.
+ */
 int doubly_linked_list_remove(doubly_linked_list_t* dll,
     doubly_linked_list_element_t* element);
 

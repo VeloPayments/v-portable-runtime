@@ -1,6 +1,19 @@
 #include <cbmc/model_assert.h>
 #include <vpr/doubly_linked_list.h>
 
+/**
+ * \brief Remove an element from a doubly linked list.
+ *
+ * If successful, the specified element is removed from the linked list.  The
+ * caller assumes responsibility for the element and the data referenced by the
+ * element.
+ *
+ * \param dll               The doubly linked list.
+ * \param element           The element to remove
+ *
+ * \returns a status code indicating success or failure.
+ *          - \ref VPR_STATUS_SUCCESS if successful.
+ */
 int doubly_linked_list_remove(doubly_linked_list_t* dll,
     doubly_linked_list_element_t* element)
 {

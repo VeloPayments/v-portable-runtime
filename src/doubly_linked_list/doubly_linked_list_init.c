@@ -13,6 +13,23 @@
 //forward decls
 static void dll_dispose(void*);
 
+/**
+ * \brief Initialize a doubly linked list.
+ *
+ * This method allows for the creation of a doubly linked list.  Once initialized,
+ * the list will have zero elements, and the first and last pointers will
+ * be set to null.
+ *
+ * When the function completes successfully, the caller owns this
+ * ::doubly_linked_list_t instance and must dispose of it by calling dispose() when
+ * it is no longer needed.
+ *
+ * \param options           The doubly linked list options to use for this instance.
+ * \param dll               The doubly linked list to initialize.
+ *
+ * \returns a status code indicating success or failure.
+ *      - \ref VPR_STATUS_SUCCESS if successful.
+ */
 int doubly_linked_list_init(
     doubly_linked_list_options_t* options, doubly_linked_list_t* dll)
 {

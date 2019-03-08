@@ -2,6 +2,21 @@
 #include <vpr/doubly_linked_list.h>
 
 
+/**
+ * \brief Insert a new element at the beginning of a doubly linked list.
+ *
+ * If successful, then a copy of this data will be made using the defined
+ * copy method, then encapsulated in an element and placed at the beginning of
+ * this linked list.
+ *
+ * \param dll               The doubly linked list
+ * \param data              An opaque pointer to some data that should be
+ *                          encapsulated in a new element and inserted at the
+ *                          beginning of the linked list.
+ *
+ * \returns a status code indicating success or failure.
+ *          - \ref VPR_STATUS_SUCCESS if successful.
+ */
 int doubly_linked_list_insert_beginning(doubly_linked_list_t* dll, void* data)
 {
     MODEL_ASSERT(dll != NULL);

@@ -1,7 +1,24 @@
 #include <cbmc/model_assert.h>
 #include <vpr/doubly_linked_list.h>
 
-
+/**
+ * \brief Insert a new element after a specified element in a doubly linked
+ * list.
+ *
+ * If successful, then a copy of this data will be made using the defined
+ * copy method, then encapsulated in an element and placed after the specified
+ * element in the linked list.
+ *
+ * \param dll               The doubly linked list
+ * \param element           The existing element, which will precede the
+ *                          new element.
+ * \param data              An opaque pointer to some data that should be
+ *                          encapsulated in a new element and inserted in the
+ *                          list.
+ *
+ * \returns a status code indicating success or failure.
+ *          - \ref VPR_STATUS_SUCCESS if successful.
+ */
 int doubly_linked_list_insert_after(doubly_linked_list_t* dll,
     doubly_linked_list_element_t* element, void* data)
 {
