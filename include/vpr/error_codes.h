@@ -63,6 +63,19 @@ extern "C" {
  * allocation fails.
  */
 #define VPR_ERROR_DYNAMIC_ARRAY_GROW_ALLOCATION_FAILED 0x1105
+
+/**
+ * \brief This error code is returned by allocator_control() when a key is
+ * invalid for an underlying allocator.
+ */
+#define VPR_ERROR_ALLOCATOR_CONTROL_INVALID_KEY 0x1106
+
+/**
+ * \brief This error code is returned by bump_allocator_options_init() when the
+ * backing buffer is too small.
+ */
+#define VPR_ERROR_BUMP_ALLOCATOR_TINY_BUFFER 0x1107
+
 /**
  * @}
  */

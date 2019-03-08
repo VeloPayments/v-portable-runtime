@@ -24,7 +24,23 @@ TEST(malloc_allocator_options_init_test, initTest)
     EXPECT_NE(nullptr, (void*)options.allocator_allocate);
     EXPECT_NE(nullptr, (void*)options.allocator_release);
     EXPECT_NE(nullptr, (void*)options.allocator_reallocate);
+    EXPECT_NE(nullptr, (void*)options.allocator_control);
     EXPECT_EQ(0, options.context);
+
+    dispose((disposable_t*)&options);
+}
+
+/**
+ * There are no valid control knobs for malloc allocator.
+ */
+TEST(malloc_allocator_options_init_test, allocator_control)
+{
+    allocator_options_t options;
+
+    malloc_allocator_options_init(&options);
+
+    EXPECT_EQ(VPR_ERROR_ALLOCATOR_CONTROL_INVALID_KEY,
+        allocator_control(&options, 1, nullptr));
 
     dispose((disposable_t*)&options);
 }
