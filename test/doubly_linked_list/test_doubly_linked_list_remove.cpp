@@ -18,7 +18,8 @@ protected:
     void SetUp() override
     {
         malloc_allocator_options_init(&alloc_opts);
-        doubly_linked_list_options_init(&options, &alloc_opts);
+        doubly_linked_list_options_init(&options, &alloc_opts,
+            sizeof(int));
     }
 
     void TearDown() override
