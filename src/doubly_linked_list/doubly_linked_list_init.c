@@ -39,6 +39,7 @@ int doubly_linked_list_init(
 
     //sanity checks on options
     MODEL_ASSERT(options != NULL);
+    MODEL_ASSERT(options->element_size > 0);
     MODEL_ASSERT(options->alloc_opts != NULL);
 
     dll->hdr.dispose = &dll_dispose;
