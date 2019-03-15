@@ -77,6 +77,43 @@ extern "C" {
 #define VPR_ERROR_BUMP_ALLOCATOR_TINY_BUFFER 0x1107
 
 /**
+ * \brief This error code is returned by doubly_linked_list_insert_after()
+ * when memory could not be allocated for a new element.
+ */
+#define VPR_ERROR_DLL_AFTER_ELEMENT_ALLOCATION_FAILED 0x1108
+
+/**
+ * \brief This error code is returned by doubly_linked_list_insert_after()
+ * when a buffer to hold a copy of the inserted data could not be allocated.
+ */
+#define VPR_ERROR_DLL_AFTER_BUFFER_ALLOCATION_FAILED 0x1109
+
+/**
+ * \brief This error code is returned by doubly_linked_list_insert_before()
+ * when memory could not be allocated for a new element.
+ */
+#define VPR_ERROR_DLL_BEFORE_ELEMENT_ALLOCATION_FAILED 0x110A
+
+/**
+ * \brief This error code is returned by doubly_linked_list_insert_before()
+ * when a buffer to hold a copy of the inserted data could not be allocated.
+ */
+#define VPR_ERROR_DLL_BEFORE_BUFFER_ALLOCATION_FAILED 0x110B
+
+/**
+ * \brief This error code is returned by doubly_linked_list_insert_beginning()
+ * when memory could not be allocated for a new element.
+ */
+#define VPR_ERROR_DLL_BEGINNING_ELEMENT_ALLOCATION_FAILED 0x110C
+
+/**
+ * \brief This error code is returned by doubly_linked_list_insert_beginning()
+ * when a buffer to hold a copy of the inserted data could not be allocated.
+ */
+#define VPR_ERROR_DLL_BEGINNING_BUFFER_ALLOCATION_FAILED 0x110D
+
+
+/**
  * @}
  */
 

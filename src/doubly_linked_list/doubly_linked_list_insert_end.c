@@ -15,6 +15,8 @@
  *
  * \returns a status code indicating success or failure.
  *          - \ref VPR_STATUS_SUCCESS if successful.
+ *          - a non-zero error code on failure
+ *
  */
 int doubly_linked_list_insert_end(doubly_linked_list_t* dll, void* data)
 {
@@ -28,13 +30,10 @@ int doubly_linked_list_insert_end(doubly_linked_list_t* dll, void* data)
     /* is this the first element in the list? */
     if (dll->last == NULL)
     {
-        doubly_linked_list_insert_beginning(dll, data);
+        return doubly_linked_list_insert_beginning(dll, data);
     }
     else
     {
-        doubly_linked_list_insert_after(dll, dll->last, data);
+        return doubly_linked_list_insert_after(dll, dll->last, data);
     }
-
-    //success
-    return VPR_STATUS_SUCCESS;
 }

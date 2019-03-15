@@ -45,8 +45,8 @@ int doubly_linked_list_init(
     dll->hdr.dispose = &dll_dispose;
     dll->options = options;
     dll->elements = 0;
-    dll->first = 0;
-    dll->last = 0;
+    dll->first = NULL;
+    dll->last = NULL;
 
     //success
     return VPR_STATUS_SUCCESS;
@@ -72,8 +72,11 @@ void dll_dispose(void* pdll)
     {
 
         // this call frees the memory for the data pointed to by the element
-        dll->options->doubly_linked_list_element_dispose(
-            dll->options->context, element->data);
+        if (element->data != NULL)
+        {
+            dll->options->doubly_linked_list_element_dispose(
+                dll->options->alloc_opts, element->data);
+        }
 
         // free the space for the element itself, being careful to
         // advance our pointer first

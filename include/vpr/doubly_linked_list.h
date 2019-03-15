@@ -27,25 +27,23 @@ extern "C" {
 /**
 * \brief The copy method to use when copying elements in this linked list.
 *
-* \param context       User-defined context for controlling the copy
-*                      method.
 * \param destination   The destination element to which this value will be
 *                      copied.
 * \param source        The source element used for the copy.
 * \param size          The size of the element being copied.
 */
 typedef void (*doubly_linked_list_element_copy_t)(
-    void* context, void* destination, const void* source, size_t size);
+    void* destination, const void* source, size_t size);
 
 /**
  * \brief The dispose method to use when disposing an element in this linked
  * list.
  *
- * \param context       User-defined context to use for the dispose method.
+ * \param alloc_opts    The allocator options to use.
  * \param elem          The element to be disposed.
  */
 typedef void (*doubly_linked_list_element_dispose_t)(
-    void* context, void* elem);
+    allocator_options_t* alloc_opts, void* elem);
 
 /**
  * \brief This structure contains the options used by a doubly linked list
@@ -75,8 +73,6 @@ typedef struct doubly_linked_list_options
     /**
      * \brief The copy method to use when copying elements in this linked list.
      *
-     * \param context       User-defined context for controlling the copy
-     *                      method.
      * \param destination   The destination element to which this value will be
      *                      copied.
      * \param source        The source element used for the copy.
@@ -88,17 +84,19 @@ typedef struct doubly_linked_list_options
      * \brief The dispose method to use when disposing an element in this
      * linked list.
      *
-     * \param context       User-defined context to use for the dispose method.
+     * \param alloc_opts    The allocator options to use.
      * \param elem          The element to be disposed.
      */
     doubly_linked_list_element_dispose_t doubly_linked_list_element_dispose;
 
-    /**
-     * \brief Context passed to user-defined methods.
-     */
-    void* context;
-
 } doubly_linked_list_options_t;
+
+/**
+ * \brief This macro defines the model check property for a valid
+ * doubly_linked_list_options_t structure.
+ */
+#define MODEL_PROP_VALID_DLL_OPTIONS(options, sz) \
+    (NULL != options && NULL != (options)->hdr.dispose && NULL != (options)->alloc_opts && (options)->element_size == sz && NULL != (options)->doubly_linked_list_element_copy && NULL != (options)->doubly_linked_list_element_dispose)
 
 /**
  * \brief An element of the doubly linked list.
@@ -124,6 +122,15 @@ typedef struct doubly_linked_list_element
     void* data;
 
 } doubly_linked_list_element_t;
+
+
+/**
+ * \brief This macro defines the model check property for a valid
+ * doubly_linked_list_element_t structure.
+ */
+#define MODEL_PROP_VALID_DLL_ELEMENT(elem) \
+    (NULL != elem && NULL != (elem)->data)
+
 
 /**
  * \brief The doubly linked list structure.
@@ -157,6 +164,13 @@ typedef struct doubly_linked_list
     doubly_linked_list_element_t* last;
 
 } doubly_linked_list_t;
+
+/**
+ * \brief This macro defines the model check property for a valid
+ * doubly_linked_list_t structure.
+ */
+#define MODEL_PROP_VALID_DLL(dll) \
+    (NULL != dll && NULL != (dll)->hdr.dispose && NULL != (dll)->options && (dll)->elements >= 0)
 
 /**
  * \brief Initialize doubly linked list options for a POD data type.
@@ -194,8 +208,6 @@ int doubly_linked_list_options_init(
  * \param options           The doubly linked list options to initialize.
  * \param alloc_opts        The allocator options to use.
  * \param element_size      The size of an individual element.
- * \param context           The context value to pass to the copy and dispose
- *                          methods.
  * \param copy_method       The method to use to copy elements.
  * \param dispose_method    The method to use to dispose elements.
  *
@@ -205,8 +217,7 @@ int doubly_linked_list_options_init(
  */
 int doubly_linked_list_options_init_ex(
     doubly_linked_list_options_t* options, allocator_options_t* alloc_opts,
-    size_t element_size, void* context,
-    doubly_linked_list_element_copy_t copy_method,
+    size_t element_size, doubly_linked_list_element_copy_t copy_method,
     doubly_linked_list_element_dispose_t dispose_method);
 
 /**
@@ -243,6 +254,7 @@ int doubly_linked_list_init(
  *
  * \returns a status code indicating success or failure.
  *          - \ref VPR_STATUS_SUCCESS if successful.
+ *          - a non-zero status code on failure.
  */
 int doubly_linked_list_insert_beginning(doubly_linked_list_t* dll, void* data);
 
@@ -260,6 +272,7 @@ int doubly_linked_list_insert_beginning(doubly_linked_list_t* dll, void* data);
  *
  * \returns a status code indicating success or failure.
  *          - \ref VPR_STATUS_SUCCESS if successful.
+ *          - a non-zero status code on failure.
  */
 int doubly_linked_list_insert_end(doubly_linked_list_t* dll, void* data);
 
@@ -280,6 +293,7 @@ int doubly_linked_list_insert_end(doubly_linked_list_t* dll, void* data);
  *
  * \returns a status code indicating success or failure.
  *          - \ref VPR_STATUS_SUCCESS if successful.
+ *          - a non-zero status code on failure.
  */
 int doubly_linked_list_insert_before(doubly_linked_list_t* dll,
     doubly_linked_list_element_t* element, void* data);
@@ -301,6 +315,7 @@ int doubly_linked_list_insert_before(doubly_linked_list_t* dll,
  *
  * \returns a status code indicating success or failure.
  *          - \ref VPR_STATUS_SUCCESS if successful.
+ *          - a non-zero status code on failure.
  */
 int doubly_linked_list_insert_after(doubly_linked_list_t* dll,
     doubly_linked_list_element_t* element, void* data);

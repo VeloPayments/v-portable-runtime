@@ -12,8 +12,8 @@
 #include <vpr/parameters.h>
 
 /* forward decls for internal methods */
-static void dll_simple_elem_copy(void*, void*, const void*, size_t);
-static void dll_simple_elem_dispose(void*, void*);
+static void dll_simple_elem_copy(void*, const void*, size_t);
+static void dll_simple_elem_dispose(allocator_options_t*, void*);
 
 /**
  * \brief Initialize doubly linked list options for a POD data type.
@@ -44,33 +44,37 @@ int doubly_linked_list_options_init(
 
     //initialize this structure in terms of doubly_linked_list_options_init_ex
     return doubly_linked_list_options_init_ex(
-        options, alloc_opts, element_size, options,
+        options, alloc_opts, element_size,
         &dll_simple_elem_copy, &dll_simple_elem_dispose);
 }
 
 /**
  * The copy method to use when copying elements in this linked list.
  *
- * \param context       User-defined context for controlling the copy
- *                      method.
  * \param destination   The destination element to which this value will be
  *                      copied.
  * \param source        The source element used for the copy.
  * \param size          The size of the element being copied.
  */
-static void dll_simple_elem_copy(
-    void* UNUSED(context), void* destination, const void* source, size_t size)
+static void dll_simple_elem_copy(void* destination, const void* source, size_t size)
 {
+    MODEL_ASSERT(destination != NULL);
+    MODEL_ASSERT(source != NULL);
+    MODEL_ASSERT(size > 0);
+
     memcpy(destination, source, size);
 }
 
 /**
  * The dispose method to use when disposing an element in this linked list.
  *
- * \param context       User-defined context to use for the dispose method.
- * \param elem          The element to be disposed.
+ * \param alloc_opts        The allocator options to use.
+ * \param elem              The element to be disposed.
  */
-static void dll_simple_elem_dispose(void* UNUSED(context), void* elem)
+static void dll_simple_elem_dispose(allocator_options_t* alloc_opts, void* elem)
 {
-    free(elem);
+    MODEL_ASSERT(alloc_opts != NULL);
+    MODEL_ASSERT(elem != NULL);
+
+    release(alloc_opts, elem);
 }

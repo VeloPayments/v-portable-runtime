@@ -18,6 +18,10 @@
  *
  * \returns a status code indicating success or failure.
  *          - \ref VPR_STATUS_SUCCESS if successful.
+ *          - \ref VPR_ERROR_DLL_AFTER_ELEMENT_ALLOCATION_FAILED if
+ *              memory could not be allocated for a new element
+ *          - \ref VPR_ERROR_DLL_AFTER_BUFFER_ALLOCATION_FAILED if
+ *              memory could not be allocated to copy the data
  */
 int doubly_linked_list_insert_after(doubly_linked_list_t* dll,
     doubly_linked_list_element_t* element, void* data)
@@ -38,20 +42,10 @@ int doubly_linked_list_insert_after(doubly_linked_list_t* dll,
         (doubly_linked_list_element_t*)allocate(
             dll->options->alloc_opts,
             sizeof(doubly_linked_list_element_t));
-
-    /* allocate space for the data */
-    uint8_t* data_buffer =
-        (uint8_t*)allocate(
-            dll->options->alloc_opts,
-            dll->options->element_size);
-
-    new_element->data = data_buffer;
-
-    /* copy the data into the buffer */
-    dll->options->doubly_linked_list_element_copy(
-        dll->options->context,
-        new_element->data, data, dll->options->element_size);
-
+    if (NULL == new_element)
+    {
+        return VPR_ERROR_DLL_AFTER_ELEMENT_ALLOCATION_FAILED;
+    }
 
     /* set the pointers */
     new_element->prev = element;
@@ -66,9 +60,23 @@ int doubly_linked_list_insert_after(doubly_linked_list_t* dll,
     }
     element->next = new_element;
 
-
     /* increment the number of elements in this list*/
     dll->elements++;
+
+    /* allocate space for the data */
+    uint8_t* data_buffer = (uint8_t*)allocate(
+        dll->options->alloc_opts,
+        dll->options->element_size);
+    new_element->data = data_buffer;
+    if (NULL == data_buffer)
+    {
+        return VPR_ERROR_DLL_AFTER_BUFFER_ALLOCATION_FAILED;
+    }
+
+    /* copy the data into the buffer */
+    dll->options->doubly_linked_list_element_copy(
+        new_element->data, data, dll->options->element_size);
+
 
     //success
     return VPR_STATUS_SUCCESS;

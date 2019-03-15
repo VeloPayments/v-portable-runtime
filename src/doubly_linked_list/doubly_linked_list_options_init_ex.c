@@ -28,8 +28,6 @@ static void dll_simple_dispose(void*);
  * \param options           The doubly linked list options to initialize.
  * \param alloc_opts        The allocator options to use.
  * \param element_size      The size of an individual element.
- * \param context           The context value to pass to the copy and dispose
- *                          methods.
  * \param copy_method       The method to use to copy elements.
  * \param dispose_method    The method to use to dispose elements.
  *
@@ -39,16 +37,15 @@ static void dll_simple_dispose(void*);
  */
 int doubly_linked_list_options_init_ex(
     doubly_linked_list_options_t* options, allocator_options_t* alloc_opts,
-    size_t element_size, void* context,
-    doubly_linked_list_element_copy_t copy_method,
+    size_t element_size, doubly_linked_list_element_copy_t copy_method,
     doubly_linked_list_element_dispose_t dispose_method)
 {
     MODEL_ASSERT(options != NULL);
     MODEL_ASSERT(alloc_opts != NULL);
     MODEL_ASSERT(alloc_opts->allocator_release != NULL);
     MODEL_ASSERT(element_size != 0);
-    MODEL_ASSERT(copy_method != 0);
-    MODEL_ASSERT(dispose_method != 0);
+    MODEL_ASSERT(copy_method != NULL);
+    MODEL_ASSERT(dispose_method != NULL);
 
     //use our dispose method to dispose of these options
     options->hdr.dispose = &dll_simple_dispose;
@@ -60,8 +57,6 @@ int doubly_linked_list_options_init_ex(
     options->doubly_linked_list_element_copy = copy_method;
     //set the dispose method
     options->doubly_linked_list_element_dispose = dispose_method;
-    //set the context
-    options->context = context;
 
     return VPR_STATUS_SUCCESS;
 }
