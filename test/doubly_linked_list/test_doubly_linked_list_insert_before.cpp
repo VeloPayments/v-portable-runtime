@@ -10,13 +10,13 @@
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/doubly_linked_list.h>
 
-class doubly_linked_list_insert_before_test : public ::testing::Test {
+class DLLInsertBeforeTest : public ::testing::Test {
 protected:
-    void SetUp() override
+    void SetUp(bool copy_on_insert)
     {
         malloc_allocator_options_init(&alloc_opts);
         doubly_linked_list_options_init(&options, &alloc_opts,
-            sizeof(long));
+            copy_on_insert, sizeof(long), false);
     }
 
     void TearDown() override
@@ -29,8 +29,10 @@ protected:
     doubly_linked_list_options_t options;
 };
 
-TEST_F(doubly_linked_list_insert_before_test, basic_test)
+TEST_F(DLLInsertBeforeTest, BasicTest)
 {
+    SetUp(true);
+
     doubly_linked_list dll;
 
     EXPECT_EQ(doubly_linked_list_init(&options, &dll), 0);
@@ -53,7 +55,6 @@ TEST_F(doubly_linked_list_insert_before_test, basic_test)
 
     // insert an element before the initial one
     long data2 = 205L;
-
     EXPECT_EQ(doubly_linked_list_insert_before(&dll, dll.first, &data2), 0);
 
     // the number of elements should be 2, with the first element being the
@@ -88,6 +89,62 @@ TEST_F(doubly_linked_list_insert_before_test, basic_test)
     EXPECT_EQ(dll.first->next, dll.last->prev);
     EXPECT_EQ(dll.last->prev->prev, dll.first);
     EXPECT_EQ(dll.last->next, nullptr);
+
+
+    //dispose of our list
+    dispose((disposable_t*)&dll);
+}
+
+TEST_F(DLLInsertBeforeTest, WithCopyOnInsert)
+{
+    SetUp(true);
+
+    doubly_linked_list dll;
+
+    ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
+
+    // insert some data
+    long data = 356;
+    ASSERT_EQ(doubly_linked_list_insert_beginning(&dll, &data), 0);
+
+    // insert something after the initial element
+    long data2 = 205;
+    EXPECT_EQ(doubly_linked_list_insert_after(&dll, dll.first, &data2), 0);
+
+    // test that the data was copied
+    data++;
+    EXPECT_EQ(*(long*)(dll.first->data), data - 1);
+
+    data2 += 10;
+    EXPECT_EQ(*(long*)(dll.last->data), data2 - 10);
+
+
+    //dispose of our list
+    dispose((disposable_t*)&dll);
+}
+
+TEST_F(DLLInsertBeforeTest, WithOutCopyOnInsert)
+{
+    SetUp(false);
+
+    doubly_linked_list dll;
+
+    ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
+
+    // insert some data
+    long data = 356;
+    ASSERT_EQ(doubly_linked_list_insert_beginning(&dll, &data), 0);
+
+    // insert something after the initial element
+    long data2 = 205;
+    EXPECT_EQ(doubly_linked_list_insert_after(&dll, dll.first, &data2), 0);
+
+    // test that the data was NOT copied
+    data++;
+    EXPECT_EQ(*(long*)(dll.first->data), data);
+
+    data2 += 10;
+    EXPECT_EQ(*(long*)(dll.last->data), data2);
 
 
     //dispose of our list

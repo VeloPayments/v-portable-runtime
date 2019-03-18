@@ -64,7 +64,6 @@ void dll_dispose(void* pdll)
     doubly_linked_list_t* dll = (doubly_linked_list_t*)pdll;
     MODEL_ASSERT(dll->options != NULL);
     MODEL_ASSERT(dll->options->alloc_opts != NULL);
-    MODEL_ASSERT(dll->options->doubly_linked_list_element_dispose != NULL);
 
     //dispose of each element in the list
     doubly_linked_list_element_t* element = dll->first;
@@ -72,7 +71,7 @@ void dll_dispose(void* pdll)
     {
 
         // this call frees the memory for the data pointed to by the element
-        if (element->data != NULL)
+        if (NULL != element->data && NULL != dll->options->doubly_linked_list_element_dispose)
         {
             dll->options->doubly_linked_list_element_dispose(
                 dll->options->alloc_opts, element->data);

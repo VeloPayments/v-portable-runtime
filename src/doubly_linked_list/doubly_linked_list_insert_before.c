@@ -6,10 +6,9 @@
  * \brief Insert a new element before a specified element in a doubly linked
  * list.
  *
- * If successful, then a copy of this data will be made using the defined
- * copy method, then encapsulated in an element and placed before the specified
- * element in the linked list.
- *
+ * If successful, then this data will be encapsulated in an element and placed
+ * before the specified element in the linked list.
+
  * \param dll               The doubly linked list
  * \param element           The existing element, which will succeed the
  *                          new element.
@@ -64,20 +63,28 @@ int doubly_linked_list_insert_before(doubly_linked_list_t* dll,
     /* increment the number of elements in this list*/
     dll->elements++;
 
-    /* allocate space for the data */
-    uint8_t* data_buffer = (uint8_t*)allocate(
-        dll->options->alloc_opts,
-        dll->options->element_size);
-    new_element->data = data_buffer;
-    if (NULL == data_buffer)
+    /* if this is a copy-on-insert, then allocate space for the data
+     * and copy it into that buffer.  Otherwise, set the pointer to
+     * the original data. */
+    if (NULL != dll->options->doubly_linked_list_element_copy)
     {
-        return VPR_ERROR_DLL_BEFORE_BUFFER_ALLOCATION_FAILED;
+        uint8_t* data_buffer = (uint8_t*)allocate(
+            dll->options->alloc_opts,
+            dll->options->element_size);
+        new_element->data = data_buffer;
+        if (NULL == data_buffer)
+        {
+            return VPR_ERROR_DLL_BEFORE_BUFFER_ALLOCATION_FAILED;
+        }
+
+        /* copy the data into the buffer */
+        dll->options->doubly_linked_list_element_copy(
+            new_element->data, data, dll->options->element_size);
     }
-
-    /* copy the data into the buffer */
-    dll->options->doubly_linked_list_element_copy(
-        new_element->data, data, dll->options->element_size);
-
+    else
+    {
+        new_element->data = data;
+    }
 
     //success
     return VPR_STATUS_SUCCESS;

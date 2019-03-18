@@ -27,9 +27,15 @@ static void dll_simple_dispose(void*);
  *
  * \param options           The doubly linked list options to initialize.
  * \param alloc_opts        The allocator options to use.
- * \param element_size      The size of an individual element.
- * \param copy_method       The method to use to copy elements.
- * \param dispose_method    The method to use to dispose elements.
+ * \param copy_method       Optional - The method to use to copy elements.
+ *                          If provided then elements are copied into
+ *                          separate memory as they are added to the list.
+ * \param element_size      Optional (when copy_method is NULL).
+ *                          The size of an individual element.
+ * \param dispose_method    Optional - The method to use to dispose of data
+ *                          within elements.
+ *                          If provided then this method is invoked on each
+ *                          element's data when the list is disposed of.
  *
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
@@ -37,15 +43,13 @@ static void dll_simple_dispose(void*);
  */
 int doubly_linked_list_options_init_ex(
     doubly_linked_list_options_t* options, allocator_options_t* alloc_opts,
-    size_t element_size, doubly_linked_list_element_copy_t copy_method,
+    doubly_linked_list_element_copy_t copy_method, size_t element_size,
     doubly_linked_list_element_dispose_t dispose_method)
 {
     MODEL_ASSERT(options != NULL);
     MODEL_ASSERT(alloc_opts != NULL);
     MODEL_ASSERT(alloc_opts->allocator_release != NULL);
-    MODEL_ASSERT(element_size != 0);
-    MODEL_ASSERT(copy_method != NULL);
-    MODEL_ASSERT(dispose_method != NULL);
+    MODEL_ASSERT(copy_method == NULL || element_size > 0);
 
     //use our dispose method to dispose of these options
     options->hdr.dispose = &dll_simple_dispose;

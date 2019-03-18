@@ -13,13 +13,13 @@
 void build_doubly_linked_list(doubly_linked_list_t* dll, int* data, int n);
 
 
-class doubly_linked_list_remove_test : public ::testing::Test {
+class DLLRemoveTest : public ::testing::Test {
 protected:
     void SetUp() override
     {
         malloc_allocator_options_init(&alloc_opts);
         doubly_linked_list_options_init(&options, &alloc_opts,
-            sizeof(int));
+            false, sizeof(int), false);
     }
 
     void TearDown() override
@@ -32,7 +32,7 @@ protected:
     doubly_linked_list_options_t options;
 };
 
-TEST_F(doubly_linked_list_remove_test, basic_test)
+TEST_F(DLLRemoveTest, BasicTest)
 {
     doubly_linked_list dll;
 

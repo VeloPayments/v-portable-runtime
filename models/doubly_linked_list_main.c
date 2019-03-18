@@ -18,6 +18,14 @@ static void verify_singleton_list();
 static void verify_beginning_before();
 static void verify_after_end_remove();
 
+/**
+ * Non-deterministic boolean value, provided by the model checker.
+ *
+ * \returns true or false in a nondeterministic manner.
+ */
+_Bool nondet_bool();
+
+
 int main(int argc, char* argv[])
 {
     verify_empty_list();
@@ -39,7 +47,7 @@ static void verify_empty_list()
 
     //initialize doubly linked list options
     doubly_linked_list_options_init(
-        &options, &alloc_opts, sizeof(int));
+        &options, &alloc_opts, false, sizeof(int), false);
 
     // verify the options are valid
     MODEL_ASSERT(MODEL_PROP_VALID_DLL_OPTIONS(&options, sizeof(int)));
@@ -72,9 +80,13 @@ static void verify_singleton_list()
     //initialize the allocator
     malloc_allocator_options_init(&alloc_opts);
 
-    //initialize doubly linked list options
+    // initialize doubly linked list options
+    // note: if we do copy_on_insert the last argument (release_on_dispose) is
+    // ignored.  If we don't do copy_on_insert, we don't want to release_on_dispose
+    // either as the data element is in stack memory.
+    _Bool copy_on_insert = nondet_bool();
     doubly_linked_list_options_init(
-        &options, &alloc_opts, sizeof(int));
+        &options, &alloc_opts, copy_on_insert, sizeof(int), copy_on_insert);
 
     // verify the options are valid
     MODEL_ASSERT(MODEL_PROP_VALID_DLL_OPTIONS(&options, sizeof(int)));
@@ -114,9 +126,13 @@ static void verify_beginning_before()
     //initialize the allocator
     malloc_allocator_options_init(&alloc_opts);
 
-    //initialize doubly linked list options
+    // initialize doubly linked list options
+    // note: if we do copy_on_insert the last argument (release_on_dispose) is
+    // ignored.  If we don't do copy_on_insert, we don't want to release_on_dispose
+    // either as the data element is in stack memory.
+    _Bool copy_on_insert = nondet_bool();
     doubly_linked_list_options_init(
-        &options, &alloc_opts, sizeof(long));
+        &options, &alloc_opts, copy_on_insert, sizeof(long), copy_on_insert);
 
     // verify the options are valid
     MODEL_ASSERT(MODEL_PROP_VALID_DLL_OPTIONS(&options, sizeof(long)));
@@ -162,9 +178,13 @@ static void verify_after_end_remove()
     //initialize the allocator
     malloc_allocator_options_init(&alloc_opts);
 
-    //initialize doubly linked list options
+    // initialize doubly linked list options
+    // note: if we do copy_on_insert the last argument (release_on_dispose) is
+    // ignored.  If we don't do copy_on_insert, we don't want to release_on_dispose
+    // either as the data element is in stack memory.
+    _Bool copy_on_insert = nondet_bool();
     doubly_linked_list_options_init(
-        &options, &alloc_opts, sizeof(long));
+        &options, &alloc_opts, copy_on_insert, sizeof(long), copy_on_insert);
 
     // verify the options are valid
     MODEL_ASSERT(MODEL_PROP_VALID_DLL_OPTIONS(&options, sizeof(long)));
@@ -179,7 +199,10 @@ static void verify_after_end_remove()
         doubly_linked_list_element_t* elem = dll.last->prev;
         doubly_linked_list_remove(&dll, elem);
         // we now "own" the element we removed
-        release(&alloc_opts, elem->data);
+        if (copy_on_insert)
+        {
+            release(&alloc_opts, elem->data);
+        }
         release(&alloc_opts, elem);
 
         // verify the list is valid

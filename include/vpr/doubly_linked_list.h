@@ -96,7 +96,7 @@ typedef struct doubly_linked_list_options
  * doubly_linked_list_options_t structure.
  */
 #define MODEL_PROP_VALID_DLL_OPTIONS(options, sz) \
-    (NULL != options && NULL != (options)->hdr.dispose && NULL != (options)->alloc_opts && (options)->element_size == sz && NULL != (options)->doubly_linked_list_element_copy && NULL != (options)->doubly_linked_list_element_dispose)
+    (NULL != options && NULL != (options)->hdr.dispose && NULL != (options)->alloc_opts && (options)->element_size == sz && (NULL == (options)->doubly_linked_list_element_copy || sz > 0))
 
 /**
  * \brief An element of the doubly linked list.
@@ -175,25 +175,36 @@ typedef struct doubly_linked_list
 /**
  * \brief Initialize doubly linked list options for a POD data type.
  *
- * This method should not be used to initialize arrays with data types that
- * cannot be copied directly (e.g. with memcpy()).
- *
  * When the function completes successfully, the caller owns this
  * ::doubly_linked_list_t instance and must dispose of it by calling dispose()
  * when it is no longer needed.
  *
  * \param options           The dynamic array options to initialize.
  * \param alloc_opts        The allocator options to use.
- * \param element_size      The size of an individual element.
+ * \param copy_on_insert    If true, data will be copied before adding to the
+ *                          linked list, leaving the caller with ownership of
+ *                          the original data.  The linked list assumes
+ *                          ownership of the copied data and will free it when
+ *                          disposed of.
+ *                          If false, the release_on_dispose argument dictates
+ *                          what happens when the list is disposed of.
+ *                          assumes ownership of the data as it is inserted.
+ * \param element_size      The size in bytes of an individual element.  This
+ *                          parameter is ignored with copy_on_insert is false,
+ *                          but must be a positive integer value if
+ *                          if copy_on_insert is true.
+ * \param release_on_dispose  This parameter is ignored if copy_on_insert is
+ *                          true.  When copy_on_insert is false, this argument
+ *                          determines whether memory storing data encapsulated
+ *                          within elements is released when the list is
+ *                          disposed.
  *
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
  *      - a non-zero status code on failure.
  */
-int doubly_linked_list_options_init(
-    doubly_linked_list_options_t* options,
-    allocator_options_t* alloc_opts,
-    size_t element_size);
+int doubly_linked_list_options_init(doubly_linked_list_options_t* options, allocator_options_t* alloc_opts,
+    bool copy_on_insert, size_t element_size, bool release_on_dispose);
 
 /**
  * \brief Initialize doubly linked list options for a custom data type.
@@ -207,9 +218,15 @@ int doubly_linked_list_options_init(
  *
  * \param options           The doubly linked list options to initialize.
  * \param alloc_opts        The allocator options to use.
- * \param element_size      The size of an individual element.
- * \param copy_method       The method to use to copy elements.
- * \param dispose_method    The method to use to dispose elements.
+ * \param copy_method       Optional - The method to use to copy elements.
+ *                          If provided then elements are copied into
+ *                          separate memory as they are added to the list.
+ * \param element_size      Optional (when copy_method is NULL).
+ *                          The size of an individual element.
+ * \param dispose_method    Optional - The method to use to dispose of data
+ *                          within elements.
+ *                          If provided then this method is invoked on each
+ *                          element's data when the list is disposed of.
  *
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
@@ -217,35 +234,35 @@ int doubly_linked_list_options_init(
  */
 int doubly_linked_list_options_init_ex(
     doubly_linked_list_options_t* options, allocator_options_t* alloc_opts,
-    size_t element_size, doubly_linked_list_element_copy_t copy_method,
+    doubly_linked_list_element_copy_t copy_method, size_t element_size,
     doubly_linked_list_element_dispose_t dispose_method);
 
 /**
  * \brief Initialize a doubly linked list.
  *
- * This method allows for the creation of a doubly linked list.  Once initialized,
- * the list will have zero elements, and the first and last pointers will
- * be set to null.
+ * This method allows for the creation of a doubly linked list.  Once
+ * initialized, the list will have zero elements, and the first and last
+ * pointers will be set to null.
  *
  * When the function completes successfully, the caller owns this
- * ::doubly_linked_list_t instance and must dispose of it by calling dispose() when
- * it is no longer needed.
+ * ::doubly_linked_list_t instance and must dispose of it by calling dispose()
+ * when it is no longer needed.
  *
- * \param options           The doubly linked list options to use for this instance.
+ * \param options           The doubly linked list options to use for this
+ *                          instance.
  * \param dll               The doubly linked list to initialize.
  *
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
  */
-int doubly_linked_list_init(
-    doubly_linked_list_options_t* options, doubly_linked_list_t* dll);
+int doubly_linked_list_init(doubly_linked_list_options_t* options,
+    doubly_linked_list_t* dll);
 
 /**
  * \brief Insert a new element at the beginning of a doubly linked list.
  *
- * If successful, then a copy of this data will be made using the defined
- * copy method, then encapsulated in an element and placed at the beginning of
- * this linked list.
+ * If successful, then this data will be encapsulated in an element and placed
+ * at the beginning of the linked list.
  *
  * \param dll               The doubly linked list
  * \param data              An opaque pointer to some data that should be
@@ -261,9 +278,8 @@ int doubly_linked_list_insert_beginning(doubly_linked_list_t* dll, void* data);
 /**
  * \brief Insert a new element at the end of a doubly linked list.
  *
- * If successful, then a copy of this data will be made using the defined
- * copy method, then encapsulated in an element and placed at the end of this
- * linked list.
+ * If successful, then this data will be encapsulated in an element and placed
+ * at the end of the linked list.
  *
  * \param dll               The doubly linked list
  * \param data              An opaque pointer to some data that should be
@@ -280,9 +296,8 @@ int doubly_linked_list_insert_end(doubly_linked_list_t* dll, void* data);
  * \brief Insert a new element before a specified element in a doubly linked
  * list.
  *
- * If successful, then a copy of this data will be made using the defined
- * copy method, then encapsulated in an element and placed before the specified
- * element in the linked list.
+ * If successful, then this data will be encapsulated in an element and placed
+ * before the specified element in the linked list.
  *
  * \param dll               The doubly linked list
  * \param element           The existing element, which will succeed the
@@ -302,9 +317,8 @@ int doubly_linked_list_insert_before(doubly_linked_list_t* dll,
  * \brief Insert a new element after a specified element in a doubly linked
  * list.
  *
- * If successful, then a copy of this data will be made using the defined
- * copy method, then encapsulated in an element and placed after the specified
- * element in the linked list.
+ * If successful, then this data will be encapsulated in an element and placed
+ * after the specified element in the linked list.
  *
  * \param dll               The doubly linked list
  * \param element           The existing element, which will precede the

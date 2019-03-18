@@ -4,10 +4,9 @@
 /**
  * \brief Insert a new element at the end of a doubly linked list.
  *
- * If successful, then a copy of this data will be made using the defined
- * copy method, then encapsulated in an element and placed at the end of this
- * linked list.
- *
+ * If successful, then this data will be encapsulated in an element and placed
+ * at the end of the linked list.
+
  * \param dll               The doubly linked list
  * \param data              An opaque pointer to some data that should be
  *                          encapsulated in a new element and inserted at the

@@ -10,13 +10,13 @@
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/doubly_linked_list.h>
 
-class doubly_linked_list_init_test : public ::testing::Test {
+class DLLInitTest : public ::testing::Test {
 protected:
     void SetUp() override
     {
         malloc_allocator_options_init(&alloc_opts);
         doubly_linked_list_options_init(&options, &alloc_opts,
-            sizeof(int));
+            false, sizeof(int), false);
     }
 
     void TearDown() override
@@ -29,7 +29,7 @@ protected:
     doubly_linked_list_options_t options;
 };
 
-TEST_F(doubly_linked_list_init_test, basic_test)
+TEST_F(DLLInitTest, BasicTest)
 {
     doubly_linked_list dll;
 
