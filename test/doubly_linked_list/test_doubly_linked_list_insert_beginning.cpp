@@ -35,11 +35,11 @@ TEST_F(DLLInsertBeginningTest, BasicTest)
 
     doubly_linked_list dll;
 
-    EXPECT_EQ(doubly_linked_list_init(&options, &dll), 0);
+    ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
 
     int data = 356;
 
-    EXPECT_EQ(doubly_linked_list_insert_beginning(&dll, &data), 0);
+    ASSERT_EQ(doubly_linked_list_insert_beginning(&dll, &data), 0);
 
     // the number of elements should be 1, with
     // the first and last pointers pointing this element
@@ -55,7 +55,7 @@ TEST_F(DLLInsertBeginningTest, BasicTest)
 
     // insert something new at the beginning
     int data2 = 205;
-    EXPECT_EQ(doubly_linked_list_insert_beginning(&dll, &data2), 0);
+    ASSERT_EQ(doubly_linked_list_insert_beginning(&dll, &data2), 0);
 
     // the number of elements should be 2, with the first element being the
     // second data item and the last element being the first data item

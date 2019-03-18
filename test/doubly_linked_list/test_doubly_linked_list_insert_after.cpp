@@ -55,7 +55,7 @@ TEST_F(DLLInsertAfterTest, BasicTest)
 
     // insert something after the initial element
     int data2 = 205;
-    EXPECT_EQ(doubly_linked_list_insert_after(&dll, dll.first, &data2), 0);
+    ASSERT_EQ(doubly_linked_list_insert_after(&dll, dll.first, &data2), 0);
     EXPECT_EQ(dll.elements, 2UL);
     EXPECT_EQ(*(int*)(dll.first->data), data);
     EXPECT_EQ(*(int*)(dll.last->data), data2);
@@ -85,7 +85,7 @@ TEST_F(DLLInsertAfterTest, WithCopyOnInsert)
 
     // insert something after the initial element
     int data2 = 205;
-    EXPECT_EQ(doubly_linked_list_insert_after(&dll, dll.first, &data2), 0);
+    ASSERT_EQ(doubly_linked_list_insert_after(&dll, dll.first, &data2), 0);
 
     // test that the data was copied
     data++;
@@ -113,7 +113,7 @@ TEST_F(DLLInsertAfterTest, WithOutCopyOnInsert)
 
     // insert something after the initial element
     int data2 = 205;
-    EXPECT_EQ(doubly_linked_list_insert_after(&dll, dll.first, &data2), 0);
+    ASSERT_EQ(doubly_linked_list_insert_after(&dll, dll.first, &data2), 0);
 
     // test that the data was NOT copied
     data++;

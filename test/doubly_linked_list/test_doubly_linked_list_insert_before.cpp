@@ -35,11 +35,11 @@ TEST_F(DLLInsertBeforeTest, BasicTest)
 
     doubly_linked_list dll;
 
-    EXPECT_EQ(doubly_linked_list_init(&options, &dll), 0);
+    ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
 
     long data = 2023988L;
 
-    EXPECT_EQ(doubly_linked_list_insert_beginning(&dll, &data), 0);
+    ASSERT_EQ(doubly_linked_list_insert_beginning(&dll, &data), 0);
 
     // the number of elements should be 1, with
     // the first and last pointers pointing this element
@@ -55,7 +55,7 @@ TEST_F(DLLInsertBeforeTest, BasicTest)
 
     // insert an element before the initial one
     long data2 = 205L;
-    EXPECT_EQ(doubly_linked_list_insert_before(&dll, dll.first, &data2), 0);
+    ASSERT_EQ(doubly_linked_list_insert_before(&dll, dll.first, &data2), 0);
 
     // the number of elements should be 2, with the first element being the
     // second data item and the last element being the first data item
@@ -72,7 +72,7 @@ TEST_F(DLLInsertBeforeTest, BasicTest)
     // add one more element, before the initial element
     // now the order should be data3 -> data2 -> data
     long data3 = -992L;
-    EXPECT_EQ(doubly_linked_list_insert_before(&dll, dll.first, &data3), 0);
+    ASSERT_EQ(doubly_linked_list_insert_before(&dll, dll.first, &data3), 0);
     EXPECT_EQ(dll.elements, 3UL);
     EXPECT_EQ(*(long*)(dll.first->data), data3);
     EXPECT_EQ(*(long*)(dll.first->next->data), data2);
@@ -109,7 +109,7 @@ TEST_F(DLLInsertBeforeTest, WithCopyOnInsert)
 
     // insert something after the initial element
     long data2 = 205;
-    EXPECT_EQ(doubly_linked_list_insert_after(&dll, dll.first, &data2), 0);
+    ASSERT_EQ(doubly_linked_list_insert_after(&dll, dll.first, &data2), 0);
 
     // test that the data was copied
     data++;
@@ -137,7 +137,7 @@ TEST_F(DLLInsertBeforeTest, WithOutCopyOnInsert)
 
     // insert something after the initial element
     long data2 = 205;
-    EXPECT_EQ(doubly_linked_list_insert_after(&dll, dll.first, &data2), 0);
+    ASSERT_EQ(doubly_linked_list_insert_after(&dll, dll.first, &data2), 0);
 
     // test that the data was NOT copied
     data++;

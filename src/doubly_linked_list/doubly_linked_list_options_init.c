@@ -31,11 +31,10 @@ static void dll_simple_elem_dispose(allocator_options_t*, void*);
  *                          disposed of.
  *                          If false, the release_on_dispose argument dictates
  *                          what happens when the list is disposed of.
- *                          assumes ownership of the data as it is inserted.
  * \param element_size      The size in bytes of an individual element.  This
  *                          parameter is ignored with copy_on_insert is false,
  *                          but must be a positive integer value if
- *                          if copy_on_insert is true.
+ *                          copy_on_insert is true.
  * \param release_on_dispose  This parameter is ignored if copy_on_insert is
  *                          true.  When copy_on_insert is false, this argument
  *                          determines whether memory storing data encapsulated

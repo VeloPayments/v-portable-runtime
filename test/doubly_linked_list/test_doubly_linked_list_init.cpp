@@ -33,7 +33,7 @@ TEST_F(DLLInitTest, BasicTest)
 {
     doubly_linked_list dll;
 
-    EXPECT_EQ(doubly_linked_list_init(&options, &dll), 0);
+    ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
 
     // the number of elements should be initialized to 0, with
     // the first and last pointers pointing to NULL

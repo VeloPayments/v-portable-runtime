@@ -36,7 +36,7 @@ TEST_F(DLLRemoveTest, BasicTest)
 {
     doubly_linked_list dll;
 
-    EXPECT_EQ(doubly_linked_list_init(&options, &dll), 0);
+    ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
 
     int data_elements[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
@@ -77,19 +77,19 @@ TEST_F(DLLRemoveTest, BasicTest)
     EXPECT_EQ(i, 9);
 
     // remove the last element
-    EXPECT_EQ(0, doubly_linked_list_remove(&dll, dll.last));
+    ASSERT_EQ(0, doubly_linked_list_remove(&dll, dll.last));
     EXPECT_EQ(dll.elements, 8UL);
     EXPECT_EQ(*(int*)dll.last->data, 8);
 
     // remove the first element
-    EXPECT_EQ(0, doubly_linked_list_remove(&dll, dll.first));
+    ASSERT_EQ(0, doubly_linked_list_remove(&dll, dll.first));
     EXPECT_EQ(dll.elements, 7UL);
     EXPECT_EQ(*(int*)dll.first->data, 1);
 
     // remove all remaining elements
     for (i = 0; i < 7; i++)
     {
-        EXPECT_EQ(0, doubly_linked_list_remove(&dll, dll.first));
+        ASSERT_EQ(0, doubly_linked_list_remove(&dll, dll.first));
     }
     EXPECT_EQ(dll.elements, 0UL);
     EXPECT_EQ(dll.first, nullptr);
