@@ -15,7 +15,7 @@ if force_velo_toolchain
     error('force_velo_toolchain is set and you arn\'t using the velo toolchain.')    
   endif                                                                                                                                                                                       
   cpp = meson.get_compiler('cpp')
-  cpp_version = run_command(cc.cmd_array() + ['--version'], check : true).stdout()
+  cpp_version = run_command(cpp.cmd_array() + ['--version'], check : true).stdout()
   if not cpp_version.contains('(velo)')
     error('force_velo_toolchain is set and you arn\'t using the velo toolchain.')
   endif
@@ -29,7 +29,12 @@ add_project_arguments('-Wall', '-Werror', '-Wextra', language : 'cpp')
 src = run_command('find', './src', '-name', '*.c', check : true).stdout().strip().split('\n')
 test_src = run_command('find', './test', '-name', '*.cpp', check : true).stdout().strip().split('\n')
 
-gtest = dependency('gtest', main : true, required : true, fallback : ['gtest','gtest_dep'])
+# GTest is currently only used on native x86 builds. Creating a disabler will disable the test exe and test target.
+if meson.is_cross_build()
+  gtest = disabler() 
+else
+  gtest = dependency('gtest', main : true, required : true, fallback : ['gtest','gtest_dep'])
+endif
 
 vcmodel = dependency(
   'vcmodel',
@@ -39,10 +44,13 @@ vcmodel = dependency(
 
 vpr_include = include_directories('include')
 
-vpr_lib = static_library(
-  'vpr', 
-  src,
-  dependencies : vcmodel,
+vpr_lib = static_library('vpr', src, 
+  dependencies : vcmodel, 
+  include_directories : vpr_include
+)
+
+vpr_dep = declare_dependency(
+  link_with : vpr_lib, 
   include_directories : vpr_include
 )
 
@@ -54,9 +62,6 @@ vpr_test = executable(
   dependencies : gtest
 )
 
-vpr_dep = declare_dependency(
-  link_with : vpr_lib, 
-  include_directories : vpr_include
-)
-
 test('testvpr', vpr_test)
+
+# vim: ts=2 sw=2 et colorcolumn=120
