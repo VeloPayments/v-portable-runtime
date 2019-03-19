@@ -10,7 +10,7 @@
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/doubly_linked_list.h>
 
-class DLLInsertAfterTest : public ::testing::Test {
+class dll_insert_after_test : public ::testing::Test {
 protected:
     void SetUp(bool copy_on_insert)
     {
@@ -29,7 +29,7 @@ protected:
     doubly_linked_list_options_t options;
 };
 
-TEST_F(DLLInsertAfterTest, BasicTest)
+TEST_F(dll_insert_after_test, basic_test)
 {
     SetUp(true);
 
@@ -71,7 +71,7 @@ TEST_F(DLLInsertAfterTest, BasicTest)
     dispose((disposable_t*)&dll);
 }
 
-TEST_F(DLLInsertAfterTest, WithCopyOnInsert)
+TEST_F(dll_insert_after_test, with_copy_on_insert)
 {
     SetUp(true);
 
@@ -99,7 +99,7 @@ TEST_F(DLLInsertAfterTest, WithCopyOnInsert)
     dispose((disposable_t*)&dll);
 }
 
-TEST_F(DLLInsertAfterTest, WithOutCopyOnInsert)
+TEST_F(dll_insert_after_test, without_copy_on_insert)
 {
     SetUp(false);
 

@@ -10,7 +10,7 @@
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/doubly_linked_list.h>
 
-class DLLInitTest : public ::testing::Test {
+class dll_init_test : public ::testing::Test {
 protected:
     void SetUp() override
     {
@@ -29,7 +29,7 @@ protected:
     doubly_linked_list_options_t options;
 };
 
-TEST_F(DLLInitTest, BasicTest)
+TEST_F(dll_init_test, basic_test)
 {
     doubly_linked_list dll;
 

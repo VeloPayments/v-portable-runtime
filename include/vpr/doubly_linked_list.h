@@ -13,7 +13,6 @@
 #define VPR_DOUBLY_LINKED_LIST_HEADER_GUARD
 
 #include <vpr/allocator.h>
-#include <vpr/compare.h>
 #include <vpr/disposable.h>
 #include <vpr/error_codes.h>
 #include <stdbool.h>

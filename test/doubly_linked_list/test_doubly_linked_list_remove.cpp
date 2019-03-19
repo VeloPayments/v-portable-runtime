@@ -13,7 +13,7 @@
 void build_doubly_linked_list(doubly_linked_list_t* dll, int* data, int n);
 
 
-class DLLRemoveTest : public ::testing::Test {
+class dll_remove_test : public ::testing::Test {
 protected:
     void SetUp() override
     {
@@ -32,7 +32,7 @@ protected:
     doubly_linked_list_options_t options;
 };
 
-TEST_F(DLLRemoveTest, BasicTest)
+TEST_F(dll_remove_test, basic_test)
 {
     doubly_linked_list dll;
 
