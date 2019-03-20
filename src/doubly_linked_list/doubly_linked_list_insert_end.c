@@ -6,7 +6,9 @@
  *
  * If successful, then this data will be encapsulated in an element and placed
  * at the end of the linked list.
-
+ *
+ * WARNING: this function is not thread safe!
+ *
  * \param dll               The doubly linked list
  * \param data              An opaque pointer to some data that should be
  *                          encapsulated in a new element and inserted at the
@@ -20,14 +22,14 @@
 int doubly_linked_list_insert_end(doubly_linked_list_t* dll, void* data)
 {
 
-    MODEL_ASSERT(dll != NULL);
+    MODEL_ASSERT(NULL != dll);
     MODEL_ASSERT(dll->elements >= 0);
-    MODEL_ASSERT(dll->options != NULL);
-    MODEL_ASSERT(dll->options->alloc_opts != NULL);
-    MODEL_ASSERT(data != NULL);
+    MODEL_ASSERT(NULL != dll->options);
+    MODEL_ASSERT(NULL != dll->options->alloc_opts);
+    MODEL_ASSERT(NULL != data);
 
     /* is this the first element in the list? */
-    if (dll->last == NULL)
+    if (NULL == dll->last)
     {
         return doubly_linked_list_insert_beginning(dll, data);
     }

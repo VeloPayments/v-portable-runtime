@@ -35,12 +35,12 @@ int doubly_linked_list_init(
 {
 
     //the doubly linked list structure must be non-null
-    MODEL_ASSERT(dll != NULL);
+    MODEL_ASSERT(NULL != dll);
 
     //sanity checks on options
-    MODEL_ASSERT(options != NULL);
+    MODEL_ASSERT(NULL != options);
     MODEL_ASSERT(options->element_size > 0);
-    MODEL_ASSERT(options->alloc_opts != NULL);
+    MODEL_ASSERT(NULL != options->alloc_opts);
 
     dll->hdr.dispose = &dll_dispose;
     dll->options = options;
@@ -60,10 +60,10 @@ int doubly_linked_list_init(
  */
 void dll_dispose(void* pdll)
 {
-    MODEL_ASSERT(pdll != NULL);
+    MODEL_ASSERT(NULL != pdll);
     doubly_linked_list_t* dll = (doubly_linked_list_t*)pdll;
-    MODEL_ASSERT(dll->options != NULL);
-    MODEL_ASSERT(dll->options->alloc_opts != NULL);
+    MODEL_ASSERT(NULL != dll->options);
+    MODEL_ASSERT(NULL != dll->options->alloc_opts);
 
     //dispose of each element in the list
     doubly_linked_list_element_t* element = dll->first;

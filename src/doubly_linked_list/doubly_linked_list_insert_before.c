@@ -8,7 +8,9 @@
  *
  * If successful, then this data will be encapsulated in an element and placed
  * before the specified element in the linked list.
-
+ *
+ * WARNING: this function is not thread safe!
+ *
  * \param dll               The doubly linked list
  * \param element           The existing element, which will succeed the
  *                          new element.
@@ -26,15 +28,15 @@
 int doubly_linked_list_insert_before(doubly_linked_list_t* dll,
     doubly_linked_list_element_t* element, void* data)
 {
-    MODEL_ASSERT(dll != NULL);
-    MODEL_ASSERT(dll->first != NULL);
-    MODEL_ASSERT(dll->last != NULL);
+    MODEL_ASSERT(NULL != dll);
+    MODEL_ASSERT(NULL != dll->first);
+    MODEL_ASSERT(NULL != dll->last);
     MODEL_ASSERT(dll->elements > 0);
-    MODEL_ASSERT(dll->options != NULL);
-    MODEL_ASSERT(dll->options->alloc_opts != NULL);
-    MODEL_ASSERT(element != NULL);
-    MODEL_ASSERT(element->data != NULL);
-    MODEL_ASSERT(data != NULL);
+    MODEL_ASSERT(NULL != dll->options);
+    MODEL_ASSERT(NULL != dll->options->alloc_opts);
+    MODEL_ASSERT(NULL != element);
+    MODEL_ASSERT(NULL != element->data);
+    MODEL_ASSERT(NULL != data);
 
     /* create the element */
     doubly_linked_list_element_t* new_element =
@@ -50,7 +52,7 @@ int doubly_linked_list_insert_before(doubly_linked_list_t* dll,
     new_element->next = element;
     new_element->prev = element->prev;
 
-    if (element->prev == NULL)
+    if (NULL == element->prev)
     {
         dll->first = new_element;
     }
@@ -61,7 +63,7 @@ int doubly_linked_list_insert_before(doubly_linked_list_t* dll,
     element->prev = new_element;
 
     /* increment the number of elements in this list*/
-    dll->elements++;
+    ++dll->elements;
 
     /* if this is a copy-on-insert, then allocate space for the data
      * and copy it into that buffer.  Otherwise, set the pointer to
