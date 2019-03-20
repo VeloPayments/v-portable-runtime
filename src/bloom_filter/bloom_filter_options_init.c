@@ -12,8 +12,8 @@
 #include <vpr/parameters.h>
 
 /* forward decls for internal methods */
-static uint64_t bloom_filter_hash_func_1(const void*);
-static uint64_t bloom_filter_hash_func_2(const void*);
+static uint64_t djb2(const void*);
+static uint64_t sdbm(const void*);
 
 int bloom_filter_options_init(bloom_filter_options_t* options,
     allocator_options_t* alloc_opts, size_t size)
@@ -22,26 +22,52 @@ int bloom_filter_options_init(bloom_filter_options_t* options,
     MODEL_ASSERT(NULL != alloc_opts);
     MODEL_ASSERT(size > 0);
 
-    return bloom_filter_options_init_ex(options, alloc_opts, size,
-        &bloom_filter_hash_func_1, &bloom_filter_hash_func_2);
+    return bloom_filter_options_init_ex(
+        options, alloc_opts, size, &djb2, &sdbm);
 }
 
 
 /**
- * The hash function to use when testing membership using the bloom filter
+ * An implementation of the djb2 hash algorithm
  *
  * \param                   The null terminated data to hash
  *
- * \returns The hash signature of the input data
+ * \returns The 64 bit hash signature of the input data
  */
-static uint64_t bloom_filter_hash_func_1(const void* UNUSED(data))
+static uint64_t djb2(const void* data)
 {
-    // TODO
-    return 0;
+    uint8_t* ptr = (uint8_t*)data;
+
+    uint64_t hash = 5381;
+    uint8_t c;
+
+    while ((c = *ptr++))
+    {
+        hash = ((hash << 5) + hash) + c;
+    }
+
+    return hash;
 }
 
-static uint64_t bloom_filter_hash_func_2(const void* UNUSED(data))
+/**
+ * An implementation of the sdbm hash algorithm
+ *
+ * \param                   The null terminated data to hash
+ *
+ * \returns The 64 bit hash signature of the input data
+ */
+static uint64_t sdbm(const void* data)
 {
-    // TODO
-    return 0;
+    uint8_t* ptr = (uint8_t*)data;
+
+    uint64_t hash = 5381;
+    uint8_t c;
+
+    while ((c = *ptr++))
+    {
+        hash = c + (hash << 6) + (hash << 16) - hash;
+    }
+
+
+    return hash;
 }
