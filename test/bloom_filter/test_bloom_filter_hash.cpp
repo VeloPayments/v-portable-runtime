@@ -109,7 +109,7 @@ TEST_F(bloom_filter_hash_test, basic_test)
         hashed_vals[i] = bloom_filter_hash(&options, buf, i, m);
         //ASSERT_LT(hashed_vals[i], (uint64_t)m);
 
-        for (int j = 0; j < i; j++)
+        for (int j = i + 1; j < i; j++)
         {
             ASSERT_NE(hashed_vals[i], hashed_vals[j]);
         }
@@ -188,13 +188,10 @@ static void test_distribution(uint64_t* vals, int num_vals,
     int num_distances = 0;
     for (int i = 0; i < num_vals; i++)
     {
-        for (int j = 0; j < num_vals; j++)
+        for (int j = i + 1; j < num_vals; j++)
         {
-            if (i != j)
-            {
-                total_distance += hamming_distance(vals[i], vals[j]);
-                ++num_distances;
-            }
+            total_distance += hamming_distance(vals[i], vals[j]);
+            ++num_distances;
         }
     }
 

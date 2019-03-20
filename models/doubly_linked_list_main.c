@@ -52,7 +52,7 @@ static void verify_empty_list()
     // verify the options are valid
     MODEL_ASSERT(MODEL_PROP_VALID_DLL_OPTIONS(&options, sizeof(int)));
 
-    //initialize the doubly linkd list
+    //initialize the doubly linked list
     MODEL_ASSERT(0 == doubly_linked_list_init(&options, &dll));
 
     // verify the (empty) list is valid
