@@ -13,7 +13,8 @@ PWD?=$(shell pwd)
 #library source files
 SRCDIR=$(PWD)/src
 DIRS=$(SRCDIR) $(SRCDIR)/abstract_factory $(SRCDIR)/allocator \
-    $(SRCDIR)/compare $(SRCDIR)/disposable $(SRCDIR)/dynamic_array
+    $(SRCDIR)/compare $(SRCDIR)/disposable $(SRCDIR)/dynamic_array \
+    $(SRCDIR)/doubly_linked_list
 SOURCES=$(foreach d,$(DIRS),$(wildcard $(d)/*.c))
 STRIPPED_SOURCES=$(patsubst $(SRCDIR)/%,%,$(SOURCES))
 MODELDIR=$(PWD)/model
@@ -23,7 +24,8 @@ MODEL_MAKEFILES?= \
 #library test files
 TESTDIR=$(PWD)/test
 TESTDIRS=$(TESTDIR) $(TESTDIR)/abstract_factory $(TESTDIR)/allocator \
-    $(TESTDIR)/compare $(TESTDIR)/dynamic_array
+    $(TESTDIR)/compare $(TESTDIR)/dynamic_array \
+    $(TESTDIR)/doubly_linked_list
 TEST_BUILD_DIR=$(HOST_CHECKED_BUILD_DIR)/test
 TEST_DIRS=$(filter-out $(TESTDIR), \
     $(patsubst $(TESTDIR)/%,$(TEST_BUILD_DIR)/%,$(TESTDIRS)))

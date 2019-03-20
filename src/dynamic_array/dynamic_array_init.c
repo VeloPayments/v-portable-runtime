@@ -23,7 +23,7 @@ static void darr_dispose(void*);
  * elements will be available in the dynamic array and will be initialized using
  * the copy element.
  *
- * When the function completes succeffully, the caller owns this
+ * When the function completes successfully, the caller owns this
  * ::dynamic_array_t instance and must dispose of it by calling dispose() when
  * it is no longer needed.
  *

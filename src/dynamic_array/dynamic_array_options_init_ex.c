@@ -20,7 +20,7 @@ static void darr_simple_dispose(void*);
  * This method allows the user to override the copy and dispose methods to
  * manage non-POD data types and complex data structures.
  *
- * When the function completes succeffully, the caller owns this
+ * When the function completes successfully, the caller owns this
  * ::dynamic_array_t instance and must dispose of it by calling dispose() when
  * it is no longer needed.
  *

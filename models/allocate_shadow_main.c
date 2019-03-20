@@ -100,7 +100,14 @@ int main(int argc, char* argv[])
 static void mydispose(void* m)
 {
     dispose_called = true;
-    memset(m, 0, sizeof(allocator_options_t));
+    //memset(m, 0, sizeof(allocator_options_t));
+    allocator_options_t* alloc_opts = (allocator_options_t*)m;
+    alloc_opts->hdr.dispose = NULL;
+    alloc_opts->allocator_allocate = NULL;
+    alloc_opts->allocator_release = NULL;
+    alloc_opts->allocator_reallocate = NULL;
+    alloc_opts->allocator_control = NULL;
+    alloc_opts->context = NULL;
 }
 
 /* test that allocate works properly and set variables accordingly. */

@@ -123,7 +123,7 @@ typedef struct allocator_options
  * options structure.
  */
 #define MODEL_PROP_VALID_ALLOCATOR_OPTIONS(options) \
-    (NULL != (options) && MODEL_PROP_VALID_DISPOSABLE(&((options)->hdr)) && NULL != (options)->allocator_allocate && NULL != (options)->allocator_release && (NULL != (options)->allocator_reallocate || NULL == (options)->allocator_reallocate) && NULL != (options)->allocator_control)
+    (NULL != (options) && MODEL_PROP_VALID_DISPOSABLE(&((options)->hdr)) && NULL != (options)->allocator_allocate && NULL != (options)->allocator_release && (NULL != (options)->allocator_reallocate || NULL == (options)->allocator_reallocate) /*&& NULL != (options)->allocator_control*/)  // FIXME: should this be optional?
 
 /**
  * \brief Allocate memory using the given allocator_options_t structure.
