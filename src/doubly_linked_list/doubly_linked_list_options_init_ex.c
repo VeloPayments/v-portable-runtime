@@ -46,10 +46,10 @@ int doubly_linked_list_options_init_ex(
     doubly_linked_list_element_copy_t copy_method, size_t element_size,
     doubly_linked_list_element_dispose_t dispose_method)
 {
-    MODEL_ASSERT(options != NULL);
-    MODEL_ASSERT(alloc_opts != NULL);
-    MODEL_ASSERT(alloc_opts->allocator_release != NULL);
-    MODEL_ASSERT(copy_method == NULL || element_size > 0);
+    MODEL_ASSERT(NULL != options);
+    MODEL_ASSERT(NULL != alloc_opts);
+    MODEL_ASSERT(NULL != alloc_opts->allocator_release);
+    MODEL_ASSERT(NULL == copy_method || element_size > 0);
 
     //use our dispose method to dispose of these options
     options->hdr.dispose = &dll_simple_dispose;
@@ -72,5 +72,5 @@ int doubly_linked_list_options_init_ex(
  */
 static void dll_simple_dispose(void* UNUSED(poptions))
 {
-    MODEL_ASSERT(poptions != NULL);
+    MODEL_ASSERT(NULL != poptions);
 }

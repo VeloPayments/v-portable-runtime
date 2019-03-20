@@ -263,6 +263,8 @@ int doubly_linked_list_init(doubly_linked_list_options_t* options,
  * If successful, then this data will be encapsulated in an element and placed
  * at the beginning of the linked list.
  *
+ * WARNING: this function is not thread safe!
+ *
  * \param dll               The doubly linked list
  * \param data              An opaque pointer to some data that should be
  *                          encapsulated in a new element and inserted at the
@@ -279,6 +281,8 @@ int doubly_linked_list_insert_beginning(doubly_linked_list_t* dll, void* data);
  *
  * If successful, then this data will be encapsulated in an element and placed
  * at the end of the linked list.
+ *
+ * WARNING: this function is not thread safe!
  *
  * \param dll               The doubly linked list
  * \param data              An opaque pointer to some data that should be
@@ -297,6 +301,8 @@ int doubly_linked_list_insert_end(doubly_linked_list_t* dll, void* data);
  *
  * If successful, then this data will be encapsulated in an element and placed
  * before the specified element in the linked list.
+ *
+ * WARNING: this function is not thread safe!
  *
  * \param dll               The doubly linked list
  * \param element           The existing element, which will succeed the
@@ -319,6 +325,8 @@ int doubly_linked_list_insert_before(doubly_linked_list_t* dll,
  * If successful, then this data will be encapsulated in an element and placed
  * after the specified element in the linked list.
  *
+ * WARNING: this function is not thread safe!
+ *
  * \param dll               The doubly linked list
  * \param element           The existing element, which will precede the
  *                          new element.
@@ -339,6 +347,8 @@ int doubly_linked_list_insert_after(doubly_linked_list_t* dll,
  * If successful, the specified element is removed from the linked list.  The
  * caller assumes responsibility for the element and the data referenced by the
  * element.
+ *
+ * WARNING: this function is not thread safe!
  *
  * \param dll               The doubly linked list.
  * \param element           The element to remove

@@ -53,13 +53,13 @@ static void verify_empty_list()
     MODEL_ASSERT(MODEL_PROP_VALID_DLL_OPTIONS(&options, sizeof(int)));
 
     //initialize the array
-    MODEL_ASSERT(doubly_linked_list_init(&options, &dll) == 0);
+    MODEL_ASSERT(0 == doubly_linked_list_init(&options, &dll));
 
     // verify the (empty) list is valid
     MODEL_ASSERT(MODEL_PROP_VALID_DLL(&dll));
-    MODEL_ASSERT(dll.elements == 0);
-    MODEL_ASSERT(dll.first == NULL);
-    MODEL_ASSERT(dll.last == NULL);
+    MODEL_ASSERT(0 == dll.elements);
+    MODEL_ASSERT(NULL == dll.first);
+    MODEL_ASSERT(NULL == dll.last);
 
     //dispose of the linked list
     dispose((disposable_t*)&dll);
@@ -92,18 +92,18 @@ static void verify_singleton_list()
     MODEL_ASSERT(MODEL_PROP_VALID_DLL_OPTIONS(&options, sizeof(int)));
 
     //initialize the list
-    MODEL_ASSERT(doubly_linked_list_init(&options, &dll) == 0);
+    MODEL_ASSERT(0 == doubly_linked_list_init(&options, &dll));
 
     // add an item to the list
     int data = 42;
-    if (doubly_linked_list_insert_beginning(&dll, &data) == 0)
+    if (0 == doubly_linked_list_insert_beginning(&dll, &data))
     {
         // verify the singleton list is valid
         MODEL_ASSERT(MODEL_PROP_VALID_DLL(&dll));
-        MODEL_ASSERT(dll.elements == 1);
-        MODEL_ASSERT(dll.first != NULL);
-        MODEL_ASSERT(dll.last != NULL);
-        MODEL_ASSERT(dll.first->data != NULL);
+        MODEL_ASSERT(1 == dll.elements);
+        MODEL_ASSERT(NULL != dll.first);
+        MODEL_ASSERT(NULL != dll.last);
+        MODEL_ASSERT(NULL != dll.first->data);
         MODEL_ASSERT(*(int*)(dll.first->data) == data);
     }
 
@@ -138,17 +138,17 @@ static void verify_beginning_before()
     MODEL_ASSERT(MODEL_PROP_VALID_DLL_OPTIONS(&options, sizeof(long)));
 
     //initialize the list
-    MODEL_ASSERT(doubly_linked_list_init(&options, &dll) == 0);
+    MODEL_ASSERT(0 == doubly_linked_list_init(&options, &dll));
 
     long data_elements[] = { 0, 1 };
 
-    if (doubly_linked_list_insert_beginning(&dll, &data_elements[0]) == 0 && doubly_linked_list_insert_before(&dll, dll.last, &data_elements[1]) == 0)
+    if (0 == doubly_linked_list_insert_beginning(&dll, &data_elements[0]) && 0 == doubly_linked_list_insert_before(&dll, dll.last, &data_elements[1]))
     {
         // verify the list is valid
         MODEL_ASSERT(MODEL_PROP_VALID_DLL(&dll));
-        MODEL_ASSERT(dll.elements == 2);
-        MODEL_ASSERT(dll.first != NULL);
-        MODEL_ASSERT(dll.last != NULL);
+        MODEL_ASSERT(2 == dll.elements);
+        MODEL_ASSERT(NULL != dll.first);
+        MODEL_ASSERT(NULL != dll.last);
 
         // verify pointers
         MODEL_ASSERT(dll.first->next->prev == dll.first);
@@ -190,11 +190,11 @@ static void verify_after_end_remove()
     MODEL_ASSERT(MODEL_PROP_VALID_DLL_OPTIONS(&options, sizeof(long)));
 
     //initialize the list
-    MODEL_ASSERT(doubly_linked_list_init(&options, &dll) == 0);
+    MODEL_ASSERT(0 == doubly_linked_list_init(&options, &dll));
 
     long data_elements[] = { 2, 3 };
 
-    if (doubly_linked_list_insert_end(&dll, &data_elements[0]) == 0 && doubly_linked_list_insert_after(&dll, dll.last, &data_elements[1]) == 0)
+    if (0 == doubly_linked_list_insert_end(&dll, &data_elements[0]) && 0 == doubly_linked_list_insert_after(&dll, dll.last, &data_elements[1]))
     {
         doubly_linked_list_element_t* elem = dll.last->prev;
         doubly_linked_list_remove(&dll, elem);
@@ -207,14 +207,14 @@ static void verify_after_end_remove()
 
         // verify the list is valid
         MODEL_ASSERT(MODEL_PROP_VALID_DLL(&dll));
-        MODEL_ASSERT(dll.elements == 1);
-        MODEL_ASSERT(dll.first != NULL);
-        MODEL_ASSERT(dll.last != NULL);
+        MODEL_ASSERT(1 == dll.elements);
+        MODEL_ASSERT(NULL != dll.first);
+        MODEL_ASSERT(NULL != dll.last);
         MODEL_ASSERT(dll.first == dll.last);
 
         // verify pointers
-        MODEL_ASSERT(dll.first->next == NULL);
-        MODEL_ASSERT(dll.first->prev == NULL);
+        MODEL_ASSERT(NULL == dll.first->next);
+        MODEL_ASSERT(NULL == dll.first->prev);
 
         // verify data
         MODEL_ASSERT(*(long*)(dll.first->data) == data_elements[1]);

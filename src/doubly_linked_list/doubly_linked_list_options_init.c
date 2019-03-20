@@ -49,10 +49,10 @@ int doubly_linked_list_options_init(doubly_linked_list_options_t* options,
     allocator_options_t* alloc_opts, bool copy_on_insert,
     size_t element_size, bool release_on_dispose)
 {
-    MODEL_ASSERT(options != NULL);
-    MODEL_ASSERT(alloc_opts != NULL);
-    MODEL_ASSERT(alloc_opts->allocator_release != NULL);
-    MODEL_ASSERT(element_size != 0);
+    MODEL_ASSERT(NULL != options);
+    MODEL_ASSERT(NULL != alloc_opts);
+    MODEL_ASSERT(NULL != alloc_opts->allocator_release);
+    MODEL_ASSERT(0 != element_size);
 
     //initialize this structure in terms of doubly_linked_list_options_init_ex
     return doubly_linked_list_options_init_ex(options, alloc_opts,
@@ -72,8 +72,8 @@ int doubly_linked_list_options_init(doubly_linked_list_options_t* options,
  */
 static void dll_simple_elem_copy(void* destination, const void* source, size_t size)
 {
-    MODEL_ASSERT(destination != NULL);
-    MODEL_ASSERT(source != NULL);
+    MODEL_ASSERT(NULL != destination);
+    MODEL_ASSERT(NULL != source);
     MODEL_ASSERT(size > 0);
 
     memcpy(destination, source, size);
@@ -87,8 +87,8 @@ static void dll_simple_elem_copy(void* destination, const void* source, size_t s
  */
 static void dll_simple_elem_dispose(allocator_options_t* alloc_opts, void* elem)
 {
-    MODEL_ASSERT(alloc_opts != NULL);
-    MODEL_ASSERT(elem != NULL);
+    MODEL_ASSERT(NULL != alloc_opts);
+    MODEL_ASSERT(NULL != elem);
 
     release(alloc_opts, elem);
 }

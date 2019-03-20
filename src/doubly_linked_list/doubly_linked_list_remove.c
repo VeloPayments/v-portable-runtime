@@ -8,6 +8,8 @@
  * caller assumes responsibility for the element and the data referenced by the
  * element.
  *
+ * WARNING: this function is not thread safe!
+ *
  * \param dll               The doubly linked list.
  * \param element           The element to remove
  *
@@ -17,18 +19,18 @@
 int doubly_linked_list_remove(doubly_linked_list_t* dll,
     doubly_linked_list_element_t* element)
 {
-    MODEL_ASSERT(dll != NULL);
+    MODEL_ASSERT(NULL != dll);
     MODEL_ASSERT(dll->elements > 0);
-    MODEL_ASSERT(dll->options != NULL);
-    MODEL_ASSERT(dll->options->alloc_opts != NULL);
-    MODEL_ASSERT(element->data != NULL);
-    MODEL_ASSERT(element->prev != NULL || element->next != NULL);
+    MODEL_ASSERT(NULL != dll->options);
+    MODEL_ASSERT(NULL != dll->options->alloc_opts);
+    MODEL_ASSERT(NULL != element->data);
+    MODEL_ASSERT(NULL != element->prev || NULL != element->next);
 
-    dll->elements--;
+    --dll->elements;
 
     /* if this is the first element, just set the list first pointer to the
        next element */
-    if (element->prev == NULL)
+    if (NULL == element->prev)
     {
         dll->first = element->next;
     }
@@ -40,7 +42,7 @@ int doubly_linked_list_remove(doubly_linked_list_t* dll,
 
     /* if this is the last element, set the list last pointer to the
        previous element */
-    if (element->next == NULL)
+    if (NULL == element->next)
     {
         dll->last = element->prev;
     }
