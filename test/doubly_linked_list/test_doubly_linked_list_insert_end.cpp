@@ -60,8 +60,8 @@ TEST_F(dll_insert_end_test, basic_test)
     // the number of elements should be 2, with the first element being the
     // second data item and the last element being the first data item
     EXPECT_EQ(dll.elements, 2UL);
-    EXPECT_EQ(*(long*)(dll.first->data), data);
-    EXPECT_EQ(*(long*)(dll.last->data), data2);
+    EXPECT_EQ(*(int*)(dll.first->data), data);
+    EXPECT_EQ(*(int*)(dll.last->data), data2);
 
     // test the links on each element
     EXPECT_EQ(dll.first->prev, nullptr);
