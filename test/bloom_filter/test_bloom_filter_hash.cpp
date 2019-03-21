@@ -21,7 +21,7 @@ protected:
     void SetUp() override
     {
         malloc_allocator_options_init(&alloc_opts);
-        bloom_filter_options_init(&options, &alloc_opts, 8);
+        bloom_filter_options_init(&options, &alloc_opts, 4, 4);
     }
 
     void TearDown() override
@@ -95,7 +95,7 @@ TEST_F(bloom_filter_hash_test, hash_function_interdependence)
 TEST_F(bloom_filter_hash_test, basic_test)
 {
     int n = 10000;  // number of insertions
-    uint64_t m = 0xFFFFFFFF;  // max 32 bits
+    uint64_t m = 0xFFFFFFFF;  // max 32 bits (given we initialized with 4 bytes)
 
     // generate a string to hash
     char buf[32];
@@ -106,7 +106,7 @@ TEST_F(bloom_filter_hash_test, basic_test)
 
     for (int i = 0; i < n; i++)
     {
-        hashed_vals[i] = bloom_filter_hash(&options, buf, i, m);
+        hashed_vals[i] = bloom_filter_hash(&options, buf, i);
         ASSERT_LT(hashed_vals[i], m);
 
         for (int j = i + 1; j < i; j++)
@@ -118,7 +118,7 @@ TEST_F(bloom_filter_hash_test, basic_test)
     // the hash values produced by each of the hash functions
     // should be distributed over the state space
     // meaning the mean hamming distance should be 16 bits (half of our m)
-    test_distribution(hashed_vals, n, 15.0, 17.0);
+    test_distribution(hashed_vals, n, 14.0, 18.0);
 }
 
 

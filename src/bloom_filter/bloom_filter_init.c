@@ -33,7 +33,7 @@ int bloom_filter_init(bloom_filter_options_t* options, bloom_filter_t* bloom)
 
     //sanity checks on options
     MODEL_ASSERT(NULL != options);
-    MODEL_ASSERT(options->size > 0);
+    MODEL_ASSERT(options->size_in_bytes > 0);
     MODEL_ASSERT(NULL != options->alloc_opts);
 
     bloom->hdr.dispose = &bloom_filter_dispose;
@@ -41,14 +41,14 @@ int bloom_filter_init(bloom_filter_options_t* options, bloom_filter_t* bloom)
 
     // allocate the bitmap
     bloom->bitmap = (void*)allocate(bloom->options->alloc_opts,
-        bloom->options->size);
+        bloom->options->size_in_bytes);
     if (NULL == bloom->bitmap)
     {
         return VPR_ERROR_BLOOM_BITMAP_ALLOCATION_FAILED;
     }
 
     // clear the bitmap
-    memset(bloom->bitmap, 0, bloom->options->size);
+    memset(bloom->bitmap, 0, bloom->options->size_in_bytes);
 
 
     //success

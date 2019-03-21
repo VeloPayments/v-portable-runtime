@@ -16,14 +16,17 @@ static uint64_t djb2(const void*);
 static uint64_t sdbm(const void*);
 
 int bloom_filter_options_init(bloom_filter_options_t* options,
-    allocator_options_t* alloc_opts, size_t size)
+    allocator_options_t* alloc_opts,
+    size_t size_in_bytes, int num_hash_functions)
 {
     MODEL_ASSERT(NULL != options);
     MODEL_ASSERT(NULL != alloc_opts);
-    MODEL_ASSERT(size > 0);
+    MODEL_ASSERT(size_in_bytes > 0);
+    MODEL_ASSERT(num_hash_functions > 0);
 
     return bloom_filter_options_init_ex(
-        options, alloc_opts, size, &djb2, &sdbm);
+        options, alloc_opts, size_in_bytes, num_hash_functions,
+        &djb2, &sdbm);
 }
 
 

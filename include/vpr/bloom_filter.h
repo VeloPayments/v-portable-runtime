@@ -39,14 +39,23 @@ typedef struct bloom_filter_options
     disposable_t hdr;
 
     /**
-     * \brief The allocator options to use when creating doubly linked lists.
+     * \brief The allocator options to use when creating a bloom filter.
      */
     allocator_options_t* alloc_opts;
 
     /**
-     * \brief The size of the bitfield, in bytes
+     * \brief The size in bytes of the filter.
+     *
+     * This is the "m" value in the literature, though most references
+     * refer to m as the size in bits.
      */
-    size_t size;
+    size_t size_in_bytes;
+
+    /**
+     * \brief The number of hash functions to use when storing an item
+     * in the set.  This is the "k" value in the literature.
+     */
+    int num_hash_functions;
 
     hash_func_t hash_function_1;
 
@@ -97,17 +106,23 @@ typedef struct bloom_filter
 
 
 int bloom_filter_options_init(bloom_filter_options_t* options,
-    allocator_options_t* alloc_opts, size_t size);
+    allocator_options_t* alloc_opts, size_t size_in_bytes,
+    int num_hash_functions);
 
 
 int bloom_filter_options_init_ex(bloom_filter_options_t* options,
-    allocator_options_t* alloc_opts, size_t size,
-    hash_func_t hash_function_1, hash_func_t hash_function_2);
+    allocator_options_t* alloc_opts, size_t size_in_bytes,
+    int num_hash_functions, hash_func_t hash_function_1,
+    hash_func_t hash_function_2);
 
 int bloom_filter_init(bloom_filter_options_t* options, bloom_filter_t* bloom);
 
-uint64_t bloom_filter_hash(bloom_filter_options_t* options, void* data,
-    uint64_t n, uint64_t m);
+uint64_t bloom_filter_hash(bloom_filter_options_t* options, const void* data,
+    int n);
+
+int bloom_filter_add_item(bloom_filter_t* bloom, const void* data);
+
+_Bool bloom_filter_contains_item(bloom_filter_t* bloom, const void* data);
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
