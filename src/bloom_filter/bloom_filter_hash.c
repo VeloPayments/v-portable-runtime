@@ -6,13 +6,14 @@
  * \copyright 2019 Velo Payments, Inc.  All rights reserved.
  */
 
+#include <stdio.h>
 #include <string.h>
 #include <cbmc/model_assert.h>
 #include <vpr/bloom_filter.h>
 
 // n is the "nth hash"
 // returned value will be the bit in the filter to set
-int bloom_filter_hash(bloom_filter_options_t* options, const void* data,
+unsigned int bloom_filter_hash(bloom_filter_options_t* options, const void* data,
     int n)
 {
     MODEL_ASSERT(NULL != options);
@@ -22,10 +23,11 @@ int bloom_filter_hash(bloom_filter_options_t* options, const void* data,
     MODEL_ASSERT(NULL != data);
     MODEL_ASSERT(n >= 0);
 
-    // the returned answer needs to be module the number of bits in the filter
-    int m = options->size_in_bytes * 8;
+    unsigned int hv1 = options->hash_function_1(data);
+    unsigned int hv2 = options->hash_function_2(data);
 
-    return (options->hash_function_1(data) +
-               n * options->hash_function_2(data)) %
-        m;
+    // the returned answer needs to be modulo the number of bits in the filter
+    unsigned int m = options->size_in_bytes * 8;
+
+    return (hv1 + n * hv2) % m;
 }

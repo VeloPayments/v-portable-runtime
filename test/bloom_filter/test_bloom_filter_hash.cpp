@@ -22,6 +22,7 @@ protected:
     {
         malloc_allocator_options_init(&alloc_opts);
         bloom_filter_options_init(&options, &alloc_opts, 4, 4);
+        srand(time(0));  // seed rng with current time
     }
 
     void TearDown() override
@@ -70,7 +71,6 @@ TEST_F(bloom_filter_hash_test, hash_function_interdependence)
     // same input that are, on average, 32 bits apart
 
     const int n = 10000;
-    srand(time(0));  // seed rng with current time
     long total_distance = 0L;
 
     for (int i = 0; i < n; i++)
@@ -88,8 +88,8 @@ TEST_F(bloom_filter_hash_test, hash_function_interdependence)
     }
 
     double mean_distance = (double)total_distance / n;
-    EXPECT_GE(mean_distance, 31.0);
-    EXPECT_LE(mean_distance, 33.0);
+    EXPECT_GE(mean_distance, 27.0);
+    EXPECT_LE(mean_distance, 37.0);
 }
 
 TEST_F(bloom_filter_hash_test, basic_test)
@@ -99,19 +99,42 @@ TEST_F(bloom_filter_hash_test, basic_test)
     // generate a string to hash
     char buf[32];
     generate_random_string(buf, 32);
+    unsigned int hv1 = options.hash_function_1(buf);
+    unsigned int hv2 = options.hash_function_2(buf);
 
-    // test that the hash value changes with n, and is < m
-    int hashed_vals[n];
-    int bits_in_filter = options.size_in_bytes * 8;
+    unsigned int bits_in_filter = options.size_in_bytes * 8;
+    unsigned int bits_to_set[bits_in_filter];
+    for (unsigned int i = 0; i < bits_in_filter; i++)
+    {
+        bits_to_set[i] = 0;
+    }
 
     for (int i = 0; i < n; i++)
     {
-        hashed_vals[i] = bloom_filter_hash(&options, buf, i);
-        ASSERT_LT(hashed_vals[i], bits_in_filter);
+        ASSERT_EQ((unsigned int)options.hash_function_1(buf), hv1);
+        ASSERT_EQ((unsigned int)options.hash_function_2(buf), hv2);
+
+        unsigned int bit = bloom_filter_hash(&options, buf, i);
+
+        ASSERT_LT(bit, bits_in_filter);
+
+        // do I always get the same bit?
+        for (int j = 0; j < 100; j++)
+        {
+            ASSERT_EQ(bloom_filter_hash(&options, buf, i), bit);
+        }
+
+        bits_to_set[bit]++;
     }
 
-    // TODO: would expect a fairly even distribution between
+    // TODO: would expect an even distribution between
     // the bits, approx n / bits_in_filter, +/- 3x?
+    // for now just make sure they were all used
+    for (unsigned int i = 0; i < bits_in_filter; i++)
+    {
+        //printf("bit: %i, num: %i\n", i, bits_to_set[i]);
+        EXPECT_NE(bits_to_set[i], 0u);
+    }
 }
 
 
@@ -162,7 +185,6 @@ static void test_hash_function(hash_func_t hash_func)
 
     const int n = 10000;
     uint64_t hashed_vals[n];
-    srand(time(0));  // seed rng with current time
     for (int i = 0; i < n; i++)
     {
         // generate a random length >= 2
@@ -172,7 +194,7 @@ static void test_hash_function(hash_func_t hash_func)
         hashed_vals[i] = hash_func(buffer);
     }
 
-    test_distribution(hashed_vals, n, 31.0, 33.0);
+    test_distribution(hashed_vals, n, 27.0, 37.0);
 }
 
 static void test_distribution(uint64_t* vals, int num_vals,
