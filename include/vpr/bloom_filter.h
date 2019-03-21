@@ -107,7 +107,7 @@ int bloom_filter_options_init_ex(bloom_filter_options_t* options,
 int bloom_filter_init(bloom_filter_options_t* options, bloom_filter_t* bloom);
 
 uint64_t bloom_filter_hash(bloom_filter_options_t* options, void* data,
-    int n, int m);
+    uint64_t n, uint64_t m);
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

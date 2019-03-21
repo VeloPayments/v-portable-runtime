@@ -12,7 +12,7 @@
 #include <vpr/parameters.h>
 
 uint64_t bloom_filter_hash(bloom_filter_options_t* options, void* data,
-    int n, int UNUSED(m))
+    uint64_t n, uint64_t m)
 {
     MODEL_ASSERT(NULL != options);
     MODEL_ASSERT(NULL != options->hash_function_1);
@@ -21,7 +21,7 @@ uint64_t bloom_filter_hash(bloom_filter_options_t* options, void* data,
     MODEL_ASSERT(n >= 0);
     MODEL_ASSERT(m > 0);
 
-
     return (options->hash_function_1(data) +
-        n * options->hash_function_2(data));  //% m;
+               n * options->hash_function_2(data)) %
+        m;
 }

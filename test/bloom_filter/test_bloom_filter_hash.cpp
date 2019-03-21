@@ -95,7 +95,7 @@ TEST_F(bloom_filter_hash_test, hash_function_interdependence)
 TEST_F(bloom_filter_hash_test, basic_test)
 {
     int n = 10000;  // number of insertions
-    int m = 32;  // max size (in bits)
+    uint64_t m = 0xFFFFFFFF;  // max 32 bits
 
     // generate a string to hash
     char buf[32];
@@ -107,7 +107,7 @@ TEST_F(bloom_filter_hash_test, basic_test)
     for (int i = 0; i < n; i++)
     {
         hashed_vals[i] = bloom_filter_hash(&options, buf, i, m);
-        //ASSERT_LT(hashed_vals[i], (uint64_t)m);
+        ASSERT_LT(hashed_vals[i], m);
 
         for (int j = i + 1; j < i; j++)
         {
@@ -117,7 +117,8 @@ TEST_F(bloom_filter_hash_test, basic_test)
 
     // the hash values produced by each of the hash functions
     // should be distributed over the state space
-    test_distribution(hashed_vals, n, 31.0, 33.0);
+    // meaning the mean hamming distance should be 16 bits (half of our m)
+    test_distribution(hashed_vals, n, 15.0, 17.0);
 }
 
 
