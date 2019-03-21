@@ -19,19 +19,16 @@ int bloom_filter_add_item(bloom_filter_t* bloom, const void* data)
     MODEL_ASSERT(NULL != bloom->bitmap);
     MODEL_ASSERT(NULL != data);
 
-    printf("adding item: %s\n", (const char*)data);
     // compute the hash of the data for each hash function, and
     // set the appropriate bit in the filter
-    //for (int n=0; n<bloom->options->num_hash_functions; n++)
-    //{
-    uint64_t hash_val = bloom_filter_hash(bloom->options, data, 0);
-    printf("    hv: %lu\n", hash_val);
+    for (int n = 0; n < bloom->options->num_hash_functions; n++)
+    {
+        int hash_val = bloom_filter_hash(bloom->options, data, n);
 
-    // set the bit corresponding to hash_val to 1
-    uint8_t* ptr = (uint8_t*)bloom->bitmap;
-    printf("ptr: %p\n", ptr);
-    //ptr[hash_val >> 3] |= (uint8_t)1 << (hash_val & 7);
-    //}
+        // set the bit corresponding to hash_val to 1
+        uint8_t* ptr = (uint8_t*)bloom->bitmap;
+        ptr[hash_val / 8] |= 1 << (hash_val % 8);
+    }
 
     return VPR_STATUS_SUCCESS;
 }

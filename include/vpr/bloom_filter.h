@@ -117,7 +117,7 @@ int bloom_filter_options_init_ex(bloom_filter_options_t* options,
 
 int bloom_filter_init(bloom_filter_options_t* options, bloom_filter_t* bloom);
 
-uint64_t bloom_filter_hash(bloom_filter_options_t* options, const void* data,
+int bloom_filter_hash(bloom_filter_options_t* options, const void* data,
     int n);
 
 int bloom_filter_add_item(bloom_filter_t* bloom, const void* data);

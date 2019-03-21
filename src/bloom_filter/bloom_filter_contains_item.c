@@ -11,11 +11,27 @@
 #include <vpr/bloom_filter.h>
 #include <vpr/parameters.h>
 
-_Bool bloom_filter_contains_item(bloom_filter_t* UNUSED(bloom), const void* UNUSED(data))
+_Bool bloom_filter_contains_item(bloom_filter_t* bloom, const void* data)
 {
     MODEL_ASSERT(NULL != bloom);
+    MODEL_ASSERT(NULL != bloom->options);
+    MODEL_ASSERT(NULL != bloom->bitmap);
     MODEL_ASSERT(NULL != data);
 
+    // compute the hash of the data for each hash function, and
+    // check the appropriate bit in the filter
+    for (int n = 0; n < bloom->options->num_hash_functions; n++)
+    {
+        int hash_val = bloom_filter_hash(bloom->options, data, n);
 
-    return VPR_STATUS_SUCCESS;
+        // check the bit corresponding to this hash value
+        uint8_t* ptr = (uint8_t*)bloom->bitmap;
+        if (!(ptr[hash_val / 8] & 1 << (hash_val % 8)))
+        {
+            return false;
+        }
+    }
+
+    // it's probably in the set :-)
+    return true;
 }

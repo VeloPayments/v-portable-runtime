@@ -47,30 +47,23 @@ TEST_F(bloom_filter_test, init_test)
     dispose((disposable_t*)&bloom);
 }
 
-TEST_F(bloom_filter_test, add_item_test)
+TEST_F(bloom_filter_test, simple_add_item_test)
 {
     bloom_filter bloom;
 
     ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
-    printf("size of bitmap: %i bitmap: %p\n", (int)options.size_in_bytes, bloom.bitmap);
 
     const char* data = "add me to the bloom filter!";
 
     // initially that is NOT in the filter
     EXPECT_FALSE(bloom_filter_contains_item(&bloom, data));
 
-    // TEMP
-    printf("max hv: %lu\n", ((uint64_t)1 << 32) - 1);
-    uint64_t hv = bloom_filter_hash(&options, data, 0);
-    printf("    hv: %lu\n", hv);
-
-    // END TEMP
 
     ASSERT_EQ(bloom_filter_add_item(&bloom, data), 0);
 
     // now the item should be in the filter
     // (no false positives possible when its the only item!)
-    //EXPECT_TRUE(bloom_filter_contains_item(&bloom, data));
+    EXPECT_TRUE(bloom_filter_contains_item(&bloom, data));
 
     //dispose of our list
     dispose((disposable_t*)&bloom);
