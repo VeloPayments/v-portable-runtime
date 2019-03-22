@@ -23,8 +23,8 @@ unsigned int bloom_filter_hash(bloom_filter_options_t* options, const void* data
     MODEL_ASSERT(NULL != data);
     MODEL_ASSERT(n >= 0);
 
-    unsigned int hv1 = options->hash_function_1(data);
-    unsigned int hv2 = options->hash_function_2(data);
+    uint64_t hv1 = options->hash_function_1(data);
+    uint64_t hv2 = options->hash_function_2(data);
 
     // the returned answer needs to be modulo the number of bits in the filter
     unsigned int m = options->size_in_bytes * 8;

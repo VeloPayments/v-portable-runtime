@@ -12,8 +12,9 @@
 #include <vpr/parameters.h>
 
 /* forward decls for internal methods */
-static uint64_t djb2(const void*);
+//static uint64_t djb2(const void*);
 static uint64_t sdbm(const void*);
+static uint64_t jenkins(const void* data);
 
 int bloom_filter_options_init(bloom_filter_options_t* options,
     allocator_options_t* alloc_opts,
@@ -26,7 +27,7 @@ int bloom_filter_options_init(bloom_filter_options_t* options,
 
     return bloom_filter_options_init_ex(
         options, alloc_opts, size_in_bytes, num_hash_functions,
-        &djb2, &sdbm);
+        &sdbm, &jenkins);
 }
 
 
@@ -37,7 +38,7 @@ int bloom_filter_options_init(bloom_filter_options_t* options,
  *
  * \returns The 64 bit hash signature of the input data
  */
-static uint64_t djb2(const void* data)
+/*static uint64_t djb2(const void* data)
 {
     uint8_t* ptr = (uint8_t*)data;
 
@@ -50,7 +51,7 @@ static uint64_t djb2(const void* data)
     }
 
     return hash;
-}
+}*/
 
 /**
  * An implementation of the sdbm hash algorithm
@@ -71,6 +72,26 @@ static uint64_t sdbm(const void* data)
         hash = c + (hash << 6) + (hash << 16) - hash;
     }
 
+
+    return hash;
+}
+
+static uint64_t jenkins(const void* data)
+{
+    uint8_t* ptr = (uint8_t*)data;
+
+    uint64_t hash = 0;
+
+    while (*ptr)
+    {
+        hash += *ptr;
+        hash += (hash << 10);
+        hash ^= (hash >> 6);
+        ++ptr;
+    }
+    hash += (hash << 3);
+    hash ^= (hash >> 11);
+    hash += (hash << 15);
 
     return hash;
 }

@@ -56,22 +56,30 @@ TEST(hamming_distance_test, test_utility_function)
 
 TEST_F(bloom_filter_hash_test, hash_func1_distribution_test)
 {
+    printf("\ntesting hash function 1...\n");
     test_hash_function(options.hash_function_1);
 }
 
 TEST_F(bloom_filter_hash_test, hash_func2_distribution_test)
 {
+    printf("\ntesting hash function 2...\n");
     test_hash_function(options.hash_function_2);
 }
 
 TEST_F(bloom_filter_hash_test, hash_function_interdependence)
 {
+    printf("\ntesting hash function interdependence...\n");
     // the idea here is that the two hash functions should be
     // unrelated, and therefore produce hashed values for the
     // same input that are, on average, 32 bits apart
 
     const int n = 10000;
     long total_distance = 0L;
+    int bits_differ[64];
+    for (int i = 0; i < 64; i++)
+    {
+        bits_differ[i] = 0;
+    }
 
     for (int i = 0; i < n; i++)
     {
@@ -85,11 +93,28 @@ TEST_F(bloom_filter_hash_test, hash_function_interdependence)
         uint64_t hash_val2 = options.hash_function_2(buffer);
 
         total_distance += hamming_distance(hash_val1, hash_val2);
+
+        // test which bits are different
+        uint64_t flipped = hash_val1 ^ hash_val2;
+        for (int j = 0; j < 64; j++)
+        {
+            if (flipped & ((uint64_t)1 << j))
+            {
+                ++bits_differ[j];
+            }
+        }
     }
 
     double mean_distance = (double)total_distance / n;
-    EXPECT_GE(mean_distance, 27.0);
-    EXPECT_LE(mean_distance, 37.0);
+    printf("\tmean hamming distance: %0.2f\n", mean_distance);
+    EXPECT_GE(mean_distance, 30.0);
+    EXPECT_LE(mean_distance, 34.0);
+
+    printf("\n\tflipped bit frequency:\n");
+    for (int i = 0; i < 64; i++)
+    {
+        printf("\tbit %i ==> %0.2f\n", i, (double)bits_differ[i] / n);
+    }
 }
 
 TEST_F(bloom_filter_hash_test, basic_test)
@@ -111,11 +136,12 @@ TEST_F(bloom_filter_hash_test, basic_test)
 
     for (int i = 0; i < n; i++)
     {
+        // verify our hash values aren't changing
         ASSERT_EQ((unsigned int)options.hash_function_1(buf), hv1);
         ASSERT_EQ((unsigned int)options.hash_function_2(buf), hv2);
 
+        // which bit do we set?
         unsigned int bit = bloom_filter_hash(&options, buf, i);
-
         ASSERT_LT(bit, bits_in_filter);
 
         // do I always get the same bit?
@@ -124,17 +150,16 @@ TEST_F(bloom_filter_hash_test, basic_test)
             ASSERT_EQ(bloom_filter_hash(&options, buf, i), bit);
         }
 
-        bits_to_set[bit]++;
+        ++bits_to_set[bit];
     }
 
-    // TODO: would expect an even distribution between
-    // the bits, approx n / bits_in_filter, +/- 3x?
+    // would expect an even distribution between the bits
     // for now just make sure they were all used
-    for (unsigned int i = 0; i < bits_in_filter; i++)
+    /*for (unsigned int i=0; i<bits_in_filter; i++)
     {
-        //printf("bit: %i, num: %i\n", i, bits_to_set[i]);
+        printf("bit: %i, num: %i\n", i, bits_to_set[i]);
         EXPECT_NE(bits_to_set[i], 0u);
-    }
+    }*/
 }
 
 
@@ -194,14 +219,21 @@ static void test_hash_function(hash_func_t hash_func)
         hashed_vals[i] = hash_func(buffer);
     }
 
-    test_distribution(hashed_vals, n, 27.0, 37.0);
+    test_distribution(hashed_vals, n, 30.0, 34.0);
 }
 
 static void test_distribution(uint64_t* vals, int num_vals,
     double lower, double upper)
 {
+    printf("\ttesting distribution of bits...\n");
     long total_distance = 0L;
     int num_distances = 0;
+    int bits_set[64];
+    for (int i = 0; i < 64; i++)
+    {
+        bits_set[i] = 0;
+    }
+
     for (int i = 0; i < num_vals; i++)
     {
         for (int j = i + 1; j < num_vals; j++)
@@ -209,9 +241,24 @@ static void test_distribution(uint64_t* vals, int num_vals,
             total_distance += hamming_distance(vals[i], vals[j]);
             ++num_distances;
         }
+        // which bits are set?
+        for (int j = 0; j < 64; j++)
+        {
+            if (vals[i] & ((uint64_t)1 << j))
+            {
+                ++bits_set[j];
+            }
+        }
     }
 
     double mean_distance = (double)total_distance / num_distances;
+    printf("\tmean hamming distance: %0.2f\n", mean_distance);
     EXPECT_GE(mean_distance, lower);
     EXPECT_LE(mean_distance, upper);
+
+    printf("\n\tbit distribution:\n");
+    for (int i = 0; i < 64; i++)
+    {
+        printf("\tbit %i ==> %i\n", i, bits_set[i]);
+    }
 }

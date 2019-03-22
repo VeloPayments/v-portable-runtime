@@ -10,6 +10,7 @@
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/bloom_filter.h>
 
+static void verify_false_positive_error_rate(bloom_filter*, double, const int);
 static void generate_random_string(char*, int);
 
 class bloom_filter_test : public ::testing::Test {
@@ -87,7 +88,7 @@ TEST_F(bloom_filter_test, simple_add_item_test)
  *               = (62352 / 10000) ln 2
  *               = 4.3
  */
-TEST_F(bloom_filter_test, false_positive_error_rate_test)
+TEST_F(bloom_filter_test, false_positive_error_rate_5pct_test)
 {
     SetUp(7794, 5);
 
@@ -95,37 +96,42 @@ TEST_F(bloom_filter_test, false_positive_error_rate_test)
 
     ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
 
-    // generate n random items of 16 bytes each add each of those to the
-    // filter.  ask each time if the item is in the filter.  the answer
-    // should ALWAYS be yes.
-    const int n = 10000;
-
-    for (int i = 0; i < n; i++)
-    {
-        char buf[17];
-        generate_random_string(buf, 17);
-        bloom_filter_add_item(&bloom, buf);
-        ASSERT_TRUE(bloom_filter_contains_item(&bloom, buf));
-    }
-
-
-    // generate n more random items and ask if they are
-    // in the filter.  none really are.  if it says no, no problem.
-    // measure the false positive rate
-    int false_positives = 0;
-    for (int i = 0; i < n; i++)
-    {
-        char buf[17];
-        generate_random_string(buf, 17);
-        if (bloom_filter_contains_item(&bloom, buf))
-        {
-            ++false_positives;
-        }
-    }
-
-    printf("false positives: %i, %0.2f\n",
-        false_positives, (double)false_positives / n);
+    verify_false_positive_error_rate(&bloom, 0.05, 10000);
 }
+
+TEST_F(bloom_filter_test, false_positive_error_rate_1pct_test)
+{
+    SetUp(11981, 7);
+
+    bloom_filter bloom;
+
+    ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
+
+    verify_false_positive_error_rate(&bloom, 0.01, 10000);
+}
+
+TEST_F(bloom_filter_test, false_positive_error_rate_half_pct_test)
+{
+    SetUp(13785, 8);
+
+    bloom_filter bloom;
+
+    ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
+
+    verify_false_positive_error_rate(&bloom, 0.005, 10000);
+}
+
+TEST_F(bloom_filter_test, false_positive_error_rate_volume_test)
+{
+    SetUp(1198132, 7);
+
+    bloom_filter bloom;
+
+    ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
+
+    verify_false_positive_error_rate(&bloom, 0.01, 1000000);
+}
+
 
 static void generate_random_string(char* buf, int len)
 {
@@ -137,4 +143,34 @@ static void generate_random_string(char* buf, int len)
 
     // null terminate
     buf[len - 1] = 0;
+}
+
+static void verify_false_positive_error_rate(bloom_filter* bloom, double target,
+    const int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        char buf[17];
+        generate_random_string(buf, 17);
+        bloom_filter_add_item(bloom, buf);
+        ASSERT_TRUE(bloom_filter_contains_item(bloom, buf));
+    }
+
+
+    // generate n more random items and ask if they are
+    // in the filter.  none really are.  if it says no, no problem.
+    // measure the false positive rate
+    int false_positives = 0;
+    for (int i = 0; i < n; i++)
+    {
+        char buf[17];
+        generate_random_string(buf, 17);
+        if (bloom_filter_contains_item(bloom, buf))
+        {
+            ++false_positives;
+        }
+    }
+
+    printf("false positives: target: %0.4f, actual% 0.4f, raw: %i out of %i\n",
+        target, (double)false_positives / n, false_positives, n);
 }
