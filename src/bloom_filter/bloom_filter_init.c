@@ -15,16 +15,22 @@
 static void bloom_filter_dispose(void*);
 
 /**
- * \brief Initialize a bloom filter
+ * \brief Initialize a bloom filter.
  *
  * This method allows for the creation of a bloom filter.  Once initialized,
- * the list will have zero elements.
+ * the filter will be empty.
+
+ * When the function completes successfully, the caller owns this
+ * ::bloom_filter_t instance and must dispose of it by calling dispose()
+ * when it is no longer needed.
  *
  * \param options           The bloom filter options to use for this instance.
- * \param dll               The bloom filter to initialize.
+ * \param bloom             The bloom filter to initialize.
  *
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
+ *      - \ref VPR_ERROR_BLOOM_BITMAP_ALLOCATION_FAILED if memory could not
+ *        be allocated for the bloom filter.
  */
 int bloom_filter_init(bloom_filter_options_t* options, bloom_filter_t* bloom)
 {
@@ -51,7 +57,6 @@ int bloom_filter_init(bloom_filter_options_t* options, bloom_filter_t* bloom)
     memset(bloom->bitmap, 0, bloom->options->size_in_bytes);
 
 
-    //success
     return VPR_STATUS_SUCCESS;
 }
 

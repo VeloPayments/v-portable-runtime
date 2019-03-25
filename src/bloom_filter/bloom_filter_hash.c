@@ -11,10 +11,20 @@
 #include <cbmc/model_assert.h>
 #include <vpr/bloom_filter.h>
 
-// n is the "nth hash"
-// returned value will be the bit in the filter to set
+/**
+ * \brief Hash a null terminated input value to determine which bit of the
+ * filter to set.
+ *
+ * \param options           The bloom filter options to use for this instance.
+ * \param data              The null terminated data to hash.
+ * \param n                 The round of hashing represented by this operation.
+ *                          If the filter has K hash functions, this value
+ *                          should be in the range [0, K).
+ *
+ * \returns The position of the bit in the filter to set to 1.
+ */
 unsigned int bloom_filter_hash(bloom_filter_options_t* options, const void* data,
-    int n)
+    unsigned int n)
 {
     MODEL_ASSERT(NULL != options);
     MODEL_ASSERT(NULL != options->hash_function_1);

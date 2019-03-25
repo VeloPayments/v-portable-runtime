@@ -7,7 +7,9 @@
  * membership.  Note, bloom filters are probabilistic.  False positives are
  * possible, but false negatives are not.  Meaning, if the bloom filter
  * says an element is not in the set, it is certain it is not.  If the
- * bloom filter says an element is in the set, it "probably" is.
+ * bloom filter says an element is in the set, it "probably" is.  The
+ * probability of a false positive is a function of the size of the filter
+ * and the number of items inserted, and is configurable.
  *
  * \copyright 2019 Velo Payments, Inc.  All rights reserved.
  */
@@ -27,9 +29,37 @@ extern "C" {
 #endif  //__cplusplus
 
 
+/**
+ * \brief A hash function that hashes an arbitrary amount of data into a
+ * 64 bit value.
+ *
+ * The bloom filter uses two hash functions to generate an artibrary
+ * number of additional hash functions.  Good hash functions are an essential
+ * component of the bloom filter.
+ *
+ * To minimize the error rate of the filter, each hash function should
+ * 1) be completely determined by the input value (and therefore repeatable)
+ * 2) use the entire input value
+ * 3) uniformly distribute the hash values over the set of possible hash values
+ *
+ * Additionally, each hash function should be independent of the other.  Call
+ * these hash functions hf0 and hf1.  For any given input value iv, the value
+ * of each bit of hf0(iv) should have a 50% probability of being different
+ * than the same bit of hf1(iv).
+ *
+ * \param data   The null terminated data to be hashed.
+ *
+ * \returns a 64 bit hash value
+ */
 typedef uint64_t (*hash_func_t)(const void* data);
 
-
+/**
+ * \brief This structure contains the options used by a bloom filter instance.
+ *
+ * User code will create an options structure using the
+ * bloom_filter_options_init() method declared below.  When this set of options
+ * is no longer required, it should be disposed using dispose().
+ */
 typedef struct bloom_filter_options
 {
 
@@ -57,8 +87,14 @@ typedef struct bloom_filter_options
      */
     int num_hash_functions;
 
+    /**
+     * \brief The first of two hash functions.
+     */
     hash_func_t hash_function_1;
 
+    /**
+     * \brief The second of two hash functions.
+     */
     hash_func_t hash_function_2;
 
 
@@ -66,10 +102,10 @@ typedef struct bloom_filter_options
 
 /**
  * \brief This macro defines the model check property for a valid
- * doubly_linked_list_options_t structure.
+ * bloom_filter_options_t structure.
  */
 #define MODEL_PROP_VALID_BLOOM_FILTER_OPTIONS(options) \
-    (NULL != options && NULL != (options)->hdr.dispose && NULL != (options)->alloc_opts && (options)->size > 0 && NULL != (options)->hash_function_1 && NULL != (options)->hash_function_2)
+    (NULL != options && NULL != (options)->hdr.dispose && NULL != (options)->alloc_opts && (options)->size_in_bytes > 0 && NULL != (options)->hash_function_1 && NULL != (options)->hash_function_2)
 
 
 /**
@@ -90,8 +126,7 @@ typedef struct bloom_filter
 
 
     /**
-     * \brief Opaque pointer to the bitfield used to test
-     * membership in a set.
+     * \brief Opaque pointer to the bitfield used to test membership in a set.
      */
     void* bitmap;
 
@@ -115,13 +150,60 @@ int bloom_filter_options_init_ex(bloom_filter_options_t* options,
     int num_hash_functions, hash_func_t hash_function_1,
     hash_func_t hash_function_2);
 
+/**
+ * \brief Initialize a bloom filter.
+ *
+ * This method allows for the creation of a bloom filter.  Once initialized,
+ * the filter will be empty.
+
+ * When the function completes successfully, the caller owns this
+ * ::bloom_filter_t instance and must dispose of it by calling dispose()
+ * when it is no longer needed.
+ *
+ * \param options           The bloom filter options to use for this instance.
+ * \param bloom             The bloom filter to initialize.
+ *
+ * \returns a status code indicating success or failure.
+ *      - \ref VPR_STATUS_SUCCESS if successful.
+ *      - \ref VPR_ERROR_BLOOM_BITMAP_ALLOCATION_FAILED if memory could not
+ *        be allocated for the bloom filter.
+ */
 int bloom_filter_init(bloom_filter_options_t* options, bloom_filter_t* bloom);
 
+/**
+ * \brief Hash a null terminated input value to determine which bit of the
+ * filter to set.
+ *
+ * \param options           The bloom filter options to use for this instance.
+ * \param data              The null terminated data to hash.
+ * \param n                 The round of hashing represented by this operation.
+ *                          If the filter has K hash functions, this value
+ *                          should be in the range [0, K).
+ *
+ * \returns The position of the bit in the filter to set to 1.
+ */
 unsigned int bloom_filter_hash(bloom_filter_options_t* options, const void* data,
-    int n);
+    unsigned int n);
 
+/**
+ * \brief Add an item to a bloom filter.
+ *
+ * \param bloom             The bloom filter.
+ * \param data              The null terminated data to add to the filter.
+ *
+ * \returns a status code indicating success or failure.
+ *      - \ref VPR_STATUS_SUCCESS if successful.
+ */
 int bloom_filter_add_item(bloom_filter_t* bloom, const void* data);
 
+/**
+ * \brief Query a bloom filter to determine if an item has been added.
+ *
+ * \param bloom             The bloom filter.
+ * \param data              The null terminated data to query the filter for.
+ *
+ * \returns a boolean value indicating if the data is present in the filter.
+ */
 _Bool bloom_filter_contains_item(bloom_filter_t* bloom, const void* data);
 
 /* make this header C++ friendly. */

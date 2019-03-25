@@ -9,8 +9,15 @@
 #include <string.h>
 #include <cbmc/model_assert.h>
 #include <vpr/bloom_filter.h>
-#include <vpr/parameters.h>
 
+/**
+ * \brief Query a bloom filter to determine if an item has been added.
+ *
+ * \param bloom             The bloom filter.
+ * \param data              The null terminated data to query the filter for.
+ *
+ * \returns a boolean value indicating if the data is present in the filter.
+ */
 _Bool bloom_filter_contains_item(bloom_filter_t* bloom, const void* data)
 {
     MODEL_ASSERT(NULL != bloom);

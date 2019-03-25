@@ -6,12 +6,19 @@
  * \copyright 2019 Velo Payments, Inc.  All rights reserved.
  */
 
-#include <stdio.h>  // TODO: temporary
 #include <string.h>
 #include <cbmc/model_assert.h>
 #include <vpr/bloom_filter.h>
-#include <vpr/parameters.h>
 
+/**
+ * \brief Add an item to a bloom filter.
+ *
+ * \param bloom             The bloom filter.
+ * \param data              The null terminated data to add to the filter.
+ *
+ * \returns a status code indicating success or failure.
+ *      - \ref VPR_STATUS_SUCCESS if successful.
+ */
 int bloom_filter_add_item(bloom_filter_t* bloom, const void* data)
 {
     MODEL_ASSERT(NULL != bloom);
