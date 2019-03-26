@@ -172,7 +172,7 @@ typedef struct bloom_filter
  * The target_error_rate is the desired rate of false positives, expressed
  * as a percentage in the range (0,1).  The actual error rate is a function
  * of the number of expected entries and the size of the filter.  If the
- * space required fo meet the target error rate is below the specified
+ * space required to meet the target error rate is below the specified
  * max_size_in_bytes, then the expected error rate will match the
  * target_error_rate.  If not, the expected error rate will be higher.
  *

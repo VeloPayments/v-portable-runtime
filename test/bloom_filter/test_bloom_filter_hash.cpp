@@ -148,12 +148,11 @@ TEST_F(bloom_filter_hash_test, basic_test)
     const int n = 10000;  // number of insertions
 
     // generate a string to hash
-    char buf[32];
-    generate_random_string(buf, 32);
+    const char* data = "this is some test data to be added to the filter.";
 
     // generate the hash values
-    uint64_t hv1 = options.hash_function_1(buf);
-    uint64_t hv2 = options.hash_function_2(buf);
+    uint64_t hv1 = options.hash_function_1(data);
+    uint64_t hv2 = options.hash_function_2(data);
 
     unsigned int bits_in_filter = options.size_in_bytes * 8;
     int bits_to_set[bits_in_filter];
@@ -165,30 +164,30 @@ TEST_F(bloom_filter_hash_test, basic_test)
     for (int i = 0; i < n; i++)
     {
         // verify our hash values aren't changing
-        ASSERT_EQ(options.hash_function_1(buf), hv1);
-        ASSERT_EQ(options.hash_function_2(buf), hv2);
+        ASSERT_EQ(options.hash_function_1(data), hv1);
+        ASSERT_EQ(options.hash_function_2(data), hv2);
 
         // which bit do we set?
-        unsigned int bit = bloom_filter_hash(&options, buf, i);
+        unsigned int bit = bloom_filter_hash(&options, data, i);
         ASSERT_LT(bit, bits_in_filter);
 
         // do I always get the same bit?
         for (int j = 0; j < 100; j++)
         {
-            ASSERT_EQ(bloom_filter_hash(&options, buf, i), bit);
+            ASSERT_EQ(bloom_filter_hash(&options, data, i), bit);
         }
 
         bits_to_set[bit]++;
     }
 
     // each bit should be set approximately n / bits_in_filter times.
-    /*int lower = (double)n / bits_in_filter * 0.9;
+    int lower = (double)n / bits_in_filter * 0.9;
     int upper = (double)n / bits_in_filter * 1.1;
-    for (unsigned  int i=0; i<bits_in_filter; i++)
+    for (unsigned int i = 0; i < bits_in_filter; i++)
     {
         EXPECT_GE(bits_to_set[i], lower);
         EXPECT_LE(bits_to_set[i], upper);
-    }*/
+    }
 }
 
 /**
