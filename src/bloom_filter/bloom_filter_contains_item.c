@@ -27,7 +27,7 @@ _Bool bloom_filter_contains_item(bloom_filter_t* bloom, const void* data)
 
     // compute the hash of the data for each hash function, and
     // check the appropriate bit in the filter
-    for (int n = 0; n < bloom->options->num_hash_functions; n++)
+    for (unsigned int n = 0; n < bloom->options->num_hash_functions; n++)
     {
         unsigned int hash_val = bloom_filter_hash(bloom->options, data, n);
 

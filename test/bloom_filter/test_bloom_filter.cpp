@@ -15,11 +15,13 @@ static void generate_random_string(char*, int);
 
 class bloom_filter_test : public ::testing::Test {
 protected:
-    void SetUp(size_t size_in_bytes, int num_hash_functions)
+    void SetUp(unsigned int num_expected_entries, float target_error_rate,
+        size_t max_size_in_bytes)
     {
         malloc_allocator_options_init(&alloc_opts);
-        bloom_filter_options_init(&options, &alloc_opts, size_in_bytes,
-            num_hash_functions);
+        bloom_filter_options_init(
+            &options, &alloc_opts, num_expected_entries, target_error_rate,
+            max_size_in_bytes);
         srand(time(0));  // seed rng with current time
     }
 
@@ -33,15 +35,30 @@ protected:
     bloom_filter_options_t options;
 };
 
+/**
+ * Test the bloom filter is initialized properly.
+ */
 TEST_F(bloom_filter_test, init_test)
 {
-    SetUp(4, 4);
+    // set up a hash function with 1000 expected entries, a 10% error rate,
+    // and maximum size of 1024 bytes.
+    SetUp(1000, 0.1, 1024);
     bloom_filter bloom;
 
     ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
 
-    EXPECT_EQ(bloom.options->size_in_bytes, (size_t)4);
+    ASSERT_EQ(bloom.options->num_expected_entries, 1000u);
+
+    // the actual size of the bloom filter should be 600 bytes
+    EXPECT_EQ(bloom.options->size_in_bytes, (size_t)600);
     EXPECT_NE(bloom.bitmap, nullptr);
+
+    // we should use four hash functions
+    EXPECT_EQ(bloom.options->num_hash_functions, 4u);
+
+    // we have enough space to meet our target error rate
+    EXPECT_GE(bloom.options->expected_error_rate, 0.09);
+    EXPECT_LE(bloom.options->expected_error_rate, 0.11);
 
     // verify the bitmap is initialized to all 0s
     char testblock[bloom.options->size_in_bytes];
@@ -53,9 +70,50 @@ TEST_F(bloom_filter_test, init_test)
     dispose((disposable_t*)&bloom);
 }
 
+/**
+ * Test the bloom filter initialization when there is not enough space
+ * to reach the desired target error rate.
+ *
+ * A filter with 1000 items and an error rate of 0.1 requires 600 bytes.
+ * In this case we will only allow 300 bytes.
+ */
+TEST_F(bloom_filter_test, not_enough_space)
+{
+    SetUp(1000, 0.1, 300);
+    bloom_filter bloom;
+
+    ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
+
+    ASSERT_EQ(bloom.options->num_expected_entries, 1000u);
+
+    EXPECT_EQ(bloom.options->size_in_bytes, (size_t)300);
+    EXPECT_NE(bloom.bitmap, nullptr);
+
+    // we should use four hash functions
+    EXPECT_EQ(bloom.options->num_hash_functions, 4u);
+
+    // the expected error rate will be higher than our target
+    EXPECT_GT(bloom.options->expected_error_rate, 0.1);
+
+    // verify the bitmap is initialized to all 0s
+    char testblock[bloom.options->size_in_bytes];
+    memset(testblock, 0, bloom.options->size_in_bytes);
+    EXPECT_EQ(
+        memcmp(testblock, bloom.bitmap, bloom.options->size_in_bytes), 0);
+
+    //dispose of our list
+    dispose((disposable_t*)&bloom);
+}
+
+
+/**
+ * Test that we can add an item and query for it.
+ */
 TEST_F(bloom_filter_test, simple_add_item_test)
 {
-    SetUp(4, 4);
+    // set up a hash function with 1000 expected entries, a 10% error rate,
+    // and maximum size of 1024 bytes.
+    SetUp(1000, 0.1, 1024);
     bloom_filter bloom;
 
     ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
@@ -90,40 +148,60 @@ TEST_F(bloom_filter_test, simple_add_item_test)
  */
 TEST_F(bloom_filter_test, false_positive_error_rate_5pct_test)
 {
-    SetUp(7794, 5);
+    SetUp(10000, 0.05, 8192);
 
     bloom_filter bloom;
 
     ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
+
+    EXPECT_EQ(bloom.options->size_in_bytes, (size_t)7795);
+    EXPECT_EQ(bloom.options->num_hash_functions, 5u);
+
 
     verify_false_positive_error_rate(&bloom, 0.05, 10000);
 }
 
+/**
+ * Test the error rate with a fault tolerance of 0.01.
+ */
 TEST_F(bloom_filter_test, false_positive_error_rate_1pct_test)
 {
-    SetUp(11981, 7);
+    SetUp(10000, 0.01, 16384);
 
     bloom_filter bloom;
 
     ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
+
+    EXPECT_EQ(bloom.options->size_in_bytes, (size_t)11982);
+    EXPECT_EQ(bloom.options->num_hash_functions, 7u);
 
     verify_false_positive_error_rate(&bloom, 0.01, 10000);
 }
 
+/**
+ * Test the error rate with a fault tolerance of 0.005.
+ */
 TEST_F(bloom_filter_test, false_positive_error_rate_half_pct_test)
 {
-    SetUp(13785, 8);
+    SetUp(10000, 0.005, 16384);
 
     bloom_filter bloom;
 
     ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
 
+    EXPECT_EQ(bloom.options->size_in_bytes, (size_t)13785);
+    EXPECT_EQ(bloom.options->num_hash_functions, 8u);
+
     verify_false_positive_error_rate(&bloom, 0.005, 10000);
 }
 
+/**
+ * Test the error rate with a fault tolerance of 0.01 and
+ * one million insertions.
+ */
 TEST_F(bloom_filter_test, false_positive_error_rate_volume_test)
 {
-    SetUp(1198132, 7);
+    SetUp(1000000, 0.01, 1198132);  // ~1.2 mb
 
     bloom_filter bloom;
 
@@ -133,6 +211,9 @@ TEST_F(bloom_filter_test, false_positive_error_rate_volume_test)
 }
 
 
+/**
+ * Utility function to generate a null terminated random string.
+ */
 static void generate_random_string(char* buf, int len)
 {
     // generate random characters 1-255
@@ -145,32 +226,52 @@ static void generate_random_string(char* buf, int len)
     buf[len - 1] = 0;
 }
 
-static void verify_false_positive_error_rate(bloom_filter* bloom, double target,
-    const int n)
+/**
+ * Utility function to measure the false positive error rate and compare it
+ * to the expected error rate.
+ */
+static void verify_false_positive_error_rate(bloom_filter* bloom,
+    double target, const int n)
 {
-    for (int i = 0; i < n; i++)
-    {
-        char buf[17];
-        generate_random_string(buf, 17);
-        bloom_filter_add_item(bloom, buf);
-        ASSERT_TRUE(bloom_filter_contains_item(bloom, buf));
-    }
+    double lower = target * 0.7;
+    double upper = target * 1.3;
 
+    // since this test is probabilistic, we'll try it a few times
+    // before concluding something is broken
+    _Bool met_target = false;
+    int attempts = 0;
+    double false_positive_rate;
 
-    // generate n more random items and ask if they are
-    // in the filter.  none really are.  if it says no, no problem.
-    // measure the false positive rate
-    int false_positives = 0;
-    for (int i = 0; i < n; i++)
+    do
     {
-        char buf[17];
-        generate_random_string(buf, 17);
-        if (bloom_filter_contains_item(bloom, buf))
+        for (int i = 0; i < n; i++)
         {
-            ++false_positives;
+            char buf[17];
+            generate_random_string(buf, 17);
+            bloom_filter_add_item(bloom, buf);
+            ASSERT_TRUE(bloom_filter_contains_item(bloom, buf));
         }
-    }
 
-    printf("false positives: target: %0.4f, actual% 0.4f, raw: %i out of %i\n",
-        target, (double)false_positives / n, false_positives, n);
+        // generate n more random items and ask if they are
+        // in the filter.  none really are.  if it says no, no problem.
+        // measure the false positive rate
+        int false_positives = 0;
+        for (int i = 0; i < n; i++)
+        {
+            char buf[17];
+            generate_random_string(buf, 17);
+            if (bloom_filter_contains_item(bloom, buf))
+            {
+                ++false_positives;
+            }
+        }
+
+        false_positive_rate = (double)false_positives / n;
+        met_target = false_positive_rate >= lower &&
+            false_positive_rate <= upper;
+
+    } while (!met_target && ++attempts <= 3);
+
+    EXPECT_GE(false_positive_rate, lower);
+    EXPECT_LE(false_positive_rate, upper);
 }

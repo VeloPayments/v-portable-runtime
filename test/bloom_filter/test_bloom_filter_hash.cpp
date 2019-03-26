@@ -14,14 +14,18 @@
 static void generate_random_string(char*, int);
 static int hamming_distance(uint64_t, uint64_t);
 static void test_hash_function(hash_func_t);
-static void test_distribution(uint64_t*, int, double, double);
+static void test_distribution(uint64_t*, int);
 
 class bloom_filter_hash_test : public ::testing::Test {
 protected:
     void SetUp() override
     {
         malloc_allocator_options_init(&alloc_opts);
-        bloom_filter_options_init(&options, &alloc_opts, 4, 4);
+        bloom_filter_options_init(&options, &alloc_opts,
+            100,  // number of expected entries
+            0.1,  // target_error_rate
+            64  // max size in bytes
+        );
         srand(time(0));  // seed rng with current time
     }
 
@@ -35,7 +39,9 @@ protected:
     bloom_filter_options_t options;
 };
 
-// ensure our utility function to measure hamming distances is correct
+/**
+ * Test that the test utility function to measure hamming distances is correct.
+ */
 TEST(hamming_distance_test, test_utility_function)
 {
     ASSERT_EQ(hamming_distance(0, 0), 0);
@@ -54,25 +60,35 @@ TEST(hamming_distance_test, test_utility_function)
     ASSERT_EQ(hamming_distance(max32, max64), 32);
 }
 
-TEST_F(bloom_filter_hash_test, hash_func1_distribution_test)
+/**
+ * Test the hash functions for this filter by:
+ *
+ * 1) ensuring they are repeatable
+ * 2) ensuring they uniformly distributes hash values of the possible set of
+ * hash values.
+ */
+TEST_F(bloom_filter_hash_test, hash_func_distribution_test)
 {
-    printf("\ntesting hash function 1...\n");
     test_hash_function(options.hash_function_1);
-}
-
-TEST_F(bloom_filter_hash_test, hash_func2_distribution_test)
-{
-    printf("\ntesting hash function 2...\n");
     test_hash_function(options.hash_function_2);
 }
 
+/**
+ * Test that the hash function are independent of each other.
+ *
+ * The hash functions are deemed independent if:
+ *
+ * 1) They produce hash values that, on average, have a hamming distance
+ * of 32 bits given the same input.
+ *
+ * -and-
+ *
+ * 2) Each bit of a hash value produced by function 1 has a 50% probability
+ * of being different than the same bit of the hash value produced by
+ * function 2.
+ */
 TEST_F(bloom_filter_hash_test, hash_function_interdependence)
 {
-    printf("\ntesting hash function interdependence...\n");
-    // the idea here is that the two hash functions should be
-    // unrelated, and therefore produce hashed values for the
-    // same input that are, on average, 32 bits apart
-
     const int n = 10000;
     long total_distance = 0L;
     int bits_differ[64];
@@ -83,7 +99,6 @@ TEST_F(bloom_filter_hash_test, hash_function_interdependence)
 
     for (int i = 0; i < n; i++)
     {
-        // generate a random string
         int len = rand() % 100 + 2;
         char buffer[len];
         generate_random_string(buffer, len);
@@ -106,29 +121,42 @@ TEST_F(bloom_filter_hash_test, hash_function_interdependence)
     }
 
     double mean_distance = (double)total_distance / n;
-    printf("\tmean hamming distance: %0.2f\n", mean_distance);
-    EXPECT_GE(mean_distance, 30.0);
-    EXPECT_LE(mean_distance, 34.0);
+    EXPECT_GE(mean_distance, 31.0);
+    EXPECT_LE(mean_distance, 33.0);
 
-    printf("\n\tflipped bit frequency:\n");
+    int num_vals_40pct = n * 0.4;
+    int num_vals_60pct = n * 0.6;
+
     for (int i = 0; i < 64; i++)
     {
-        printf("\tbit %i ==> %0.2f\n", i, (double)bits_differ[i] / n);
+        EXPECT_GE(bits_differ[i], num_vals_40pct);
+        EXPECT_LE(bits_differ[i], num_vals_60pct);
     }
 }
 
+/**
+ * Test the hash generation function that uses the two core hash functions
+ * to generate an arbitrary number of hashes.  The generated hashes map input
+ * values to bits in the filter.
+ *
+ * In this test we ensure that the generated hash functions reliably map
+ * inputs to the same bit, and inputs are uniformly distributed to all bits
+ * in the filter.
+ */
 TEST_F(bloom_filter_hash_test, basic_test)
 {
-    int n = 10000;  // number of insertions
+    const int n = 10000;  // number of insertions
 
     // generate a string to hash
     char buf[32];
     generate_random_string(buf, 32);
-    unsigned int hv1 = options.hash_function_1(buf);
-    unsigned int hv2 = options.hash_function_2(buf);
+
+    // generate the hash values
+    uint64_t hv1 = options.hash_function_1(buf);
+    uint64_t hv2 = options.hash_function_2(buf);
 
     unsigned int bits_in_filter = options.size_in_bytes * 8;
-    unsigned int bits_to_set[bits_in_filter];
+    int bits_to_set[bits_in_filter];
     for (unsigned int i = 0; i < bits_in_filter; i++)
     {
         bits_to_set[i] = 0;
@@ -137,8 +165,8 @@ TEST_F(bloom_filter_hash_test, basic_test)
     for (int i = 0; i < n; i++)
     {
         // verify our hash values aren't changing
-        ASSERT_EQ((unsigned int)options.hash_function_1(buf), hv1);
-        ASSERT_EQ((unsigned int)options.hash_function_2(buf), hv2);
+        ASSERT_EQ(options.hash_function_1(buf), hv1);
+        ASSERT_EQ(options.hash_function_2(buf), hv2);
 
         // which bit do we set?
         unsigned int bit = bloom_filter_hash(&options, buf, i);
@@ -150,19 +178,22 @@ TEST_F(bloom_filter_hash_test, basic_test)
             ASSERT_EQ(bloom_filter_hash(&options, buf, i), bit);
         }
 
-        ++bits_to_set[bit];
+        bits_to_set[bit]++;
     }
 
-    // would expect an even distribution between the bits
-    // for now just make sure they were all used
-    /*for (unsigned int i=0; i<bits_in_filter; i++)
+    // each bit should be set approximately n / bits_in_filter times.
+    /*int lower = (double)n / bits_in_filter * 0.9;
+    int upper = (double)n / bits_in_filter * 1.1;
+    for (unsigned  int i=0; i<bits_in_filter; i++)
     {
-        printf("bit: %i, num: %i\n", i, bits_to_set[i]);
-        EXPECT_NE(bits_to_set[i], 0u);
+        EXPECT_GE(bits_to_set[i], lower);
+        EXPECT_LE(bits_to_set[i], upper);
     }*/
 }
 
-
+/**
+ * Utility function to generate a null terminated random string.
+ */
 static void generate_random_string(char* buf, int len)
 {
     // generate random characters 1-255
@@ -175,6 +206,9 @@ static void generate_random_string(char* buf, int len)
     buf[len - 1] = 0;
 }
 
+/**
+ * Utility function to measure the hamming distance between two 64-bit words.
+ */
 static int hamming_distance(uint64_t x, uint64_t y)
 {
     int dist = 0;
@@ -190,6 +224,13 @@ static int hamming_distance(uint64_t x, uint64_t y)
     return dist;
 }
 
+/**
+ * Test a hashing function by :
+ *
+ * 1) ensuring it is repeatable
+ * 2) ensuring it uniformly distributes hash values of the possible set of
+ * hash values.
+ */
 static void test_hash_function(hash_func_t hash_func)
 {
     const char* data = "this is some data that needs to be hashed.";
@@ -202,30 +243,30 @@ static void test_hash_function(hash_func_t hash_func)
         ASSERT_EQ(hash_func(data), hash_val);
     }
 
-    // calculate the average hamming distance.  You would expect, on average,
-    // half of the bits to flip from one key to the next.  The idea here is
-    // to get several random values, hash them, then for each hashed value
-    // measure the hamming distance to other values and ensure it is very
-    // close to the expected mean
-
+    // generate a large number of random values and ensure the corresponding
+    // hash values are uniformly distributed.
     const int n = 10000;
     uint64_t hashed_vals[n];
     for (int i = 0; i < n; i++)
     {
-        // generate a random length >= 2
         int len = rand() % 100 + 2;
         char buffer[len];
         generate_random_string(buffer, len);
         hashed_vals[i] = hash_func(buffer);
     }
 
-    test_distribution(hashed_vals, n, 30.0, 34.0);
+    test_distribution(hashed_vals, n);
 }
 
-static void test_distribution(uint64_t* vals, int num_vals,
-    double lower, double upper)
+/**
+ * Test the "bit distribution" of a set of 64 bit values.
+ *
+ * 1) Each bit should be set approximately 50% of the time.
+ * 2) The mean of all hamming distances should be close to 32 (half of 64).
+ *
+ */
+static void test_distribution(uint64_t* vals, int num_vals)
 {
-    printf("\ttesting distribution of bits...\n");
     long total_distance = 0L;
     int num_distances = 0;
     int bits_set[64];
@@ -252,13 +293,15 @@ static void test_distribution(uint64_t* vals, int num_vals,
     }
 
     double mean_distance = (double)total_distance / num_distances;
-    printf("\tmean hamming distance: %0.2f\n", mean_distance);
-    EXPECT_GE(mean_distance, lower);
-    EXPECT_LE(mean_distance, upper);
+    EXPECT_GE(mean_distance, 31.0);
+    EXPECT_LE(mean_distance, 33.0);
 
-    printf("\n\tbit distribution:\n");
+    int num_vals_40pct = num_vals * 0.4;
+    int num_vals_60pct = num_vals * 0.6;
+
     for (int i = 0; i < 64; i++)
     {
-        printf("\tbit %i ==> %i\n", i, bits_set[i]);
+        EXPECT_GE(bits_set[i], num_vals_40pct);
+        EXPECT_LE(bits_set[i], num_vals_60pct);
     }
 }

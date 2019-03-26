@@ -74,6 +74,11 @@ typedef struct bloom_filter_options
     allocator_options_t* alloc_opts;
 
     /**
+     * \brief The number of expected entries into the filter.
+     */
+    unsigned int num_expected_entries;
+
+    /**
      * \brief The size in bytes of the filter.
      *
      * This is the "m" value in the literature, though most references
@@ -82,18 +87,32 @@ typedef struct bloom_filter_options
     size_t size_in_bytes;
 
     /**
-     * \brief The number of hash functions to use when storing an item
-     * in the set.  This is the "k" value in the literature.
+     * \brief The number of hash functions to use when storing an item in the
+     * filter.
+     *
+     * This is the "k" value in the literature.  The value should be a small
+     * positive value.  Each of the K hash functions is derived using two
+     * supplied hash functions.
      */
-    int num_hash_functions;
+    unsigned int num_hash_functions;
 
     /**
-     * \brief The first of two hash functions.
+     * \brief The expeted rate of false positives, expressed as a percentage
+     * in the range (0,1).
+     *
+     * This is the "p" value in the literature.
+     */
+    float expected_error_rate;
+
+    /**
+     * \brief The first of two hash functions, used to derive additional hash
+     * functions.
      */
     hash_func_t hash_function_1;
 
     /**
-     * \brief The second of two hash functions.
+     * \brief The second of two hash functions, used to derive additional hash
+     * functions.
      */
     hash_func_t hash_function_2;
 
@@ -105,7 +124,7 @@ typedef struct bloom_filter_options
  * bloom_filter_options_t structure.
  */
 #define MODEL_PROP_VALID_BLOOM_FILTER_OPTIONS(options) \
-    (NULL != options && NULL != (options)->hdr.dispose && NULL != (options)->alloc_opts && (options)->size_in_bytes > 0 && NULL != (options)->hash_function_1 && NULL != (options)->hash_function_2)
+    (NULL != options && NULL != (options)->hdr.dispose && NULL != (options)->alloc_opts && (options)->size_in_bytes > 0 && (options)->num_hash_functions > 0 && (options)->expected_error_rate >= 0.0 && (options)->expected_error_rate <= 1.0 && NULL != (options)->hash_function_1 && NULL != (options)->hash_function_2)
 
 
 /**
@@ -140,15 +159,78 @@ typedef struct bloom_filter
     (NULL != bloom && NULL != (bloom)->hdr.dispose && NULL != (bloom)->options && NULL != (bloom)->bitmap)
 
 
+/**
+ * \brief Initialize a bloom filter options using default hash functions.
+ *
+ * Initialize the bloom filter options using default hash functions.
+ * Those hash functions are sdbm and jenkins.  The num_expected_entries
+ * parameter should be a reasonable estimate of the upper bound of entries
+ * that will be inserted into the filter.  While the filter will continue
+ * to operate if more entries are inserted, the error rate will rise above
+ * the target error rate.
+ *
+ * The target_error_rate is the desired rate of false positives, expressed
+ * as a percentage in the range (0,1).  The actual error rate is a function
+ * of the number of expected entries and the size of the filter.  If the
+ * space required fo meet the target error rate is below the specified
+ * max_size_in_bytes, then the expected error rate will match the
+ * target_error_rate.  If not, the expected error rate will be higher.
+ *
+ * \param options                  The bloom filter options to initialize.
+ * \param alloc_opts               The allocator options to use.
+ * \param num_expected_entries     The number of items that are expected to be
+ *                                 added to the filter.
+ * \param target_error_rate        The desired error rate for false positives.
+ * \param max_size_in_bytes        The maximum size the filter is allowed to
+ *                                 be.
+ *
+ * \returns a status code indicating success or failure.
+ *      - \ref VPR_STATUS_SUCCESS if successful.
+ */
 int bloom_filter_options_init(bloom_filter_options_t* options,
-    allocator_options_t* alloc_opts, size_t size_in_bytes,
-    int num_hash_functions);
+    allocator_options_t* alloc_opts, unsigned int num_expected_entries,
+    float target_error_rate, size_t max_size_in_bytes);
 
 
+/**
+ * \brief Initialize a bloom filter.
+ *
+ * Initialize the bloom filter options using user supplied hash functions.
+ * The num_expected_entries parameter should be a reasonable estimate of the
+ * upper bound of entries that will be inserted into the filter.  While the
+ * filter will continue to operate if more entries are inserted, the error
+ * rate will rise above the target error rate.
+ *
+ * The target_error_rate is the desired rate of false positives, expressed
+ * as a percentage in the range (0,1).  The actual error rate is a function
+ * of the number of expected entries and the size of the filter.  If the
+ * space required fo meet the target error rate is below the specified
+ * max_size_in_bytes, then the expected error rate will match the
+ * target_error_rate.  If not, the expected error rate will be higher.
+ *
+ * The supplied hash functions hash_function_1 and hash_function_2 should be
+ * capable of hashing a null terminated input value of arbitrary size and
+ * producing a 64 bit hashed value.  Hashing is an essential component of the
+ * filter; it is imperative that the supplied hash functions be high quality
+ * and independent of each other.
+ *
+ * \param options                  The bloom filter options to initialize.
+ * \param alloc_opts               The allocator options to use.
+ * \param num_expected_entries     The number of items that are expected to be
+ *                                 added to the filter.
+ * \param target_error_rate        The desired error rate for false positives.
+ * \param max_size_in_bytes        The maximum size the filter is allowed to
+ *                                 be.
+ * \param hash_function_1          A hash function
+ * \param hash_function_2          A hash function
+ *
+ * \returns a status code indicating success or failure.
+ *      - \ref VPR_STATUS_SUCCESS if successful.
+ */
 int bloom_filter_options_init_ex(bloom_filter_options_t* options,
-    allocator_options_t* alloc_opts, size_t size_in_bytes,
-    int num_hash_functions, hash_func_t hash_function_1,
-    hash_func_t hash_function_2);
+    allocator_options_t* alloc_opts, unsigned int num_expected_entries,
+    float target_error_rate, size_t max_size_in_bytes,
+    hash_func_t hash_function_1, hash_func_t hash_function_2);
 
 /**
  * \brief Initialize a bloom filter.

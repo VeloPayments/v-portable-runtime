@@ -28,9 +28,9 @@ int bloom_filter_add_item(bloom_filter_t* bloom, const void* data)
 
     // compute the hash of the data for each hash function, and
     // set the appropriate bit in the filter
-    for (int n = 0; n < bloom->options->num_hash_functions; n++)
+    for (unsigned int n = 0; n < bloom->options->num_hash_functions; n++)
     {
-        int hash_val = bloom_filter_hash(bloom->options, data, n);
+        unsigned int hash_val = bloom_filter_hash(bloom->options, data, n);
 
         // set the bit corresponding to hash_val to 1
         uint8_t* ptr = (uint8_t*)bloom->bitmap;
