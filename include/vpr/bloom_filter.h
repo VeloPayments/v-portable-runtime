@@ -97,7 +97,7 @@ typedef struct bloom_filter_options
     unsigned int num_hash_functions;
 
     /**
-     * \brief The expeted rate of false positives, expressed as a percentage
+     * \brief The expected rate of false positives, expressed as a percentage
      * in the range (0,1).
      *
      * This is the "p" value in the literature.
