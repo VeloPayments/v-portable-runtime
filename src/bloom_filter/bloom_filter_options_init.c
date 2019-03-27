@@ -12,8 +12,8 @@
 #include <vpr/parameters.h>
 
 /* forward decls for internal methods */
-static uint64_t sdbm(const void*);
-static uint64_t jenkins(const void* data);
+static uint64_t sdbm(const void*, size_t);
+static uint64_t jenkins(const void*, size_t);
 
 /**
  * \brief Initialize a bloom filter options using default hash functions.
@@ -63,22 +63,23 @@ int bloom_filter_options_init(
 /**
  * An implementation of the sdbm hash algorithm
  *
- * \param                   The null terminated data to hash
+ * \param data               The data to hash
+ * \param len                The length of the data to be hashed.
  *
  * \returns The 64 bit hash signature of the input data
  */
-static uint64_t sdbm(const void* data)
+static uint64_t sdbm(const void* data, size_t len)
 {
     uint8_t* ptr = (uint8_t*)data;
 
     uint64_t hash = 5381;
-    uint8_t c;
 
-    while ((c = *ptr++))
+    MODEL_ASSUME(len < 3);
+    for (unsigned int i = 0; i < len; i++)
     {
+        uint8_t c = *ptr++;
         hash = c + (hash << 6) + (hash << 16) - hash;
     }
-
 
     return hash;
 }
@@ -86,23 +87,25 @@ static uint64_t sdbm(const void* data)
 /**
  * An implementation of the jenkins hash algorithm
  *
- * \param                   The null terminated data to hash
+ * \param data               The data to hash
+ * \param len                The length of the data to be hashed.
  *
  * \returns The 64 bit hash signature of the input data
  */
-static uint64_t jenkins(const void* data)
+static uint64_t jenkins(const void* data, size_t len)
 {
     uint8_t* ptr = (uint8_t*)data;
 
     uint64_t hash = 0;
-    uint8_t c;
 
-    while ((c = *ptr++))
+    MODEL_ASSUME(len < 3);
+    for (unsigned int i = 0; i < len; i++)
     {
-        hash += c;
+        hash += *ptr++;
         hash += (hash << 10);
         hash ^= (hash >> 6);
     }
+
     hash += (hash << 3);
     hash ^= (hash >> 11);
     hash += (hash << 15);

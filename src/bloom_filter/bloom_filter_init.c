@@ -54,7 +54,7 @@ int bloom_filter_init(bloom_filter_options_t* options, bloom_filter_t* bloom)
     }
 
     // clear the bitmap
-    memset(bloom->bitmap, 0, bloom->options->size_in_bytes);
+    MODEL_EXEMPT(memset(bloom->bitmap, 0, bloom->options->size_in_bytes));
 
 
     return VPR_STATUS_SUCCESS;

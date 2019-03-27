@@ -14,11 +14,13 @@
  * \brief Query a bloom filter to determine if an item has been added.
  *
  * \param bloom             The bloom filter.
- * \param data              The null terminated data to query the filter for.
+ * \param data              The data to query the filter for.
+ * \param len               The size of the data to query for.
  *
  * \returns a boolean value indicating if the data is present in the filter.
  */
-_Bool bloom_filter_contains_item(bloom_filter_t* bloom, const void* data)
+_Bool bloom_filter_contains_item(bloom_filter_t* bloom, const void* data,
+    size_t len)
 {
     MODEL_ASSERT(NULL != bloom);
     MODEL_ASSERT(NULL != bloom->options);
@@ -29,7 +31,8 @@ _Bool bloom_filter_contains_item(bloom_filter_t* bloom, const void* data)
     // check the appropriate bit in the filter
     for (unsigned int n = 0; n < bloom->options->num_hash_functions; n++)
     {
-        unsigned int hash_val = bloom_filter_hash(bloom->options, data, n);
+        unsigned int hash_val = bloom_filter_hash(
+            bloom->options, data, len, n);
 
         // check the bit corresponding to this hash value
         uint8_t* ptr = (uint8_t*)bloom->bitmap;

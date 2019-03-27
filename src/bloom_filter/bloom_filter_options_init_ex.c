@@ -74,9 +74,9 @@ int bloom_filter_options_init_ex(
 
     // given the number of expected entries and the target error rate,
     // calculate the required size of the filter in bits.
-    unsigned int m =
-        ceil((num_expected_entries * log(target_error_rate)) /
-            log(1 / pow(2, log(2))));
+    unsigned int m = max_size_in_bytes * 8;
+    MODEL_EXEMPT(m = ceil((num_expected_entries * log(target_error_rate)) /
+                     log(1 / pow(2, log(2)))));
     size_t m_bytes;
     if (m % 8)
     {
@@ -92,15 +92,17 @@ int bloom_filter_options_init_ex(
 
 
     // calculate the number of hash functions
-    options->num_hash_functions =
-        ceil(((double)m / num_expected_entries) * log(2));
+    options->num_hash_functions = 1;
+    MODEL_EXEMPT(options->num_hash_functions =
+                     ceil(((double)m / num_expected_entries) * log(2)));
 
     // calculate the expected error rate, which may not be the same as the
     // target if we couldn't allocate enough space.
-    options->expected_error_rate = pow(1 -
-            exp(-(float)options->num_hash_functions /
-                ((float)options->size_in_bytes * 8 / num_expected_entries)),
-        options->num_hash_functions);
+    options->expected_error_rate = target_error_rate;
+    MODEL_EXEMPT(options->expected_error_rate = pow(1 -
+                         exp(-(float)options->num_hash_functions /
+                             ((float)options->size_in_bytes * 8 / num_expected_entries)),
+                     options->num_hash_functions));
 
     return VPR_STATUS_SUCCESS;
 }

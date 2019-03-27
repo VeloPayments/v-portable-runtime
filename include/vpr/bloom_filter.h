@@ -47,11 +47,12 @@ extern "C" {
  * of each bit of hf0(iv) should have a 50% probability of being different
  * than the same bit of hf1(iv).
  *
- * \param data   The null terminated data to be hashed.
+ * \param data   The data to be hashed.
+ * \param len    The length of the data to be hashed.
  *
  * \returns a 64 bit hash value
  */
-typedef uint64_t (*hash_func_t)(const void* data);
+typedef uint64_t (*hash_func_t)(const void* data, size_t len);
 
 /**
  * \brief This structure contains the options used by a bloom filter instance.
@@ -125,7 +126,6 @@ typedef struct bloom_filter_options
  */
 #define MODEL_PROP_VALID_BLOOM_FILTER_OPTIONS(options) \
     (NULL != options && NULL != (options)->hdr.dispose && NULL != (options)->alloc_opts && (options)->size_in_bytes > 0 && (options)->num_hash_functions > 0 && (options)->expected_error_rate >= 0.0 && (options)->expected_error_rate <= 1.0 && NULL != (options)->hash_function_1 && NULL != (options)->hash_function_2)
-
 
 /**
  * \brief The bloom filter structure.
@@ -209,10 +209,10 @@ int bloom_filter_options_init(bloom_filter_options_t* options,
  * target_error_rate.  If not, the expected error rate will be higher.
  *
  * The supplied hash functions hash_function_1 and hash_function_2 should be
- * capable of hashing a null terminated input value of arbitrary size and
- * producing a 64 bit hashed value.  Hashing is an essential component of the
- * filter; it is imperative that the supplied hash functions be high quality
- * and independent of each other.
+ * capable of hashing an input value of arbitrary size and producing a 64 bit
+ * hashed value.  Hashing is an essential component of the filter; it is
+ * imperative that the supplied hash functions be high quality and independent
+ * of each other.
  *
  * \param options                  The bloom filter options to initialize.
  * \param alloc_opts               The allocator options to use.
@@ -253,40 +253,44 @@ int bloom_filter_options_init_ex(bloom_filter_options_t* options,
 int bloom_filter_init(bloom_filter_options_t* options, bloom_filter_t* bloom);
 
 /**
- * \brief Hash a null terminated input value to determine which bit of the
- * filter to set.
+ * \brief Hash an input value to determine which bit of the filter to set.
  *
  * \param options           The bloom filter options to use for this instance.
- * \param data              The null terminated data to hash.
+ * \param data              The data to hash.
+ * \param len               The length of the data to hash.
  * \param n                 The round of hashing represented by this operation.
  *                          If the filter has K hash functions, this value
  *                          should be in the range [0, K).
  *
  * \returns The position of the bit in the filter to set to 1.
  */
-unsigned int bloom_filter_hash(bloom_filter_options_t* options, const void* data,
-    unsigned int n);
+unsigned int bloom_filter_hash(bloom_filter_options_t* options,
+    const void* data, size_t len, unsigned int n);
 
 /**
  * \brief Add an item to a bloom filter.
  *
  * \param bloom             The bloom filter.
- * \param data              The null terminated data to add to the filter.
+ * \param data              The data to add to the filter.
+ * \param len               The size of the data to add to the filter.
  *
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
  */
-int bloom_filter_add_item(bloom_filter_t* bloom, const void* data);
+int bloom_filter_add_item(bloom_filter_t* bloom, const void* data,
+    size_t len);
 
 /**
  * \brief Query a bloom filter to determine if an item has been added.
  *
  * \param bloom             The bloom filter.
- * \param data              The null terminated data to query the filter for.
+ * \param data              The data to query the filter for.
+ * \param len               The size of the data to query for.
  *
  * \returns a boolean value indicating if the data is present in the filter.
  */
-_Bool bloom_filter_contains_item(bloom_filter_t* bloom, const void* data);
+_Bool bloom_filter_contains_item(bloom_filter_t* bloom, const void* data,
+    size_t len);
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

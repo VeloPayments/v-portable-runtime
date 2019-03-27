@@ -11,7 +11,7 @@
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/bloom_filter.h>
 
-static void generate_random_string(char*, int);
+static void generate_random_bytes(uint8_t*, size_t);
 static int hamming_distance(uint64_t, uint64_t);
 static void test_hash_function(hash_func_t);
 static void test_distribution(uint64_t*, int);
@@ -100,12 +100,12 @@ TEST_F(bloom_filter_hash_test, hash_function_interdependence)
     for (int i = 0; i < n; i++)
     {
         int len = rand() % 100 + 2;
-        char buffer[len];
-        generate_random_string(buffer, len);
+        uint8_t buffer[len];
+        generate_random_bytes(buffer, len);
 
         // calculate the hash values using both functions
-        uint64_t hash_val1 = options.hash_function_1(buffer);
-        uint64_t hash_val2 = options.hash_function_2(buffer);
+        uint64_t hash_val1 = options.hash_function_1(buffer, len);
+        uint64_t hash_val2 = options.hash_function_2(buffer, len);
 
         total_distance += hamming_distance(hash_val1, hash_val2);
 
@@ -147,12 +147,12 @@ TEST_F(bloom_filter_hash_test, basic_test)
 {
     const int n = 10000;  // number of insertions
 
-    // generate a string to hash
     const char* data = "this is some test data to be added to the filter.";
+    size_t sz_data = strlen(data);
 
     // generate the hash values
-    uint64_t hv1 = options.hash_function_1(data);
-    uint64_t hv2 = options.hash_function_2(data);
+    uint64_t hv1 = options.hash_function_1(data, sz_data);
+    uint64_t hv2 = options.hash_function_2(data, sz_data);
 
     unsigned int bits_in_filter = options.size_in_bytes * 8;
     int bits_to_set[bits_in_filter];
@@ -164,17 +164,17 @@ TEST_F(bloom_filter_hash_test, basic_test)
     for (int i = 0; i < n; i++)
     {
         // verify our hash values aren't changing
-        ASSERT_EQ(options.hash_function_1(data), hv1);
-        ASSERT_EQ(options.hash_function_2(data), hv2);
+        ASSERT_EQ(options.hash_function_1(data, sz_data), hv1);
+        ASSERT_EQ(options.hash_function_2(data, sz_data), hv2);
 
         // which bit do we set?
-        unsigned int bit = bloom_filter_hash(&options, data, i);
+        unsigned int bit = bloom_filter_hash(&options, data, sz_data, i);
         ASSERT_LT(bit, bits_in_filter);
 
         // do I always get the same bit?
         for (int j = 0; j < 100; j++)
         {
-            ASSERT_EQ(bloom_filter_hash(&options, data, i), bit);
+            ASSERT_EQ(bloom_filter_hash(&options, data, sz_data, i), bit);
         }
 
         bits_to_set[bit]++;
@@ -191,18 +191,14 @@ TEST_F(bloom_filter_hash_test, basic_test)
 }
 
 /**
- * Utility function to generate a null terminated random string.
+ * Utility function to generate a random sequence of bytes
  */
-static void generate_random_string(char* buf, int len)
+static void generate_random_bytes(uint8_t* buf, size_t len)
 {
-    // generate random characters 1-255
-    for (int i = 0; i < (len - 1); i++)
+    for (unsigned int i = 0; i < len; i++)
     {
-        buf[i] = (char)(rand() % 254 + 1);
+        buf[i] = rand();
     }
-
-    // null terminate
-    buf[len - 1] = 0;
 }
 
 /**
@@ -232,14 +228,15 @@ static int hamming_distance(uint64_t x, uint64_t y)
  */
 static void test_hash_function(hash_func_t hash_func)
 {
-    const char* data = "this is some data that needs to be hashed.";
+    uint8_t data[] = { 0x00, 0x11, 0x22 };
+    size_t sz_data = sizeof(data);
 
-    uint64_t hash_val = hash_func(data);
+    uint64_t hash_val = hash_func(data, sz_data);
 
     // verify the hash is repeatable
     for (int i = 0; i < 10; i++)
     {
-        ASSERT_EQ(hash_func(data), hash_val);
+        ASSERT_EQ(hash_func(data, sz_data), hash_val);
     }
 
     // generate a large number of random values and ensure the corresponding
@@ -249,9 +246,9 @@ static void test_hash_function(hash_func_t hash_func)
     for (int i = 0; i < n; i++)
     {
         int len = rand() % 100 + 2;
-        char buffer[len];
-        generate_random_string(buffer, len);
-        hashed_vals[i] = hash_func(buffer);
+        uint8_t buffer[len];
+        generate_random_bytes(buffer, len);
+        hashed_vals[i] = hash_func(buffer, len);
     }
 
     test_distribution(hashed_vals, n);

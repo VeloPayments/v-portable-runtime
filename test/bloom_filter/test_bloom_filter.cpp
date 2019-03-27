@@ -11,7 +11,7 @@
 #include <vpr/bloom_filter.h>
 
 static void verify_false_positive_error_rate(bloom_filter*, double, const int);
-static void generate_random_string(char*, int);
+static void generate_random_bytes(uint8_t*, size_t);
 
 class bloom_filter_test : public ::testing::Test {
 protected:
@@ -119,16 +119,17 @@ TEST_F(bloom_filter_test, simple_add_item_test)
     ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
 
     const char* data = "add me to the bloom filter!";
+    size_t sz_data = strlen(data);
 
     // initially that is NOT in the filter
-    EXPECT_FALSE(bloom_filter_contains_item(&bloom, data));
+    EXPECT_FALSE(bloom_filter_contains_item(&bloom, data, sz_data));
 
 
-    ASSERT_EQ(bloom_filter_add_item(&bloom, data), 0);
+    ASSERT_EQ(bloom_filter_add_item(&bloom, data, sz_data), 0);
 
     // now the item should be in the filter
     // (no false positives possible when its the only item!)
-    EXPECT_TRUE(bloom_filter_contains_item(&bloom, data));
+    EXPECT_TRUE(bloom_filter_contains_item(&bloom, data, sz_data));
 
     //dispose of our list
     dispose((disposable_t*)&bloom);
@@ -212,18 +213,14 @@ TEST_F(bloom_filter_test, false_positive_error_rate_volume_test)
 
 
 /**
- * Utility function to generate a null terminated random string.
+ * Utility function to generate a random sequence of bytes
  */
-static void generate_random_string(char* buf, int len)
+static void generate_random_bytes(uint8_t* buf, size_t len)
 {
-    // generate random characters 1-255
-    for (int i = 0; i < (len - 1); i++)
+    for (unsigned int i = 0; i < len; i++)
     {
-        buf[i] = (char)(rand() % 254 + 1);
+        buf[i] = rand();
     }
-
-    // null terminate
-    buf[len - 1] = 0;
 }
 
 /**
@@ -246,10 +243,10 @@ static void verify_false_positive_error_rate(bloom_filter* bloom,
     {
         for (int i = 0; i < n; i++)
         {
-            char buf[17];
-            generate_random_string(buf, 17);
-            bloom_filter_add_item(bloom, buf);
-            ASSERT_TRUE(bloom_filter_contains_item(bloom, buf));
+            uint8_t buf[17];
+            generate_random_bytes(buf, 17);
+            bloom_filter_add_item(bloom, buf, 17);
+            ASSERT_TRUE(bloom_filter_contains_item(bloom, buf, 17));
         }
 
         // generate n more random items and ask if they are
@@ -258,9 +255,9 @@ static void verify_false_positive_error_rate(bloom_filter* bloom,
         int false_positives = 0;
         for (int i = 0; i < n; i++)
         {
-            char buf[17];
-            generate_random_string(buf, 17);
-            if (bloom_filter_contains_item(bloom, buf))
+            uint8_t buf[17];
+            generate_random_bytes(buf, 17);
+            if (bloom_filter_contains_item(bloom, buf, 17))
             {
                 ++false_positives;
             }

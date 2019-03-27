@@ -10,7 +10,7 @@ ALL:
 	--div-by-zero-check --signed-overflow-check --unsigned-overflow-check \
     --pointer-overflow-check --conversion-check \
 	--trace --stop-on-fail \
-    --object-bits 16 --unwind 3 --unwindset __builtin___memset_chk.0:60,memcpy.0:10 \
+    --object-bits 16 --unwind 3 --unwindset __builtin___memset_chk.0:60 \
     --unwinding-assertions --drop-unused-functions \
 	-I $(VCMODEL_DIR)/include -I ../include \
 	-DCBMC \
@@ -22,8 +22,14 @@ ALL:
 	../src/bloom_filter/bloom_filter_init.c \
 	../src/bloom_filter/bloom_filter_options_init.c \
 	../src/bloom_filter/bloom_filter_options_init_ex.c \
+	../src/bloom_filter/bloom_filter_hash.c \
+	../src/bloom_filter/bloom_filter_add_item.c \
+	../src/bloom_filter/bloom_filter_contains_item.c \
 	../src/allocator/allocate_shadow.c \
 	../src/allocator/malloc_allocator_options_init_shadow.c \
 	../src/allocator/malloc_allocator_options_dispose_shadow.c \
 	../src/allocator/release_shadow.c \
 	../src/disposable/dispose_shadow.c
+
+
+#    --depth sdbm.0:5 --depth jenkins.0:5 \
