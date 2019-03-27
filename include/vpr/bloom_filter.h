@@ -292,6 +292,50 @@ int bloom_filter_add_item(bloom_filter_t* bloom, const void* data,
 _Bool bloom_filter_contains_item(bloom_filter_t* bloom, const void* data,
     size_t len);
 
+/**
+ * \brief Helper function to calculate the size of a filter.
+ *
+ * Calculate the size a bloom filter would need to be to achieve a target
+ * error rate, given the number of expected entries.
+ *
+ * \param num_expected_entries     The number of items that are expected to be
+ *                                 added to the filter.
+ * \param target_error_rate        The desired error rate for false positives.
+ *
+ * \return size in bytes the filter would need to be to meet the
+ *         target error rate.
+ */
+size_t bloom_filter_calculate_size(unsigned int num_expected_entries,
+    float target_error_rate);
+
+/**
+ * \brief Helper function to calculate the number of hash functions to use.
+ *
+ * \param num_expected_entries     The number of items that are expected to be
+ *                                 added to the filter.
+ * \param size_in_bytes            The size of the bloom filter in bytes.
+ *
+ * \return The number of hash functions required.
+ */
+unsigned int bloom_filter_calculate_num_hashes(
+    unsigned int num_expected_entries, size_t size_in_bytes);
+
+/**
+ * \brief Helper function to calculate the expected error rate of a bloom
+ *        filter.
+ *
+ * \param num_expected_entries     The number of items that are expected to be
+ *                                 added to the filter.
+ * \param size_in_bytes            The size of the bloom filter in bytes.
+ * \param num_hash_functions       The number of hash functions.
+ *
+ * \return The number of hash functions required.
+ */
+float bloom_filter_calculate_expected_error_rate(
+    unsigned int num_expected_entries, size_t size_in_bytes,
+    unsigned int num_hash_functions);
+
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 }
