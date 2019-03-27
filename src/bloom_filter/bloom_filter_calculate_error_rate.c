@@ -18,7 +18,7 @@
  * \param size_in_bytes            The size of the bloom filter in bytes.
  * \param num_hash_functions       The number of hash functions.
  *
- * \return The number of hash functions required.
+ * \return The expected error rate.
  */
 float bloom_filter_calculate_expected_error_rate(
     unsigned int num_expected_entries, size_t size_in_bytes,
