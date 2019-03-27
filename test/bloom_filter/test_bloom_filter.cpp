@@ -62,7 +62,7 @@ TEST_F(bloom_filter_test, init_test)
     EXPECT_EQ(
         memcmp(testblock, bloom.bitmap, bloom.options->size_in_bytes), 0);
 
-    //dispose of our list
+    //dispose of our filter
     dispose((disposable_t*)&bloom);
 }
 
@@ -94,7 +94,7 @@ TEST_F(bloom_filter_test, not_enough_space)
     EXPECT_EQ(
         memcmp(testblock, bloom.bitmap, bloom.options->size_in_bytes), 0);
 
-    //dispose of our list
+    //dispose of our filter
     dispose((disposable_t*)&bloom);
 }
 
@@ -124,7 +124,7 @@ TEST_F(bloom_filter_test, simple_add_item_test)
     // (no false positives possible when its the only item!)
     EXPECT_TRUE(bloom_filter_contains_item(&bloom, data, sz_data));
 
-    //dispose of our list
+    //dispose of our filter
     dispose((disposable_t*)&bloom);
 }
 
@@ -226,6 +226,16 @@ static void verify_false_positive_error_rate(bloom_filter* bloom,
     double lower = target * 0.7;
     double upper = target * 1.3;
 
+    // if you put something in the filter, it should ALWAYS
+    // say it is in the filter (no possibility of false negative)
+    for (int i = 0; i < n; i++)
+    {
+        uint8_t buf[17];
+        generate_random_bytes(buf, 17);
+        bloom_filter_add_item(bloom, buf, 17);
+        ASSERT_TRUE(bloom_filter_contains_item(bloom, buf, 17));
+    }
+
     // since this test is probabilistic, we'll try it a few times
     // before concluding something is broken
     _Bool met_target = false;
@@ -234,16 +244,6 @@ static void verify_false_positive_error_rate(bloom_filter* bloom,
 
     do
     {
-        for (int i = 0; i < n; i++)
-        {
-            uint8_t buf[17];
-            generate_random_bytes(buf, 17);
-            bloom_filter_add_item(bloom, buf, 17);
-            ASSERT_TRUE(bloom_filter_contains_item(bloom, buf, 17));
-        }
-
-        // generate n more random items and ask if they are
-        // in the filter.  none really are.  if it says no, no problem.
         // measure the false positive rate
         int false_positives = 0;
         for (int i = 0; i < n; i++)
@@ -260,7 +260,7 @@ static void verify_false_positive_error_rate(bloom_filter* bloom,
         met_target = false_positive_rate >= lower &&
             false_positive_rate <= upper;
 
-    } while (!met_target && ++attempts <= 3);
+    } while (!met_target && ++attempts <= 5);
 
     EXPECT_GE(false_positive_rate, lower);
     EXPECT_LE(false_positive_rate, upper);
