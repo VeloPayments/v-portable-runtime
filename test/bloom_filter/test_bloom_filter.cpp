@@ -53,12 +53,8 @@ TEST_F(bloom_filter_test, init_test)
     EXPECT_EQ(bloom.options->size_in_bytes, (size_t)600);
     EXPECT_NE(bloom.bitmap, nullptr);
 
-    // we should use four hash functions
-    EXPECT_EQ(bloom.options->num_hash_functions, 4u);
-
-    // we have enough space to meet our target error rate
-    EXPECT_GE(bloom.options->expected_error_rate, 0.09);
-    EXPECT_LE(bloom.options->expected_error_rate, 0.11);
+    // we should use three hash functions
+    EXPECT_EQ(bloom.options->num_hash_functions, 3u);
 
     // verify the bitmap is initialized to all 0s
     char testblock[bloom.options->size_in_bytes];
@@ -89,11 +85,8 @@ TEST_F(bloom_filter_test, not_enough_space)
     EXPECT_EQ(bloom.options->size_in_bytes, (size_t)300);
     EXPECT_NE(bloom.bitmap, nullptr);
 
-    // we should use four hash functions
-    EXPECT_EQ(bloom.options->num_hash_functions, 4u);
-
-    // the expected error rate will be higher than our target
-    EXPECT_GT(bloom.options->expected_error_rate, 0.1);
+    // we should use two hash functions
+    EXPECT_EQ(bloom.options->num_hash_functions, 2u);
 
     // verify the bitmap is initialized to all 0s
     char testblock[bloom.options->size_in_bytes];
@@ -156,7 +149,7 @@ TEST_F(bloom_filter_test, false_positive_error_rate_5pct_test)
     ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
 
     EXPECT_EQ(bloom.options->size_in_bytes, (size_t)7795);
-    EXPECT_EQ(bloom.options->num_hash_functions, 5u);
+    EXPECT_EQ(bloom.options->num_hash_functions, 4u);
 
 
     verify_false_positive_error_rate(&bloom, 0.05, 10000);

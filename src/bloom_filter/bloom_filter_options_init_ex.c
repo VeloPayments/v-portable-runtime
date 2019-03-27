@@ -8,7 +8,6 @@
 
 #include <cbmc/model_assert.h>
 #include <math.h>
-#include <stdio.h>
 #include <string.h>
 #include <vpr/bloom_filter.h>
 #include <vpr/parameters.h>
@@ -73,36 +72,18 @@ int bloom_filter_options_init_ex(
     options->hash_function_2 = hash_function_2;
 
     // given the number of expected entries and the target error rate,
-    // calculate the required size of the filter in bits.
-    unsigned int m = max_size_in_bytes * 8;
-    MODEL_EXEMPT(m = ceil((num_expected_entries * log(target_error_rate)) /
-                     log(1 / pow(2, log(2)))));
-    size_t m_bytes;
-    if (m % 8)
-    {
-        m_bytes = m / 8 + 1;
-    }
-    else
-    {
-        m_bytes = m / 8;
-    }
-    options->size_in_bytes = m_bytes < max_size_in_bytes
-        ? m_bytes
+    // calculate the required size of the filter
+    size_t bytes_required = bloom_filter_calculate_size(num_expected_entries,
+        target_error_rate);
+    options->size_in_bytes = bytes_required < max_size_in_bytes
+        ? bytes_required
         : max_size_in_bytes;
 
 
     // calculate the number of hash functions
-    options->num_hash_functions = 1;
-    MODEL_EXEMPT(options->num_hash_functions =
-                     ceil(((double)m / num_expected_entries) * log(2)));
+    options->num_hash_functions = bloom_filter_calculate_num_hashes(
+        num_expected_entries, options->size_in_bytes);
 
-    // calculate the expected error rate, which may not be the same as the
-    // target if we couldn't allocate enough space.
-    options->expected_error_rate = target_error_rate;
-    MODEL_EXEMPT(options->expected_error_rate = pow(1 -
-                         exp(-(float)options->num_hash_functions /
-                             ((float)options->size_in_bytes * 8 / num_expected_entries)),
-                     options->num_hash_functions));
 
     return VPR_STATUS_SUCCESS;
 }

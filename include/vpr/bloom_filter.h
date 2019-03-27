@@ -98,14 +98,6 @@ typedef struct bloom_filter_options
     unsigned int num_hash_functions;
 
     /**
-     * \brief The expected rate of false positives, expressed as a percentage
-     * in the range (0,1).
-     *
-     * This is the "p" value in the literature.
-     */
-    float expected_error_rate;
-
-    /**
      * \brief The first of two hash functions, used to derive additional hash
      * functions.
      */
@@ -125,7 +117,7 @@ typedef struct bloom_filter_options
  * bloom_filter_options_t structure.
  */
 #define MODEL_PROP_VALID_BLOOM_FILTER_OPTIONS(options) \
-    (NULL != options && NULL != (options)->hdr.dispose && NULL != (options)->alloc_opts && (options)->size_in_bytes > 0 && (options)->num_hash_functions > 0 && (options)->expected_error_rate >= 0.0 && (options)->expected_error_rate <= 1.0 && NULL != (options)->hash_function_1 && NULL != (options)->hash_function_2)
+    (NULL != options && NULL != (options)->hdr.dispose && NULL != (options)->alloc_opts && (options)->size_in_bytes > 0 && (options)->num_hash_functions > 0 && NULL != (options)->hash_function_1 && NULL != (options)->hash_function_2)
 
 /**
  * \brief The bloom filter structure.

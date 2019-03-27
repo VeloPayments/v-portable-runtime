@@ -1,16 +1,19 @@
 /**
- * \file bloom_filter_calculate_num_hashes.c
+ * \file bloom_filter_calculate_num_hashes_shadow.c
  *
- * Implementation of bloom_filter_calculate_num_hashes.
+ * Shadow library implementation of bloom_filter_calculate_num_hashes.
  *
  * \copyright 2019 Velo Payments, Inc.  All rights reserved.
  */
 
+#include <cbmc/model_assert.h>
 #include <math.h>
 #include <vpr/bloom_filter.h>
 
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_bf_calculate_hashes_shadowed
+/* this is the shadow implementation. */
+#ifdef MODEL_CHECK_vpr_bf_calculate_hashes_shadowed
+
+unsigned int nondet_uint();
 
 /**
  * \brief Helper function to calculate the number of hash functions to use.
@@ -24,9 +27,11 @@
 unsigned int bloom_filter_calculate_num_hashes(
     unsigned int num_expected_entries, size_t size_in_bytes)
 {
+    unsigned int n = nondet_uint();
 
-    return round(
-        ((double)(size_in_bytes * 8) / num_expected_entries) * log(2));
+    MODEL_ASSUME(n > 0);
+
+    return n;
 }
 
-#endif /*!defined(MODEL_CHECK_vpr_bf_calculate_hashes_shadowed)*/
+#endif /*defined(MODEL_CHECK_vpr_bf_calculate_hashes_shadowed)*/

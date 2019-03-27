@@ -16,13 +16,6 @@
 static void verify_init();
 static void verify_add_item();
 
-/**
- * Non-deterministic boolean value, provided by the model checker.
- *
- * \returns true or false in a nondeterministic manner.
- */
-_Bool nondet_bool();
-
 
 int main(int argc, char* argv[])
 {

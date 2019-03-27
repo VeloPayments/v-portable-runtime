@@ -1,16 +1,19 @@
 /**
- * \file bloom_filter_calculate_size.c
+ * \file bloom_filter_calculate_size_shadow.c
  *
- * Implementation of bloom_filter_calculate_size.
+ * Shadow library implementation of bloom_filter_calculate_size.
  *
  * \copyright 2019 Velo Payments, Inc.  All rights reserved.
  */
 
+#include <cbmc/model_assert.h>
 #include <math.h>
 #include <vpr/bloom_filter.h>
 
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_bf_calculate_size_shadowed
+/* this is the shadow implementation. */
+#ifdef MODEL_CHECK_vpr_bf_calculate_size_shadowed
+
+unsigned int nondet_uint();
 
 /**
  * \brief Helper function to calculate the size of a filter.
@@ -28,22 +31,11 @@
 size_t bloom_filter_calculate_size(unsigned int num_expected_entries,
     float target_error_rate)
 {
-    size_t m_bytes;
+    size_t sz = nondet_uint();
 
-    unsigned int m_bits = ceil(
-        (num_expected_entries * log(target_error_rate)) /
-        log(1 / pow(2, log(2))));
+    MODEL_ASSUME(sz > 0);
 
-    if (m_bits % 8)
-    {
-        m_bytes = m_bits / 8 + 1;
-    }
-    else
-    {
-        m_bytes = m_bits / 8;
-    }
-
-    return m_bytes;
+    return sz;
 }
 
-#endif /*!defined(MODEL_CHECK_vpr_bf_calculate_size_shadowed)*/
+#endif /*defined(MODEL_CHECK_vpr_bf_calculate_size_shadowed)*/
