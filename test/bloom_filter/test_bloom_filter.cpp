@@ -40,7 +40,7 @@ protected:
  */
 TEST_F(bloom_filter_test, init_test)
 {
-    // set up a hash function with 1000 expected entries, a 10% error rate,
+    // set up a bloom filter with 1000 expected entries, a 10% error rate,
     // and maximum size of 1024 bytes.
     SetUp(1000, 0.1, 1024);
     bloom_filter bloom;
@@ -104,7 +104,7 @@ TEST_F(bloom_filter_test, not_enough_space)
  */
 TEST_F(bloom_filter_test, simple_add_item_test)
 {
-    // set up a hash function with 1000 expected entries, a 10% error rate,
+    // set up a bloom filter with 1000 expected entries, a 10% error rate,
     // and maximum size of 1024 bytes.
     SetUp(1000, 0.1, 1024);
     bloom_filter bloom;

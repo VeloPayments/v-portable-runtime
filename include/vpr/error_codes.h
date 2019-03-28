@@ -113,7 +113,18 @@ extern "C" {
 #define VPR_ERROR_DLL_BEGINNING_BUFFER_ALLOCATION_FAILED 0x1205
 
 
+/**
+ * \brief This error code is returned by bloom_filter_init() when memory could
+ * not be allocated for the bloom filter.
+ */
 #define VPR_ERROR_BLOOM_BITMAP_ALLOCATION_FAILED 0x1300
+
+
+/**
+ * \brief This error code is returned by hashmap_init() when memory could not
+ * be allocated to initialize the hashmap.
+ */
+#define VPR_ERROR_HASHMAP_ALLOCATION_FAILED 0x1400
 
 
 /**
