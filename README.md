@@ -13,6 +13,9 @@ Current Features
 * Portable Memory Allocation Library.
 * Dynamic Arrays.
 * Abstract Factory.
+* Doubly Linked Lists.
+* Bloom Filters.
+* Hashmaps.
 
 Building
 ========

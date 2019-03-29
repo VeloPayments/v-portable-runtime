@@ -55,3 +55,22 @@ TEST_F(hashmap_test, init_test)
     //dispose of our hashmap
     dispose((disposable_t*)&hmap);
 }
+
+/**
+ * Test a simple PUT and GET operation
+ */
+TEST_F(hashmap_test, simple_put_test)
+{
+    SetUp(1000);
+    hashmap hmap;
+
+    ASSERT_EQ(hashmap_init(&options, &hmap), 0);
+
+    int val = 99;
+    ASSERT_EQ(hashmap_put(&hmap, &val), 0);
+
+    EXPECT_EQ(hmap.elements, 1u);
+
+    //dispose of our hashmap
+    dispose((disposable_t*)&hmap);
+}

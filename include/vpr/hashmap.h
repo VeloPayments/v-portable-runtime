@@ -142,7 +142,11 @@ int hashmap_options_init_ex(
  *      - \ref VPR_ERROR_HASHMAP_ALLOCATION_FAILED if memory could not
  *        be allocated for the hashmap
  */
-int hashmap_init(hashmap_options_t* options, hashmap_t* bloom);
+int hashmap_init(hashmap_options_t* options, hashmap_t* hmap);
+
+
+int hashmap_put(hashmap_t* hmap, void* data);
+
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

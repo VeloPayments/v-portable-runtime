@@ -14,6 +14,7 @@
 #include <vpr/hashmap.h>
 
 static void verify_empty_hashmap();
+static void verify_put();
 
 /**
  * Non-deterministic boolean value, provided by the model checker.
@@ -26,6 +27,7 @@ _Bool nondet_bool();
 int main(int argc, char* argv[])
 {
     verify_empty_hashmap();
+    verify_put();
 
     return 0;
 }
@@ -39,9 +41,9 @@ static void verify_empty_hashmap()
     //initialize the allocator
     malloc_allocator_options_init(&alloc_opts);
 
-    //initialize doubly linked list options
-    hashmap_options_init(
-        &options, &alloc_opts, 1024u);
+    //initialize hashmap options
+    MODEL_ASSUME(hashmap_options_init(
+        &options, &alloc_opts, 1024u));
 
     // verify the options are valid
     MODEL_ASSERT(MODEL_PROP_VALID_HASHMAP_OPTIONS(&options));
@@ -60,6 +62,39 @@ static void verify_empty_hashmap()
     dispose((disposable_t*)&hmap);
 
 cleanup_options:
+    //dispose of options
+    dispose((disposable_t*)&options);
+
+    //dispose of allocator
+    dispose((disposable_t*)&alloc_opts);
+}
+
+static void verify_put()
+{
+    allocator_options_t alloc_opts;
+    hashmap_options_t options;
+    hashmap_t hmap;
+
+    //initialize the allocator
+    malloc_allocator_options_init(&alloc_opts);
+
+    //initialize hashmap options
+    MODEL_ASSUME(hashmap_options_init(
+        &options, &alloc_opts, 1024u));
+
+    // verify the options are valid
+    MODEL_ASSERT(MODEL_PROP_VALID_HASHMAP_OPTIONS(&options));
+
+    //initialize the hashmap
+    MODEL_ASSUME(0 == hashmap_init(&options, &hmap));
+
+    // add an item
+    int value = 3;  // TODO
+    hashmap_put(&hmap, &value);
+
+    //dispose of the hashmap
+    dispose((disposable_t*)&hmap);
+
     //dispose of options
     dispose((disposable_t*)&options);
 

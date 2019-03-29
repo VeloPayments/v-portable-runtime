@@ -22,6 +22,7 @@ ALL:
 	../src/hashmap/hashmap_init.c \
 	../src/hashmap/hashmap_options_init.c \
 	../src/hashmap/hashmap_options_init_ex.c \
+	../src/hashmap/hashmap_put.c \
 	../src/allocator/allocate_shadow.c \
 	../src/allocator/malloc_allocator_options_init_shadow.c \
 	../src/allocator/malloc_allocator_options_dispose_shadow.c \
