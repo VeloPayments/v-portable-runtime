@@ -6,7 +6,6 @@
  * \copyright 2019 Velo Payments, Inc.  All rights reserved.
  */
 
-#include <string.h>
 #include <cbmc/model_assert.h>
 #include <vpr/hashmap.h>
 #include <vpr/parameters.h>
@@ -45,16 +44,20 @@ int hashmap_init(hashmap_options_t* options, hashmap_t* hmap)
     hmap->options = options;
 
     // allocate the space for the hashmap
-    hmap->buckets = (void*)allocate(hmap->options->alloc_opts,
+    hmap->buckets = (void*)allocate(
+        hmap->options->alloc_opts,
         hmap->options->capacity * sizeof(void*));
     if (NULL == hmap->buckets)
     {
         return VPR_ERROR_HASHMAP_ALLOCATION_FAILED;
     }
 
-    // clear the hashmap
-    MODEL_EXEMPT(memset(
-        hmap->buckets, 0, hmap->options->capacity * sizeof(void*)));
+    // clear the hashmap - all buckets contain a NULL pointer
+    uint8_t* ptr = hmap->buckets;
+    for (unsigned int i = 0; i < hmap->options->capacity; i++)
+    {
+        *(ptr + i) = 0;
+    }
 
     // this hashmap has no elements
     hmap->elements = 0u;

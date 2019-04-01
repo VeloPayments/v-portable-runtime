@@ -42,12 +42,11 @@ TEST_F(hashmap_test, init_test)
     ASSERT_EQ(hmap.options->capacity, 1000u);
 
     // verify the hashmap is initialized to all NULLs
-    void* testblock[hmap.options->capacity];
-    memset(testblock, 0, hmap.options->capacity * sizeof(void*));
-    EXPECT_EQ(
-        memcmp(testblock, hmap.buckets,
-            hmap.options->capacity * sizeof(void*)),
-        0);
+    for (unsigned int i = 0; i < hmap.options->capacity; i++)
+    {
+        uint8_t* ptr = i + (uint8_t*)hmap.buckets;
+        EXPECT_EQ(*ptr, 0);
+    }
 
     // there should be 0 elements
     EXPECT_EQ(hmap.elements, 0u);
@@ -61,15 +60,27 @@ TEST_F(hashmap_test, init_test)
  */
 TEST_F(hashmap_test, simple_put_test)
 {
-    SetUp(1000);
+    SetUp(1024);
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);
 
-    int val = 99;
-    ASSERT_EQ(hashmap_put(&hmap, &val), 0);
+    uint64_t key = (uint64_t)1337;
 
+    // should be nothing in the bucket that key is mapped to
+    EXPECT_EQ(hashmap_get(&hmap, key), nullptr);
+
+    // add the value to the hashmap
+    int val = 99;
+    ASSERT_EQ(hashmap_put(&hmap, key, &val), 0);
+
+    // we should have one element now
     EXPECT_EQ(hmap.elements, 1u);
+
+    // get our value back out
+    void* ptr = hashmap_get(&hmap, key);
+    EXPECT_NE(ptr, nullptr);
+    EXPECT_EQ(*(int*)ptr, val);
 
     //dispose of our hashmap
     dispose((disposable_t*)&hmap);

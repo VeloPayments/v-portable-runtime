@@ -59,8 +59,24 @@ typedef struct hashmap_options
 
 
 /**
+ * \brief A hashmap entry
+ */
+typedef struct hashmap_entry
+{
+    /**
+     * \brief The full key for this entry.
+     */
+    uint64_t key;
+
+    /**
+     * \brief Opaque pointer to the value being stored.
+     */
+    void* val;
+
+} hashmap_entry_t;
+
+/**
  * \brief The hashmap structure.
- *
  */
 typedef struct hashmap
 {
@@ -144,8 +160,9 @@ int hashmap_options_init_ex(
  */
 int hashmap_init(hashmap_options_t* options, hashmap_t* hmap);
 
+void* hashmap_get(hashmap_t* hmap, uint64_t key);
 
-int hashmap_put(hashmap_t* hmap, void* data);
+int hashmap_put(hashmap_t* hmap, uint64_t key, void* val);
 
 
 /* make this header C++ friendly. */
