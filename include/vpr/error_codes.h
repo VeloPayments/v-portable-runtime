@@ -139,6 +139,13 @@ extern "C" {
  */
 #define VPR_ERROR_HASHMAP_ENTRY_ALLOCATION_FAILED 0x1402
 
+
+/**
+ * \brief This error code is returned by hashmap_put() when memory could not be
+ * allocated to create a buffer to copy the data item to.
+ */
+#define VPR_ERROR_HASHMAP_DATA_ITEM_ALLOCATION_FAILED 0x1403
+
 /**
  * @}
  */

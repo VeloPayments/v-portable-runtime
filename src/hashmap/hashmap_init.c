@@ -8,6 +8,7 @@
 
 #include <cbmc/model_assert.h>
 #include <vpr/hashmap.h>
+#include <vpr/doubly_linked_list.h>
 #include <vpr/parameters.h>
 
 //forward decls
@@ -53,10 +54,10 @@ int hashmap_init(hashmap_options_t* options, hashmap_t* hmap)
     }
 
     // clear the hashmap - all buckets contain a NULL pointer
-    uint8_t* ptr = hmap->buckets;
     for (unsigned int i = 0; i < hmap->options->capacity; i++)
     {
-        *(ptr + i) = 0;
+        doubly_linked_list_t** dllptr = i + (doubly_linked_list_t**)hmap->buckets;
+        *dllptr = NULL;
     }
 
     // this hashmap has no elements

@@ -13,6 +13,21 @@
 
 static doubly_linked_list_t* allocate_dll(allocator_options_t*);
 
+/**
+ * \brief Add an item to a hashmap.
+ *
+ * Add a data item to the hashmap.  The 64 bit key should be a random value
+ * to minimize chaining, which will decrease performance.
+ *
+ * \param hmap              The hashmap to add the item to.
+ * \param key               A unique key that serves as an identifier for the
+ *                          data item.
+ * \param val               Opaque pointer to the data item.
+ *
+ * \returns a status code indicating success or failure.
+ *      - \ref VPR_STATUS_SUCCESS if successful.
+ *      - non-zero code on failure.
+ */
 int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
 {
     MODEL_ASSERT(NULL != hmap);
@@ -25,7 +40,8 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
 
     // get the linked list in that bucket.  If there is not already one,
     // create one and add it to the bucket now.
-    doubly_linked_list_t** dllptr = (doubly_linked_list_t**)(hmap->buckets + bucket);
+    doubly_linked_list_t** dllptr =
+        bucket + (doubly_linked_list_t**)hmap->buckets;
     if (NULL == *dllptr)
     {
         *dllptr = (doubly_linked_list_t*)allocate_dll(hmap->options->alloc_opts);
@@ -44,8 +60,32 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
         dllptr = NULL;
         return VPR_ERROR_HASHMAP_ENTRY_ALLOCATION_FAILED;
     }
+
     hmap_entry->key = key;
-    hmap_entry->val = val;  // TODO: copy on insert option?
+
+    // if this is a copy-on-insert, then allocate space for the data and copy
+    // it into that buffer.  Otherwise, set the pointer to the original data.
+
+    if (NULL != hmap->options->hashmap_item_copy)
+    {
+        uint8_t* data_buffer = (uint8_t*)allocate(
+            hmap->options->alloc_opts,
+            hmap->options->item_size);
+        hmap_entry->val = data_buffer;
+        if (NULL == data_buffer)
+        {
+            return VPR_ERROR_HASHMAP_DATA_ITEM_ALLOCATION_FAILED;
+        }
+
+        // copy the data into the buffer
+        hmap->options->hashmap_item_copy(
+            hmap_entry->val, val, hmap->options->item_size);
+    }
+    else
+    {
+        // not copying, just reference data passed in.
+        hmap_entry->val = val;
+    }
 
     // add the entry to the linked list
     int dll_retval = doubly_linked_list_insert_end(*dllptr, hmap_entry);

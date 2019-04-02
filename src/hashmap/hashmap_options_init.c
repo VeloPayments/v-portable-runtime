@@ -55,7 +55,7 @@ int hashmap_options_init(
     MODEL_ASSERT(NULL != alloc_opts);
     MODEL_ASSERT(NULL != alloc_opts->allocator_release);
     MODEL_ASSERT(capacity > 0);
-    MODEL_ASSERT(0 != element_size);
+    MODEL_ASSERT(0 != item_size);
 
     return hashmap_options_init_ex(options, alloc_opts, capacity,
         copy_on_insert ? &hashmap_item_copy : NULL,
