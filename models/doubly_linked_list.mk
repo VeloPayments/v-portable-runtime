@@ -8,15 +8,15 @@ include $(MODEL_CHECK_DIR)/model_check.mk
 ALL:
 	$(CBMC) --bounds-check --pointer-check --memory-leak-check \
 	--div-by-zero-check --signed-overflow-check --unsigned-overflow-check \
-    --pointer-overflow-check --conversion-check \
+	--pointer-overflow-check --conversion-check \
 	--trace --stop-on-fail \
-    --object-bits 16 --unwind 3 --unwindset __builtin___memset_chk.0:60,memcpy.0:10 \
-    --unwinding-assertions --drop-unused-functions \
+	--object-bits 16 --unwind 3 --unwindset __builtin___memset_chk.0:60,memcpy.0:10 \
+	--unwinding-assertions --drop-unused-functions \
 	-I $(VCMODEL_DIR)/include -I ../include \
 	-DCBMC \
-    -DMODEL_CHECK_vpr_malloc_allocator_shadowed \
-    -DMODEL_CHECK_vpr_allocator_shadowed \
-    -DMODEL_CHECK_vpr_dispose_shadowed \
+	-DMODEL_CHECK_vpr_malloc_allocator_shadowed \
+	-DMODEL_CHECK_vpr_allocator_shadowed \
+	-DMODEL_CHECK_vpr_dispose_shadowed \
 	$(MODEL_CHECK_SOURCES) \
 	doubly_linked_list_main.c \
 	../src/doubly_linked_list/doubly_linked_list_init.c \

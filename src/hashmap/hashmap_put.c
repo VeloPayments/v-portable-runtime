@@ -11,9 +11,7 @@
 #include <vpr/doubly_linked_list.h>
 #include <vpr/parameters.h>
 
-static doubly_linked_list_t* allocate_dll(
-    allocator_options_t* alloc_opts, bool copy_on_insert,
-    size_t element_size, bool release_on_dispose);
+static doubly_linked_list_t* allocate_dll(allocator_options_t*);
 
 int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
 {
@@ -30,8 +28,7 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
     doubly_linked_list_t** dllptr = (doubly_linked_list_t**)(hmap->buckets + bucket);
     if (NULL == *dllptr)
     {
-        *dllptr = (doubly_linked_list_t*)allocate_dll(
-            hmap->options->alloc_opts, true, sizeof(hashmap_entry_t), true);  // TODO
+        *dllptr = (doubly_linked_list_t*)allocate_dll(hmap->options->alloc_opts);
         if (NULL == *dllptr)
         {
             return VPR_ERROR_HASHMAP_BUCKET_ALLOCATION_FAILED;
@@ -48,7 +45,7 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
         return VPR_ERROR_HASHMAP_ENTRY_ALLOCATION_FAILED;
     }
     hmap_entry->key = key;
-    hmap_entry->val = val;
+    hmap_entry->val = val;  // TODO: copy on insert option?
 
     // add the entry to the linked list
     int dll_retval = doubly_linked_list_insert_end(*dllptr, hmap_entry);
@@ -66,10 +63,17 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
     return VPR_STATUS_SUCCESS;
 }
 
-
-static doubly_linked_list_t* allocate_dll(
-    allocator_options_t* alloc_opts, bool copy_on_insert,
-    size_t element_size, bool release_on_dispose)
+/**
+ * Create a doubly linked list.
+ *
+ * The LL will be configured to assume ownership (not copy) the hash entries
+ * that are added to it, and to release the memory allocated for each
+ * hash entry when the list is disposed of.
+ *
+ * \param alloc_opts            The allocator options to use for this LL
+ * \return a pointer to the DLL, or NULL on failure
+ */
+static doubly_linked_list_t* allocate_dll(allocator_options_t* alloc_opts)
 {
     // set up the options for this doubly linked list
     doubly_linked_list_options_t* dll_options =
@@ -81,7 +85,11 @@ static doubly_linked_list_t* allocate_dll(
         return NULL;
     }
 
-    if (0 != doubly_linked_list_options_init(dll_options, alloc_opts, copy_on_insert, element_size, release_on_dispose))
+    int dll_options_init_retval = 0;
+    MODEL_EXEMPT(dll_options_init_retval = doubly_linked_list_options_init(
+                     dll_options, alloc_opts, false, sizeof(hashmap_entry_t), true));
+
+    if (0 != dll_options_init_retval)
     {
         release(alloc_opts, dll_options);
         return NULL;
@@ -91,14 +99,15 @@ static doubly_linked_list_t* allocate_dll(
     doubly_linked_list_t* dll = (doubly_linked_list_t*)allocate(
         alloc_opts, sizeof(doubly_linked_list_t));
 
-
     if (NULL == dll)
     {
         release(alloc_opts, dll_options);
         return NULL;
     }
 
-    if (0 != doubly_linked_list_init(dll_options, dll))
+    int dll_init_retval = 0;
+    MODEL_EXEMPT(dll_init_retval = doubly_linked_list_init(dll_options, dll));
+    if (0 != dll_init_retval)
     {
         release(alloc_opts, dll);
         release(alloc_opts, dll_options);

@@ -80,5 +80,7 @@ void hashmap_dispose(void* phmap)
     MODEL_ASSERT(NULL != hmap->options);
     MODEL_ASSERT(NULL != hmap->options->alloc_opts);
 
+    // TODO: may need to release data items.  (Get model check to fail first.)
+
     release(hmap->options->alloc_opts, hmap->buckets);
 }

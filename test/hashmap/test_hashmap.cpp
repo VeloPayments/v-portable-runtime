@@ -15,7 +15,8 @@ protected:
     void SetUp(unsigned int capacity)
     {
         malloc_allocator_options_init(&alloc_opts);
-        hashmap_options_init(&options, &alloc_opts, capacity);
+        hashmap_options_init(&options, &alloc_opts, capacity,
+            false, sizeof(int), false);
     }
 
     void TearDown() override

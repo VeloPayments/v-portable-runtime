@@ -22,8 +22,8 @@ static void dll_simple_dispose(void*);
  * manage non-POD data types and complex data structures.
  *
  * When the function completes successfully, the caller owns this
- * ::doubly_linked_list_t instance and must dispose of it by calling dispose() when
- * it is no longer needed.
+ * ::doubly_linked_list_options_t instance and must dispose of it by calling
+ * dispose() when it is no longer needed.
  *
  * \param options           The doubly linked list options to initialize.
  * \param alloc_opts        The allocator options to use.
