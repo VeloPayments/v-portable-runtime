@@ -167,9 +167,10 @@ TEST_F(hashmap_test, add_multiple_items)
     ASSERT_EQ(hashmap_put(&hmap, 1, &val1), 0);
     EXPECT_EQ(hmap.elements, 2u);
 
+    // this entry overwrites the first entry
     int val2 = 102;
     ASSERT_EQ(hashmap_put(&hmap, 0, &val2), 0);
-    EXPECT_EQ(hmap.elements, 2u);  // overwrites 1st entry
+    EXPECT_EQ(hmap.elements, 2u);
     int* found = (int*)hashmap_get(&hmap, 0);
     EXPECT_EQ(*found, val2);
 
@@ -183,7 +184,7 @@ TEST_F(hashmap_test, add_multiple_items)
  * values are added with unique keys, the hashmap should continue to perform
  * correctly, though values will chained in each bucket.
  */
-TEST_F(hashmap_test, chaining)
+TEST_F(hashmap_test, chaining_round_robin)
 {
     unsigned int capacity = 100;
     SetUp(capacity, true, sizeof(unsigned int));
@@ -207,6 +208,42 @@ TEST_F(hashmap_test, chaining)
         EXPECT_EQ(*val, i);
     }
 
+    // add the values again, overwriting the originals
+    for (unsigned int i = 0; i < (capacity * 10); i++)
+    {
+        uint64_t key = i;
+        hashmap_put(&hmap, key, &i);
+    }
+    EXPECT_EQ(hmap.elements, capacity * 10);
+
+    //dispose of our hashmap
+    dispose((disposable_t*)&hmap);
+}
+
+/**
+ * Test add all elements with same key
+ */
+TEST_F(hashmap_test, duplicate_key)
+{
+    unsigned int capacity = 100;
+    SetUp(capacity, true, sizeof(unsigned int));
+    hashmap hmap;
+
+    ASSERT_EQ(hashmap_init(&options, &hmap), 0);
+
+    // add 10 times more items than we have capacity for
+    uint64_t key = 333;
+    for (unsigned int i = 0; i < (capacity * 10); i++)
+    {
+        hashmap_put(&hmap, key, &i);
+
+        // read the value back out
+        unsigned int* found = (unsigned int*)hashmap_get(&hmap, key);
+        EXPECT_EQ(*found, i);
+    }
+
+    // we should have just one item
+    EXPECT_EQ(hmap.elements, 1u);
 
     //dispose of our hashmap
     dispose((disposable_t*)&hmap);

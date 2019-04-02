@@ -11,6 +11,8 @@
 #include <vpr/doubly_linked_list.h>
 #include <vpr/parameters.h>
 
+static void remove_hashmap_entry(hashmap_t*, hashmap_entry_t*,
+    doubly_linked_list_t*, doubly_linked_list_element_t*);
 static doubly_linked_list_t* allocate_dll(allocator_options_t*);
 
 /**
@@ -65,7 +67,6 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
 
     // if this is a copy-on-insert, then allocate space for the data and copy
     // it into that buffer.  Otherwise, set the pointer to the original data.
-
     if (NULL != hmap->options->hashmap_item_copy)
     {
         uint8_t* data_buffer = (uint8_t*)allocate(
@@ -88,7 +89,7 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
     }
 
     // add the entry to the linked list
-    int dll_retval = doubly_linked_list_insert_end(*dllptr, hmap_entry);
+    int dll_retval = doubly_linked_list_insert_beginning(*dllptr, hmap_entry);
     if (0 != dll_retval)
     {
         release(hmap->options->alloc_opts, hmap_entry);
@@ -100,7 +101,53 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
     // success
     hmap->elements++;
 
+    // scan the rest of the LL looking for values with the same key
+    // remove any that are found.
+    doubly_linked_list_element_t* element = (*dllptr)->first->next;
+    while (element != NULL)
+    {
+        doubly_linked_list_element_t* next_element = element->next;
+        hashmap_entry_t* hmap_entry = (hashmap_entry_t*)element->data;
+        if (hmap_entry->key == key)
+        {
+            remove_hashmap_entry(hmap, hmap_entry, *dllptr, element);
+        }
+
+        element = next_element;
+    }
+
+
     return VPR_STATUS_SUCCESS;
+}
+
+/**
+ * Remove a hashmap entry from the doubly linked list it is contained in.
+ *
+ * \param hmap                  The hashmap
+ * \param hmap_entry            The hashmap entry to remove.
+ * \param dll                   The doubly linked list containing the entry.
+ * \param element               The DLL element encapsulating the hashmap
+ *                              entry.
+ */
+static void remove_hashmap_entry(hashmap_t* hmap, hashmap_entry_t* hmap_entry,
+    doubly_linked_list_t* dll, doubly_linked_list_element_t* element)
+{
+    doubly_linked_list_remove(dll, element);
+
+    // this call frees the memory for the data, if appropriate
+    if (NULL != hmap_entry->val && NULL != hmap->options->hashmap_item_dispose)
+    {
+        hmap->options->hashmap_item_dispose(
+            hmap->options->alloc_opts, hmap_entry->val);
+    }
+
+    // free the hashmap entry
+    release(hmap->options->alloc_opts, hmap_entry);
+
+    // free the memory for the DLL element
+    release(dll->options->alloc_opts, element);
+
+    hmap->elements--;
 }
 
 /**
