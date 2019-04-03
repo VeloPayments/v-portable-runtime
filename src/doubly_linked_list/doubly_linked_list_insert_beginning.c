@@ -1,7 +1,18 @@
+/**
+ * \file doubly_linked_list_insert_beginning.c
+ *
+ * Implementation of doubly_linked_list_insert_beginning.
+ *
+ * \copyright 2019 Velo Payments, Inc.  All rights reserved.
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include <cbmc/model_assert.h>
 #include <vpr/doubly_linked_list.h>
+
+/* this is the real implementation. */
+#ifndef MODEL_CHECK_vpr_dll_shadowed
 
 /**
  * \brief Insert a new element at the beginning of a doubly linked list.
@@ -82,3 +93,5 @@ int doubly_linked_list_insert_beginning(doubly_linked_list_t* dll, void* data)
         return doubly_linked_list_insert_before(dll, dll->first, data);
     }
 }
+
+#endif /*!defined(MODEL_CHECK_vpr_dll_shadowed)*/

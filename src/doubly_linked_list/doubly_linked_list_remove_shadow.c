@@ -1,7 +1,7 @@
 /**
- * \file doubly_linked_list_remove.c
+ * \file doubly_linked_list_remove_shadow.c
  *
- * Implementation of doubly_linked_list_remove.
+ * Shadow library implementation of doubly_linked_list_remove.
  *
  * \copyright 2019 Velo Payments, Inc.  All rights reserved.
  */
@@ -9,8 +9,8 @@
 #include <cbmc/model_assert.h>
 #include <vpr/doubly_linked_list.h>
 
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_dll_shadowed
+/* this is the shadow implementation. */
+#ifdef MODEL_CHECK_vpr_dll_shadowed
 
 /**
  * \brief Remove an element from a doubly linked list.
@@ -67,4 +67,4 @@ int doubly_linked_list_remove(doubly_linked_list_t* dll,
     return VPR_STATUS_SUCCESS;
 }
 
-#endif /*!defined(MODEL_CHECK_vpr_dll_shadowed)*/
+#endif /*defined(MODEL_CHECK_vpr_dll_shadowed)*/

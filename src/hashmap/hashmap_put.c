@@ -44,18 +44,19 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
     // create one and add it to the bucket now.
     doubly_linked_list_t** dllptr =
         bucket + (doubly_linked_list_t**)hmap->buckets;
-    if (NULL == *dllptr)
+    MODEL_ASSERT(NULL == *dllptr);  // TODO
+    /*if (NULL == *dllptr)
     {
-        *dllptr = (doubly_linked_list_t*)allocate_dll(hmap->options->alloc_opts);
+        *dllptr = (doubly_linked_list_t*) allocate_dll(hmap->options->alloc_opts);
         if (NULL == *dllptr)
         {
             return VPR_ERROR_HASHMAP_BUCKET_ALLOCATION_FAILED;
         }
-    }
+    }*/
 
     // create the hash entry
-    hashmap_entry_t* hmap_entry = (hashmap_entry_t*)allocate(
-        hmap->options->alloc_opts, sizeof(hashmap_entry_t));
+    /*hashmap_entry_t* hmap_entry = (hashmap_entry_t*) allocate(
+            hmap->options->alloc_opts, sizeof(hashmap_entry_t));
     if (NULL == hmap_entry)
     {
         release(hmap->options->alloc_opts, *dllptr);
@@ -63,15 +64,15 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
         return VPR_ERROR_HASHMAP_ENTRY_ALLOCATION_FAILED;
     }
 
-    hmap_entry->key = key;
+    hmap_entry->key = key;*/
 
     // if this is a copy-on-insert, then allocate space for the data and copy
     // it into that buffer.  Otherwise, set the pointer to the original data.
-    if (NULL != hmap->options->hashmap_item_copy)
+    /*if (NULL != hmap->options->hashmap_item_copy)
     {
-        uint8_t* data_buffer = (uint8_t*)allocate(
-            hmap->options->alloc_opts,
-            hmap->options->item_size);
+        uint8_t *data_buffer = (uint8_t *) allocate(
+                hmap->options->alloc_opts,
+                hmap->options->item_size);
         hmap_entry->val = data_buffer;
         if (NULL == data_buffer)
         {
@@ -80,31 +81,29 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
 
         // copy the data into the buffer
         hmap->options->hashmap_item_copy(
-            hmap_entry->val, val, hmap->options->item_size);
+                hmap_entry->val, val, hmap->options->item_size);
     }
     else
     {
         // not copying, just reference data passed in.
         hmap_entry->val = val;
-    }
+    }*/
 
     // add the entry to the linked list
-    int dll_retval = doubly_linked_list_insert_beginning(*dllptr, hmap_entry);
+    /*int dll_retval = doubly_linked_list_insert_beginning(*dllptr, hmap_entry);
     if (0 != dll_retval)
     {
         release(hmap->options->alloc_opts, hmap_entry);
-        release(hmap->options->alloc_opts, *dllptr);
-        dllptr = NULL;
         return dll_retval;
-    }
+    }*/
 
     // success
     hmap->elements++;
 
     // scan the rest of the LL looking for values with the same key
     // remove any that are found.
-    doubly_linked_list_element_t* element = (*dllptr)->first->next;
-    while (element != NULL)
+    /*doubly_linked_list_element_t* element = (*dllptr)->first->next;
+    while (NULL != element)
     {
         doubly_linked_list_element_t* next_element = element->next;
         hashmap_entry_t* hmap_entry = (hashmap_entry_t*)element->data;
@@ -114,7 +113,7 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
         }
 
         element = next_element;
-    }
+    }*/
 
 
     return VPR_STATUS_SUCCESS;
@@ -132,6 +131,8 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
 static void remove_hashmap_entry(hashmap_t* hmap, hashmap_entry_t* hmap_entry,
     doubly_linked_list_t* dll, doubly_linked_list_element_t* element)
 {
+    MODEL_ASSERT(hmap->elements > 0);
+
     doubly_linked_list_remove(dll, element);
 
     // this call frees the memory for the data, if appropriate
@@ -172,11 +173,7 @@ static doubly_linked_list_t* allocate_dll(allocator_options_t* alloc_opts)
         return NULL;
     }
 
-    int dll_options_init_retval = 0;
-    MODEL_EXEMPT(dll_options_init_retval = doubly_linked_list_options_init(
-                     dll_options, alloc_opts, false, sizeof(hashmap_entry_t), true));
-
-    if (0 != dll_options_init_retval)
+    if (0 != doubly_linked_list_options_init(dll_options, alloc_opts, false, sizeof(hashmap_entry_t), true))
     {
         release(alloc_opts, dll_options);
         return NULL;
@@ -192,9 +189,7 @@ static doubly_linked_list_t* allocate_dll(allocator_options_t* alloc_opts)
         return NULL;
     }
 
-    int dll_init_retval = 0;
-    MODEL_EXEMPT(dll_init_retval = doubly_linked_list_init(dll_options, dll));
-    if (0 != dll_init_retval)
+    if (0 != doubly_linked_list_init(dll_options, dll))
     {
         release(alloc_opts, dll);
         release(alloc_opts, dll_options);

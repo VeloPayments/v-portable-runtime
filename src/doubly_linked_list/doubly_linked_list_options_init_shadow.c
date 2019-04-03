@@ -1,7 +1,7 @@
 /**
- * \file doubly_linked_list_options_init.c
+ * \file doubly_linked_list_options_init_shadow.c
  *
- * Implementation of doubly_linked_list_options_init.
+ * Shadow library implementation of doubly_linked_list_options_init.
  *
  * \copyright 2019 Velo Payments, Inc.  All rights reserved.
  */
@@ -11,12 +11,11 @@
 #include <vpr/doubly_linked_list.h>
 #include <vpr/parameters.h>
 
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_dll_shadowed
+/* this is the shadow implementation. */
+#ifdef MODEL_CHECK_vpr_dll_shadowed
 
 /* forward decls for internal methods */
-static void dll_simple_elem_copy(void*, const void*, size_t);
-static void dll_simple_elem_dispose(allocator_options_t*, void*);
+static void dll_simple_dispose(void*);
 
 /**
  * \brief Initialize doubly linked list options for a POD data type.
@@ -57,43 +56,24 @@ int doubly_linked_list_options_init(doubly_linked_list_options_t* options,
     MODEL_ASSERT(NULL != alloc_opts->allocator_release);
     MODEL_ASSERT(0 != element_size);
 
-    //initialize this structure in terms of doubly_linked_list_options_init_ex
-    return doubly_linked_list_options_init_ex(options, alloc_opts,
-        copy_on_insert ? &dll_simple_elem_copy : NULL,
-        element_size,
-        (copy_on_insert || release_on_dispose) ? &dll_simple_elem_dispose
-                                               : NULL);
+    options->hdr.dispose = &dll_simple_dispose;
+    options->alloc_opts = alloc_opts;
+    options->element_size = element_size;
+    options->doubly_linked_list_element_copy = NULL;
+    options->doubly_linked_list_element_dispose = NULL;
+
+    return VPR_STATUS_SUCCESS;
 }
 
 /**
- * The copy method to use when copying elements in this linked list.
+ * Dispose of the options structure.  Nothing special needs to be done.
  *
- * \param destination   The destination element to which this value will be
- *                      copied.
- * \param source        The source element used for the copy.
- * \param size          The size of the element being copied.
+ * \param poptions          Opaque pointer to the options structure.
  */
-static void dll_simple_elem_copy(void* destination, const void* source, size_t size)
+static void dll_simple_dispose(void* UNUSED(poptions))
 {
-    MODEL_ASSERT(NULL != destination);
-    MODEL_ASSERT(NULL != source);
-    MODEL_ASSERT(size > 0);
-
-    memcpy(destination, source, size);
+    MODEL_ASSERT(NULL != poptions);
 }
 
-/**
- * The dispose method to use when disposing an element in this linked list.
- *
- * \param alloc_opts        The allocator options to use.
- * \param elem              The element to be disposed.
- */
-static void dll_simple_elem_dispose(allocator_options_t* alloc_opts, void* elem)
-{
-    MODEL_ASSERT(NULL != alloc_opts);
-    MODEL_ASSERT(NULL != elem);
 
-    release(alloc_opts, elem);
-}
-
-#endif /*!defined(MODEL_CHECK_vpr_dll_shadowed)*/
+#endif /*defined(MODEL_CHECK_vpr_dll_shadowed)*/

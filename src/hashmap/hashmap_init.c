@@ -61,7 +61,7 @@ int hashmap_init(hashmap_options_t* options, hashmap_t* hmap)
     }
 
     // this hashmap has no elements
-    hmap->elements = 0u;
+    hmap->elements = 0;
 
     return VPR_STATUS_SUCCESS;
 }
@@ -81,7 +81,17 @@ void hashmap_dispose(void* phmap)
     MODEL_ASSERT(NULL != hmap->options);
     MODEL_ASSERT(NULL != hmap->options->alloc_opts);
 
-    // TODO: may need to release data items.  (Get model check to fail first.)
+    // dispose of the linked lists within the buckets
+    for (unsigned int i = 0; i < hmap->options->capacity; i++)
+    {
+        doubly_linked_list_t** dllptr =
+            i + (doubly_linked_list_t**)hmap->buckets;
+        if (NULL != *dllptr)
+        {
+            dispose((disposable_t*)*dllptr);
+        }
+    }
+
 
     release(hmap->options->alloc_opts, hmap->buckets);
 }
