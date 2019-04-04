@@ -51,11 +51,7 @@ int doubly_linked_list_insert_beginning(doubly_linked_list_t* dll, void* data)
     }
 
     // we only allow one element in the shadow impl
-    if (NULL != dll->first)
-    {
-        // FIXME
-        MODEL_ASSERT(1 == 0);
-    }
+    MODEL_ASSERT(NULL == dll->first);
 
     /* set the pointers */
     dll->first = new_element;

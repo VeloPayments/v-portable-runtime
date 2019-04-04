@@ -43,10 +43,11 @@ TEST_F(hashmap_test, init_test)
     ASSERT_EQ(hmap.options->capacity, 1000u);
 
     // verify the hashmap is initialized to all NULLs
+    ASSERT_EQ(*(uint8_t**)hmap.buckets, nullptr);
     for (unsigned int i = 0; i < hmap.options->capacity; i++)
     {
-        uint8_t* ptr = i + (uint8_t*)hmap.buckets;
-        EXPECT_EQ(*ptr, 0);
+        uint8_t* ptr = *((uint8_t**)((uint8_t*)hmap.buckets + i));
+        EXPECT_EQ(ptr, nullptr);
     }
 
     // there should be 0 elements
@@ -85,7 +86,7 @@ TEST_F(hashmap_test, put_get_without_copy)
 
     // as we did not copy-on-insert the value should
     // reference our stack variable
-    val = 100;
+    ++val;
     EXPECT_EQ(*(int*)hashmap_get(&hmap, key), val);
 
     //dispose of our hashmap

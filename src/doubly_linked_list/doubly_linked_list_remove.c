@@ -9,9 +9,6 @@
 #include <cbmc/model_assert.h>
 #include <vpr/doubly_linked_list.h>
 
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_dll_shadowed
-
 /**
  * \brief Remove an element from a doubly linked list.
  *
@@ -66,5 +63,3 @@ int doubly_linked_list_remove(doubly_linked_list_t* dll,
     //success
     return VPR_STATUS_SUCCESS;
 }
-
-#endif /*!defined(MODEL_CHECK_vpr_dll_shadowed)*/

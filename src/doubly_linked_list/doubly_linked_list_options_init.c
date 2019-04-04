@@ -11,9 +11,6 @@
 #include <vpr/doubly_linked_list.h>
 #include <vpr/parameters.h>
 
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_dll_shadowed
-
 /* forward decls for internal methods */
 static void dll_simple_elem_copy(void*, const void*, size_t);
 static void dll_simple_elem_dispose(allocator_options_t*, void*);
@@ -95,5 +92,3 @@ static void dll_simple_elem_dispose(allocator_options_t* alloc_opts, void* elem)
 
     release(alloc_opts, elem);
 }
-
-#endif /*!defined(MODEL_CHECK_vpr_dll_shadowed)*/

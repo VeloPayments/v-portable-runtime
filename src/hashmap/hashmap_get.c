@@ -30,17 +30,17 @@ void* hashmap_get(hashmap_t* hmap, uint64_t key)
     unsigned int bucket = key % hmap->options->capacity;
 
     // get the doubly linked list from the bucket
-    doubly_linked_list_t** dll =
-        bucket + (doubly_linked_list_t**)hmap->buckets;
+    void** buckets = hmap->buckets;
+    doubly_linked_list_t* dllptr = (doubly_linked_list_t*)buckets[bucket];
 
     // if there is no doubly linked list there is no value to return
-    if (NULL == *dll)
+    if (NULL == dllptr)
     {
         return NULL;
     }
 
     // search for the key within that list
-    doubly_linked_list_element_t* element = (*dll)->first;
+    doubly_linked_list_element_t* element = dllptr->first;
     while (element != NULL)
     {
         hashmap_entry_t* hmap_entry = (hashmap_entry_t*)element->data;

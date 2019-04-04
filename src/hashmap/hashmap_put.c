@@ -42,78 +42,79 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
 
     // get the linked list in that bucket.  If there is not already one,
     // create one and add it to the bucket now.
-    doubly_linked_list_t** dllptr =
-        bucket + (doubly_linked_list_t**)hmap->buckets;
-    MODEL_ASSERT(NULL == *dllptr);  // TODO
-    /*if (NULL == *dllptr)
+    void** buckets = hmap->buckets;
+    doubly_linked_list_t* dllptr = (doubly_linked_list_t*)buckets[bucket];
+
+    if (NULL == dllptr)
     {
-        *dllptr = (doubly_linked_list_t*) allocate_dll(hmap->options->alloc_opts);
-        if (NULL == *dllptr)
+        dllptr = (doubly_linked_list_t*)
+            allocate_dll(hmap->options->alloc_opts);
+        if (NULL == dllptr)
         {
             return VPR_ERROR_HASHMAP_BUCKET_ALLOCATION_FAILED;
         }
-    }*/
+        buckets[bucket] = dllptr;
+    }
 
     // create the hash entry
-    /*hashmap_entry_t* hmap_entry = (hashmap_entry_t*) allocate(
-            hmap->options->alloc_opts, sizeof(hashmap_entry_t));
+    hashmap_entry_t* hmap_entry = (hashmap_entry_t*)allocate(
+        hmap->options->alloc_opts, sizeof(hashmap_entry_t));
     if (NULL == hmap_entry)
     {
-        release(hmap->options->alloc_opts, *dllptr);
-        dllptr = NULL;
         return VPR_ERROR_HASHMAP_ENTRY_ALLOCATION_FAILED;
     }
 
-    hmap_entry->key = key;*/
+    hmap_entry->key = key;
 
     // if this is a copy-on-insert, then allocate space for the data and copy
     // it into that buffer.  Otherwise, set the pointer to the original data.
-    /*if (NULL != hmap->options->hashmap_item_copy)
+    if (NULL != hmap->options->hashmap_item_copy)
     {
-        uint8_t *data_buffer = (uint8_t *) allocate(
-                hmap->options->alloc_opts,
-                hmap->options->item_size);
+        uint8_t* data_buffer = (uint8_t*)allocate(
+            hmap->options->alloc_opts,
+            hmap->options->item_size);
         hmap_entry->val = data_buffer;
         if (NULL == data_buffer)
         {
+            release(hmap->options->alloc_opts, hmap_entry);
             return VPR_ERROR_HASHMAP_DATA_ITEM_ALLOCATION_FAILED;
         }
 
         // copy the data into the buffer
         hmap->options->hashmap_item_copy(
-                hmap_entry->val, val, hmap->options->item_size);
+            hmap_entry->val, val, hmap->options->item_size);
     }
     else
     {
         // not copying, just reference data passed in.
         hmap_entry->val = val;
-    }*/
+    }
 
     // add the entry to the linked list
-    /*int dll_retval = doubly_linked_list_insert_beginning(*dllptr, hmap_entry);
+    int dll_retval = doubly_linked_list_insert_beginning(dllptr, hmap_entry);
     if (0 != dll_retval)
     {
         release(hmap->options->alloc_opts, hmap_entry);
         return dll_retval;
-    }*/
+    }
 
     // success
     hmap->elements++;
 
     // scan the rest of the LL looking for values with the same key
     // remove any that are found.
-    /*doubly_linked_list_element_t* element = (*dllptr)->first->next;
+    doubly_linked_list_element_t* element = dllptr->first->next;
     while (NULL != element)
     {
         doubly_linked_list_element_t* next_element = element->next;
         hashmap_entry_t* hmap_entry = (hashmap_entry_t*)element->data;
         if (hmap_entry->key == key)
         {
-            remove_hashmap_entry(hmap, hmap_entry, *dllptr, element);
+            remove_hashmap_entry(hmap, hmap_entry, dllptr, element);
         }
 
         element = next_element;
-    }*/
+    }
 
 
     return VPR_STATUS_SUCCESS;
@@ -173,6 +174,10 @@ static doubly_linked_list_t* allocate_dll(allocator_options_t* alloc_opts)
         return NULL;
     }
 
+    // the elements in this DLL are hash_entries.  We don't want to copy them;
+    // the DLL will assume ownership of the hash entries added to them.
+    // However, we do need to release the hash entries when we dispose of
+    // the DLL.
     if (0 != doubly_linked_list_options_init(dll_options, alloc_opts, false, sizeof(hashmap_entry_t), true))
     {
         release(alloc_opts, dll_options);
