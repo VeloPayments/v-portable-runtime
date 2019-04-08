@@ -153,6 +153,9 @@ TEST_F(bloom_filter_test, false_positive_error_rate_5pct_test)
 
 
     verify_false_positive_error_rate(&bloom, 0.05, 10000);
+
+    //dispose of our filter
+    dispose((disposable_t*)&bloom);
 }
 
 /**
@@ -170,6 +173,9 @@ TEST_F(bloom_filter_test, false_positive_error_rate_1pct_test)
     EXPECT_EQ(bloom.options->num_hash_functions, 7u);
 
     verify_false_positive_error_rate(&bloom, 0.01, 10000);
+
+    //dispose of our filter
+    dispose((disposable_t*)&bloom);
 }
 
 /**
@@ -187,6 +193,9 @@ TEST_F(bloom_filter_test, false_positive_error_rate_half_pct_test)
     EXPECT_EQ(bloom.options->num_hash_functions, 8u);
 
     verify_false_positive_error_rate(&bloom, 0.005, 10000);
+
+    //dispose of our filter
+    dispose((disposable_t*)&bloom);
 }
 
 /**
@@ -202,6 +211,9 @@ TEST_F(bloom_filter_test, false_positive_error_rate_volume_test)
     ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
 
     verify_false_positive_error_rate(&bloom, 0.01, 1000000);
+
+    //dispose of our filter
+    dispose((disposable_t*)&bloom);
 }
 
 
