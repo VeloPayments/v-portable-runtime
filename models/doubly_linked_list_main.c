@@ -1,7 +1,7 @@
 /**
- * \file custom_doubly_linked_list_init.c
+ * \file doubly_linked_list_main.c
  *
- * Simple model check of doubly_linked_list_init.
+ * Simple model check of doubly linked list
  *
  * \copyright 2019 Velo Payments, Inc.  All rights reserved.
  */
@@ -52,7 +52,7 @@ static void verify_empty_list()
     // verify the options are valid
     MODEL_ASSERT(MODEL_PROP_VALID_DLL_OPTIONS(&options, sizeof(int)));
 
-    //initialize the array
+    //initialize the doubly linked list
     MODEL_ASSERT(0 == doubly_linked_list_init(&options, &dll));
 
     // verify the (empty) list is valid
