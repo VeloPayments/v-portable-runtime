@@ -8,6 +8,7 @@
 
 #include <cbmc/model_assert.h>
 #include <string.h>
+#include <stdbool.h>
 #include <vpr/hashmap.h>
 #include <vpr/parameters.h>
 
@@ -48,8 +49,8 @@ static void hashmap_item_dispose(allocator_options_t*, void*);
  */
 int hashmap_options_init(
     hashmap_options_t* options, allocator_options_t* alloc_opts,
-    unsigned int capacity, _Bool copy_on_insert, size_t item_size,
-    _Bool release_on_dispose)
+    uint32_t capacity, bool copy_on_insert, size_t item_size,
+    bool release_on_dispose)
 {
     MODEL_ASSERT(NULL != options);
     MODEL_ASSERT(NULL != alloc_opts);

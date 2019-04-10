@@ -43,7 +43,7 @@ static void hashmap_simple_dispose(void*);
  */
 int hashmap_options_init_ex(
     hashmap_options_t* options, allocator_options_t* alloc_opts,
-    unsigned int capacity, hashmap_item_copy_t copy_method,
+    uint32_t capacity, hashmap_item_copy_t copy_method,
     size_t item_size, hashmap_item_dispose_t dispose_method)
 {
     MODEL_ASSERT(NULL != options);

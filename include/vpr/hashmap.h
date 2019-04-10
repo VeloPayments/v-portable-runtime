@@ -68,7 +68,7 @@ typedef struct hashmap_options
     /**
      * \brief The number of buckets in this hashmap.
      */
-    unsigned int capacity;
+    uint32_t capacity;
 
     /**
     * \brief The copy method to use when adding items to this hashmap.
@@ -138,7 +138,7 @@ typedef struct hashmap
     /**
      * \brief The number of elements in this hashmap.
      */
-    unsigned int elements;
+    uint32_t elements;
 
 } hashmap_t;
 
@@ -184,8 +184,8 @@ typedef struct hashmap
  */
 int hashmap_options_init(
     hashmap_options_t* options, allocator_options_t* alloc_opts,
-    unsigned int capacity, _Bool copy_on_insert, size_t item_size,
-    _Bool release_on_dispose);
+    uint32_t capacity, bool copy_on_insert, size_t item_size,
+    bool release_on_dispose);
 
 /**
  * \brief Initialize hashmap options for a custom data type.
@@ -215,7 +215,7 @@ int hashmap_options_init(
  */
 int hashmap_options_init_ex(
     hashmap_options_t* options, allocator_options_t* alloc_opts,
-    unsigned int capacity, hashmap_item_copy_t copy_method,
+    uint32_t capacity, hashmap_item_copy_t copy_method,
     size_t item_size, hashmap_item_dispose_t dispose_method);
 
 
