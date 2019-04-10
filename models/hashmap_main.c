@@ -19,9 +19,9 @@ static void verify_get();
 
 int main(int argc, char* argv[])
 {
-    //verify_empty_hashmap();
+    verify_empty_hashmap();
     verify_put();
-    //verify_get();
+    verify_get();
 
     return 0;
 }
@@ -72,7 +72,7 @@ static void verify_put()
     malloc_allocator_options_init(&alloc_opts);
 
     //initialize hashmap options
-    if (0 != hashmap_options_init(&options, &alloc_opts, 1, false, sizeof(int), false))
+    if (0 != hashmap_options_init(&options, &alloc_opts, 1, true, sizeof(int), false))
     {
         goto cleanup_alloc_opts;
     }
@@ -127,10 +127,9 @@ static void verify_get()
         goto cleanup_options;
     }
 
-    // add an item
-    /*uint64_t key = (uint64_t)45;
-    int value = 3;
-    hashmap_put(&hmap, key, &value);*/
+    // GET  an item
+    uint64_t key = (uint64_t)45;
+    int* val = (int*)hashmap_get(&hmap, key);
 
     //dispose of the hashmap
     dispose((disposable_t*)&hmap);
