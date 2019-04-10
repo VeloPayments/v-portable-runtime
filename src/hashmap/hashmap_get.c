@@ -27,7 +27,7 @@ void* hashmap_get(hashmap_t* hmap, uint64_t key)
     MODEL_ASSERT(NULL != hmap);
 
     // figure out which bucket
-    unsigned int bucket = key % hmap->options->capacity;
+    uint32_t bucket = key % hmap->options->capacity;
 
     // get the doubly linked list from the bucket
     void** buckets = hmap->buckets;

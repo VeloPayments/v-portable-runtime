@@ -6,13 +6,14 @@
  * \copyright 2019 Velo-Payments, Inc.  All rights reserved.
  */
 
+#include <stdbool.h>
 #include <gtest/gtest.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/hashmap.h>
 
 class hashmap_test : public ::testing::Test {
 protected:
-    void SetUp(unsigned int capacity, _Bool copy_on_insert, size_t item_size)
+    void SetUp(uint32_t capacity, bool copy_on_insert, size_t item_size)
     {
         malloc_allocator_options_init(&alloc_opts);
         hashmap_options_init(&options, &alloc_opts, capacity,

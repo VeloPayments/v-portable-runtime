@@ -38,7 +38,7 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
     MODEL_ASSERT(NULL != val);
 
     // figure out which bucket
-    unsigned int bucket = key % hmap->options->capacity;
+    uint32_t bucket = key % hmap->options->capacity;
 
     // get the linked list in that bucket.  If there is not already one,
     // create one and add it to the bucket now.

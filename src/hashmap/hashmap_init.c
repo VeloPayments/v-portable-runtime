@@ -57,7 +57,7 @@ int hashmap_init(hashmap_options_t* options, hashmap_t* hmap)
 
     // clear the hashmap
     void** buckets = hmap->buckets;
-    for (unsigned int i = 0; i < hmap->options->capacity; i++)
+    for (uint32_t i = 0; i < hmap->options->capacity; i++)
     {
         buckets[i] = NULL;
     }
@@ -85,7 +85,7 @@ void hashmap_dispose(void* phmap)
 
     // dispose of the linked lists within the buckets
     void** buckets = hmap->buckets;
-    for (unsigned int i = 0; i < hmap->options->capacity; i++)
+    for (uint32_t i = 0; i < hmap->options->capacity; i++)
     {
         doubly_linked_list_t* dll = (doubly_linked_list_t*)buckets[i];
         if (NULL != dll)
