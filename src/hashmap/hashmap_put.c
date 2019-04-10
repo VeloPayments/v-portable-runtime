@@ -94,6 +94,10 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val)
     int dll_retval = doubly_linked_list_insert_beginning(dllptr, hmap_entry);
     if (0 != dll_retval)
     {
+        if (NULL != hmap->options->hashmap_item_copy)
+        {
+            release(hmap->options->alloc_opts, hmap_entry->val);
+        }
         release(hmap->options->alloc_opts, hmap_entry);
         return dll_retval;
     }
