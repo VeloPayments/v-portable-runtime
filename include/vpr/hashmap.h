@@ -261,6 +261,19 @@ int hashmap_init(hashmap_options_t* options, hashmap_t* hmap);
 void* hashmap_get(hashmap_t* hmap, uint64_t key);
 
 /**
+ * \brief Retrieve a data item from a hashmap.
+ *
+ * Query a hashmap using a variable length key.
+ *
+ * \param hmap              The hashmap to query
+ * \param key               The key identifying the item.
+ * \param key_len           The length of the key in bytes.
+ *
+ * \returns an opaque pointer to the item, or NULL if it wasn't found.
+ */
+void* hashmap_get_var_key(hashmap_t* hmap, uint8_t* key, size_t key_len);
+
+/**
  * \brief Add an item to a hashmap.
  *
  * Add a data item to the hashmap.  The 64 bit key should be a random value
@@ -277,6 +290,21 @@ void* hashmap_get(hashmap_t* hmap, uint64_t key);
  */
 int hashmap_put(hashmap_t* hmap, uint64_t key, void* val);
 
+/**
+ * \brief Add an item to a hashmap.
+ *
+ * Add a data item to the hashmap using a variable length key.
+ *
+ * \param hmap              The hashmap to add the item to.
+ * \param key               A unique key that serves as an identifier for the
+ *                          data item.
+ * \param key_len           The length of the key.
+ * \param val               Opaque pointer to the data item.
+ *
+ * \returns a status code indicating success or failure.
+ *      - \ref VPR_STATUS_SUCCESS if successful.
+ *      - non-zero code on failure.
+ */
 int hashmap_put_var_key(hashmap_t* hmap, uint8_t* key, size_t key_len,
     void* val);
 

@@ -95,9 +95,9 @@ TEST_F(hashmap_test, put_get_without_copy)
 }
 
 /**
- * Test PUT with variable key
+ * Test PUT/GET with variable length key
  */
-TEST_F(hashmap_test, put_var_key)
+TEST_F(hashmap_test, put_get_var_key)
 {
     SetUp(1024, false, sizeof(long));
     hashmap hmap;
@@ -108,9 +108,7 @@ TEST_F(hashmap_test, put_var_key)
     size_t key_len = sizeof(key) / sizeof(uint8_t);
 
     // should be nothing in the bucket the key is mapped to
-    uint64_t key64 = options.hash_func(key, key_len);
-    EXPECT_GT(key64, (uint64_t)0);
-    EXPECT_EQ(hashmap_get(&hmap, key64), nullptr);
+    EXPECT_EQ(hashmap_get_var_key(&hmap, key, key_len), nullptr);
 
     // add the value to the hashmap
     long val = 9999L;
@@ -120,10 +118,9 @@ TEST_F(hashmap_test, put_var_key)
     EXPECT_EQ(hmap.elements, 1u);
 
     // GET the value back out and compare
-    long* found = (long*)hashmap_get(&hmap, key64);
+    long* found = (long*)hashmap_get_var_key(&hmap, key, key_len);
     EXPECT_NE(found, nullptr);
-    // EXPECT_EQ(*found, val);
-
+    EXPECT_EQ(*found, val);
 
     // dispose of our hashmap
     dispose((disposable_t*)&hmap);
