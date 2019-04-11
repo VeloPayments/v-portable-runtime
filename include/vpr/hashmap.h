@@ -12,6 +12,7 @@
 
 #include <vpr/allocator.h>
 #include <vpr/disposable.h>
+#include <vpr/hash_func.h>
 #include <vpr/error_codes.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -69,6 +70,11 @@ typedef struct hashmap_options
      * \brief The number of buckets in this hashmap.
      */
     uint32_t capacity;
+
+    /**
+     * \brief The hash function to convert keys to a uint64_t.
+     */
+    hash_func_t hash_func;
 
     /**
     * \brief The copy method to use when adding items to this hashmap.
@@ -200,6 +206,8 @@ int hashmap_options_init(
  * \param options           The hashmap options to initialize.
  * \param alloc_opts        The allocator options to use.
  * \param capacity          The number of buckets to allocate.
+ * \param hash_func         The hash function to use to convert variable
+ *                          length keys to 64 bit keys.
  * \param copy_method       Optional - The method to use to copy elements.
  *                          If provided then elements are copied into
  *                          separate memory as they are added to the list.
@@ -215,7 +223,8 @@ int hashmap_options_init(
  */
 int hashmap_options_init_ex(
     hashmap_options_t* options, allocator_options_t* alloc_opts,
-    uint32_t capacity, hashmap_item_copy_t copy_method,
+    uint32_t capacity, hash_func_t hash_func,
+    hashmap_item_copy_t copy_method,
     size_t item_size, hashmap_item_dispose_t dispose_method);
 
 
@@ -268,6 +277,8 @@ void* hashmap_get(hashmap_t* hmap, uint64_t key);
  */
 int hashmap_put(hashmap_t* hmap, uint64_t key, void* val);
 
+int hashmap_put_var_key(hashmap_t* hmap, uint8_t* key, size_t key_len,
+    void* val);
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

@@ -53,7 +53,7 @@ static void bloom_filter_simple_dispose(void*);
  */
 int bloom_filter_options_init_ex(
     bloom_filter_options_t* options, allocator_options_t* alloc_opts,
-    unsigned int num_expected_entries, float target_error_rate,
+    size_t num_expected_entries, float target_error_rate,
     size_t max_size_in_bytes, hash_func_t hash_function_1,
     hash_func_t hash_function_2)
 {

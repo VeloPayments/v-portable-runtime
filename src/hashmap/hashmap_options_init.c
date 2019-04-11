@@ -59,6 +59,7 @@ int hashmap_options_init(
     MODEL_ASSERT(0 != item_size);
 
     return hashmap_options_init_ex(options, alloc_opts, capacity,
+        &sdbm,
         copy_on_insert ? &hashmap_item_copy : NULL,
         item_size,
         (copy_on_insert || release_on_dispose) ? &hashmap_item_dispose : NULL);

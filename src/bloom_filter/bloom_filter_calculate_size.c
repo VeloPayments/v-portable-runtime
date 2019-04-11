@@ -25,12 +25,12 @@
  * \return size in bytes the filter would need to be to meet the
  *         target error rate.
  */
-size_t bloom_filter_calculate_size(unsigned int num_expected_entries,
+size_t bloom_filter_calculate_size(uint32_t num_expected_entries,
     float target_error_rate)
 {
     size_t m_bytes;
 
-    unsigned int m_bits = ceil(
+    uint32_t m_bits = ceil(
         (num_expected_entries * log(target_error_rate)) /
         log(1 / pow(2, log(2))));
 

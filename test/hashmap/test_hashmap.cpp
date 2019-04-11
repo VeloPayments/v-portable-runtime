@@ -95,6 +95,41 @@ TEST_F(hashmap_test, put_get_without_copy)
 }
 
 /**
+ * Test PUT with variable key
+ */
+TEST_F(hashmap_test, put_var_key)
+{
+    SetUp(1024, false, sizeof(long));
+    hashmap hmap;
+
+    ASSERT_EQ(hashmap_init(&options, &hmap), 0);
+
+    uint8_t key[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    size_t key_len = sizeof(key) / sizeof(uint8_t);
+
+    // should be nothing in the bucket the key is mapped to
+    uint64_t key64 = options.hash_func(key, key_len);
+    EXPECT_GT(key64, (uint64_t)0);
+    EXPECT_EQ(hashmap_get(&hmap, key64), nullptr);
+
+    // add the value to the hashmap
+    long val = 9999L;
+    ASSERT_EQ(hashmap_put_var_key(&hmap, key, key_len, &val), 0);
+
+    // we should have one element now
+    EXPECT_EQ(hmap.elements, 1u);
+
+    // GET the value back out and compare
+    long* found = (long*)hashmap_get(&hmap, key64);
+    EXPECT_NE(found, nullptr);
+    // EXPECT_EQ(*found, val);
+
+
+    // dispose of our hashmap
+    dispose((disposable_t*)&hmap);
+}
+
+/**
  * Test a simple PUT and GET operation using a complex
  * structure with copy-on-insert
  */
