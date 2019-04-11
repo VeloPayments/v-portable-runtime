@@ -249,16 +249,16 @@ int hashmap_options_init_ex(
 int hashmap_init(hashmap_options_t* options, hashmap_t* hmap);
 
 /**
- * \brief Retrieve a data item from a hashmap.
+ * \brief Retrieve a data item from a hashmap using a 64 bit key.
  *
  * Query a hashmap using a key that uniquely identifies a data item.
  *
  * \param hmap              The hashmap to query
- * \param key               The key identifying the item.
+ * \param key               The 64 bit key identifying the item.
  *
  * \returns an opaque pointer to the item, or NULL if it wasn't found.
  */
-void* hashmap_get(hashmap_t* hmap, uint64_t key);
+void* hashmap_get64(hashmap_t* hmap, uint64_t key);
 
 /**
  * \brief Retrieve a data item from a hashmap.
@@ -271,10 +271,10 @@ void* hashmap_get(hashmap_t* hmap, uint64_t key);
  *
  * \returns an opaque pointer to the item, or NULL if it wasn't found.
  */
-void* hashmap_get_var_key(hashmap_t* hmap, uint8_t* key, size_t key_len);
+void* hashmap_get(hashmap_t* hmap, uint8_t* key, size_t key_len);
 
 /**
- * \brief Add an item to a hashmap.
+ * \brief Add an item to a hashmap using a 64 bit key.
  *
  * Add a data item to the hashmap.  The 64 bit key should be a random value
  * to minimize chaining, which will decrease performance.
@@ -288,7 +288,7 @@ void* hashmap_get_var_key(hashmap_t* hmap, uint8_t* key, size_t key_len);
  *      - \ref VPR_STATUS_SUCCESS if successful.
  *      - non-zero code on failure.
  */
-int hashmap_put(hashmap_t* hmap, uint64_t key, void* val);
+int hashmap_put64(hashmap_t* hmap, uint64_t key, void* val);
 
 /**
  * \brief Add an item to a hashmap.
@@ -305,8 +305,7 @@ int hashmap_put(hashmap_t* hmap, uint64_t key, void* val);
  *      - \ref VPR_STATUS_SUCCESS if successful.
  *      - non-zero code on failure.
  */
-int hashmap_put_var_key(hashmap_t* hmap, uint8_t* key, size_t key_len,
-    void* val);
+int hashmap_put(hashmap_t* hmap, uint8_t* key, size_t key_len, void* val);
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

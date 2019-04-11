@@ -71,24 +71,24 @@ TEST_F(hashmap_test, put_get_without_copy)
     uint64_t key = (uint64_t)1337;
 
     // should be nothing in the bucket that key is mapped to
-    EXPECT_EQ(hashmap_get(&hmap, key), nullptr);
+    EXPECT_EQ(hashmap_get64(&hmap, key), nullptr);
 
     // add the value to the hashmap
     int val = 99;
-    ASSERT_EQ(hashmap_put(&hmap, key, &val), 0);
+    ASSERT_EQ(hashmap_put64(&hmap, key, &val), 0);
 
     // we should have one element now
     EXPECT_EQ(hmap.elements, 1u);
 
     // get our value back out
-    void* ptr = hashmap_get(&hmap, key);
+    void* ptr = hashmap_get64(&hmap, key);
     EXPECT_NE(ptr, nullptr);
     EXPECT_EQ(*(int*)ptr, val);
 
     // as we did not copy-on-insert the value should
     // reference our stack variable
     ++val;
-    EXPECT_EQ(*(int*)hashmap_get(&hmap, key), val);
+    EXPECT_EQ(*(int*)hashmap_get64(&hmap, key), val);
 
     //dispose of our hashmap
     dispose((disposable_t*)&hmap);
@@ -108,17 +108,17 @@ TEST_F(hashmap_test, put_get_var_key)
     size_t key_len = sizeof(key) / sizeof(uint8_t);
 
     // should be nothing in the bucket the key is mapped to
-    EXPECT_EQ(hashmap_get_var_key(&hmap, key, key_len), nullptr);
+    EXPECT_EQ(hashmap_get(&hmap, key, key_len), nullptr);
 
     // add the value to the hashmap
     long val = 9999L;
-    ASSERT_EQ(hashmap_put_var_key(&hmap, key, key_len, &val), 0);
+    ASSERT_EQ(hashmap_put(&hmap, key, key_len, &val), 0);
 
     // we should have one element now
     EXPECT_EQ(hmap.elements, 1u);
 
     // GET the value back out and compare
-    long* found = (long*)hashmap_get_var_key(&hmap, key, key_len);
+    long* found = (long*)hashmap_get(&hmap, key, key_len);
     EXPECT_NE(found, nullptr);
     EXPECT_EQ(*found, val);
 
@@ -147,20 +147,20 @@ TEST_F(hashmap_test, put_get_with_copy)
     uint64_t key = (uint64_t)123;
 
     // should be nothing in the bucket that key is mapped to
-    EXPECT_EQ(hashmap_get(&hmap, key), nullptr);
+    EXPECT_EQ(hashmap_get64(&hmap, key), nullptr);
 
     // add the value to the hashmap
     test_type_t val;
     val.a = 123;
     val.b = 456L;
     val.c = true;
-    ASSERT_EQ(hashmap_put(&hmap, key, &val), 0);
+    ASSERT_EQ(hashmap_put64(&hmap, key, &val), 0);
 
     // we should have one element now
     EXPECT_EQ(hmap.elements, 1u);
 
     // get our value back out
-    void* ptr = hashmap_get(&hmap, key);
+    void* ptr = hashmap_get64(&hmap, key);
     EXPECT_NE(ptr, nullptr);
     test_type_t* found = (test_type_t*)ptr;
     EXPECT_EQ(found->a, val.a);
@@ -171,7 +171,7 @@ TEST_F(hashmap_test, put_get_with_copy)
     // variable
     ++val.a;
     --val.b;
-    found = (test_type_t*)hashmap_get(&hmap, key);
+    found = (test_type_t*)hashmap_get64(&hmap, key);
 
     EXPECT_EQ(found->a, val.a - 1);
     EXPECT_EQ(found->b, val.b + 1);
@@ -193,19 +193,19 @@ TEST_F(hashmap_test, add_multiple_items)
 
     // add the value to the hashmap
     int val0 = 100;
-    ASSERT_EQ(hashmap_put(&hmap, 0, &val0), 0);
+    ASSERT_EQ(hashmap_put64(&hmap, 0, &val0), 0);
     EXPECT_EQ(hmap.elements, 1u);
 
     // add a new value
     int val1 = 101;
-    ASSERT_EQ(hashmap_put(&hmap, 1, &val1), 0);
+    ASSERT_EQ(hashmap_put64(&hmap, 1, &val1), 0);
     EXPECT_EQ(hmap.elements, 2u);
 
     // this entry overwrites the first entry
     int val2 = 102;
-    ASSERT_EQ(hashmap_put(&hmap, 0, &val2), 0);
+    ASSERT_EQ(hashmap_put64(&hmap, 0, &val2), 0);
     EXPECT_EQ(hmap.elements, 2u);
-    int* found = (int*)hashmap_get(&hmap, 0);
+    int* found = (int*)hashmap_get64(&hmap, 0);
     EXPECT_EQ(*found, val2);
 
     //dispose of our hashmap
@@ -230,7 +230,7 @@ TEST_F(hashmap_test, chaining_round_robin)
     for (unsigned int i = 0; i < (capacity * 10); i++)
     {
         uint64_t key = i;
-        hashmap_put(&hmap, key, &i);
+        hashmap_put64(&hmap, key, &i);
     }
     EXPECT_EQ(hmap.elements, capacity * 10);
 
@@ -238,7 +238,7 @@ TEST_F(hashmap_test, chaining_round_robin)
     for (unsigned int i = 0; i < (capacity * 10); i++)
     {
         uint64_t key = i;
-        unsigned int* val = (unsigned int*)hashmap_get(&hmap, key);
+        unsigned int* val = (unsigned int*)hashmap_get64(&hmap, key);
         EXPECT_EQ(*val, i);
     }
 
@@ -246,7 +246,7 @@ TEST_F(hashmap_test, chaining_round_robin)
     for (unsigned int i = 0; i < (capacity * 10); i++)
     {
         uint64_t key = i;
-        hashmap_put(&hmap, key, &i);
+        hashmap_put64(&hmap, key, &i);
     }
     EXPECT_EQ(hmap.elements, capacity * 10);
 
@@ -269,10 +269,10 @@ TEST_F(hashmap_test, duplicate_key)
     uint64_t key = 333;
     for (unsigned int i = 0; i < (capacity * 10); i++)
     {
-        hashmap_put(&hmap, key, &i);
+        hashmap_put64(&hmap, key, &i);
 
         // read the value back out
-        unsigned int* found = (unsigned int*)hashmap_get(&hmap, key);
+        unsigned int* found = (unsigned int*)hashmap_get64(&hmap, key);
         EXPECT_EQ(*found, i);
     }
 

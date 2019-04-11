@@ -89,7 +89,7 @@ static void verify_put()
     // add an item
     uint64_t key = (uint64_t)45;
     int value = 3;
-    hashmap_put(&hmap, key, &value);
+    hashmap_put64(&hmap, key, &value);
 
     //dispose of the hashmap
     dispose((disposable_t*)&hmap);
@@ -129,7 +129,7 @@ static void verify_get()
 
     // GET  an item
     uint64_t key = (uint64_t)45;
-    int* val = (int*)hashmap_get(&hmap, key);
+    int* val = (int*)hashmap_get64(&hmap, key);
 
     //dispose of the hashmap
     dispose((disposable_t*)&hmap);

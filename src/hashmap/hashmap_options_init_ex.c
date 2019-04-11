@@ -53,7 +53,7 @@ int hashmap_options_init_ex(
     MODEL_ASSERT(NULL != alloc_opts);
     MODEL_ASSERT(NULL != alloc_opts->allocator_release);
     MODEL_ASSERT(capacity > 0);
-    MODEL_ASSERT(NULL != hash_function);
+    MODEL_ASSERT(NULL != hash_func);
     MODEL_ASSERT(NULL == copy_method || item_size > 0);
 
     options->hdr.dispose = &hashmap_simple_dispose;
