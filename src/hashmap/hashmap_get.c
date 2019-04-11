@@ -9,7 +9,6 @@
 #include <string.h>
 #include <cbmc/model_assert.h>
 #include <vpr/hashmap.h>
-#include <vpr/doubly_linked_list.h>
 #include <vpr/parameters.h>
 
 /**
@@ -26,32 +25,7 @@ void* hashmap_get(hashmap_t* hmap, uint64_t key)
 {
     MODEL_ASSERT(NULL != hmap);
 
-    // figure out which bucket
-    uint32_t bucket = key % hmap->options->capacity;
+    uint8_t* keyptr = (uint8_t*)&key;
 
-    // get the doubly linked list from the bucket
-    void** buckets = hmap->buckets;
-    doubly_linked_list_t* dllptr = (doubly_linked_list_t*)buckets[bucket];
-
-    // if there is no doubly linked list there is no value to return
-    if (NULL == dllptr)
-    {
-        return NULL;
-    }
-
-    // search for the key within that list
-    doubly_linked_list_element_t* element = dllptr->first;
-    while (element != NULL)
-    {
-        hashmap_entry_t* hmap_entry = (hashmap_entry_t*)element->data;
-        if (hmap_entry->key == key)
-        {
-            return hmap_entry->val;
-        }
-
-        element = element->next;
-    }
-
-
-    return NULL;
+    return hashmap_get_var_key(hmap, keyptr, sizeof(uint64_t));
 }
