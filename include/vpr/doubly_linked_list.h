@@ -202,8 +202,8 @@ typedef struct doubly_linked_list
  *      - a non-zero status code on failure.
  */
 int doubly_linked_list_options_init(doubly_linked_list_options_t* options,
-    allocator_options_t* alloc_opts, _Bool copy_on_insert,
-    size_t element_size, _Bool release_on_dispose);
+    allocator_options_t* alloc_opts, bool copy_on_insert,
+    size_t element_size, bool release_on_dispose);
 
 /**
  * \brief Initialize doubly linked list options for a custom data type.

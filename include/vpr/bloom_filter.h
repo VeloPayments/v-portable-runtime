@@ -273,7 +273,7 @@ _Bool bloom_filter_contains_item(bloom_filter_t* bloom, const void* data,
  * \return size in bytes the filter would need to be to meet the
  *         target error rate.
  */
-size_t bloom_filter_calculate_size(uint32_t num_expected_entries,
+size_t bloom_filter_calculate_size(size_t num_expected_entries,
     float target_error_rate);
 
 /**
@@ -286,7 +286,7 @@ size_t bloom_filter_calculate_size(uint32_t num_expected_entries,
  * \return The number of hash functions required.
  */
 unsigned int bloom_filter_calculate_num_hashes(
-    uint32_t num_expected_entries, size_t size_in_bytes);
+    size_t num_expected_entries, size_t size_in_bytes);
 
 /**
  * \brief Helper function to calculate the expected error rate of a bloom
@@ -300,7 +300,7 @@ unsigned int bloom_filter_calculate_num_hashes(
  * \return The expected error rate.
  */
 float bloom_filter_calculate_expected_error_rate(
-    uint32_t num_expected_entries, size_t size_in_bytes,
+    size_t num_expected_entries, size_t size_in_bytes,
     unsigned int num_hash_functions);
 
 

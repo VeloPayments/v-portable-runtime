@@ -30,7 +30,9 @@ static void hashmap_simple_dispose(void*);
  * \param capacity          The number of buckets to allocate.
  * \param hash_func         The hash function to use to convert variable
  *                          length keys to 64 bit keys.
- * \param equals_func       The function to test equality of two values.
+ * \param equals_func       Optional - The function to test equality of two
+ *                          values. If not supplied, values are considered
+ *                          equal if their hashed keys are equal.
  * \param copy_method       Optional - The method to use to copy values.
  *                          If provided then values are copied into separate
  *                          memory as they are added to the map.

@@ -12,7 +12,7 @@
 
 class dll_insert_end_test : public ::testing::Test {
 protected:
-    void SetUp(_Bool copy_on_insert)
+    void SetUp(bool copy_on_insert)
     {
         malloc_allocator_options_init(&alloc_opts);
         doubly_linked_list_options_init(&options, &alloc_opts,

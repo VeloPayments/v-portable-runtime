@@ -25,11 +25,6 @@ extern "C" {
  * 2) use the entire input value
  * 3) uniformly distribute the hash values over the set of possible hash values
  *
- * Additionally, each hash function should be independent of the other.  Call
- * these hash functions hf0 and hf1.  For any given input value iv, the value
- * of each bit of hf0(iv) should have a 50% probability of being different
- * than the same bit of hf1(iv).
- *
  * \param data   The data to be hashed.
  * \param len    The length of the data to be hashed.
  *

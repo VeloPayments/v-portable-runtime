@@ -167,7 +167,7 @@ typedef struct hashmap
     /**
      * \brief The number of elements in this hashmap.
      */
-    uint32_t elements;
+    size_t elements;
 
 } hashmap_t;
 
@@ -232,7 +232,9 @@ int hashmap_options_init(
  * \param capacity          The number of buckets to allocate.
  * \param hash_func         The hash function to use to convert variable
  *                          length keys to 64 bit keys.
- * \param equals_func       The function to test equality of two values.
+ * \param equals_func       Optional - The function to test equality of two
+ *                          values. If not supplied, values are considered
+ *                          equal if their hashed keys are equal.
  * \param copy_method       Optional - The method to use to copy values.
  *                          If provided then values are copied into separate
  *                          memory as they are added to the map.
@@ -278,7 +280,7 @@ int hashmap_init(hashmap_options_t* options, hashmap_t* hmap);
  * \param key               The key identifying the item.
  * \param key_len           The length of the key in bytes.
  *
- * \returns an opaque pointer to the item, or NULL if it wasn't found.
+ * \returns an opaque pointer to the value, or NULL if it wasn't found.
  */
 void* hashmap_get(hashmap_t* hmap, uint8_t* key, size_t key_len);
 

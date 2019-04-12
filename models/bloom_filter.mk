@@ -29,6 +29,7 @@ ALL:
 	../src/bloom_filter/bloom_filter_contains_item.c \
 	../src/bloom_filter/bloom_filter_calculate_num_hashes_shadow.c \
 	../src/bloom_filter/bloom_filter_calculate_size_shadow.c \
+	../src/hash_func/hash_func.c \
 	../src/allocator/allocate_shadow.c \
 	../src/allocator/malloc_allocator_options_init_shadow.c \
 	../src/allocator/malloc_allocator_options_dispose_shadow.c \

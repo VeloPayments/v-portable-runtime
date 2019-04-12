@@ -37,7 +37,7 @@ static void verify_empty_hashmap()
 
     //initialize hashmap options
     hashmap_options_init(
-        &options, &alloc_opts, 1, false, sizeof(int), false);
+        &options, &alloc_opts, 1, NULL, false, sizeof(int), false);
 
     // verify the options are valid
     MODEL_ASSERT(MODEL_PROP_VALID_HASHMAP_OPTIONS(&options, sizeof(int)));
@@ -72,7 +72,7 @@ static void verify_put()
     malloc_allocator_options_init(&alloc_opts);
 
     //initialize hashmap options
-    if (0 != hashmap_options_init(&options, &alloc_opts, 1, true, sizeof(int), false))
+    if (0 != hashmap_options_init(&options, &alloc_opts, 1, NULL, true, sizeof(int), false))
     {
         goto cleanup_alloc_opts;
     }
@@ -113,7 +113,7 @@ static void verify_get()
     malloc_allocator_options_init(&alloc_opts);
 
     //initialize hashmap options
-    if (0 != hashmap_options_init(&options, &alloc_opts, 1, false, sizeof(int), false))
+    if (0 != hashmap_options_init(&options, &alloc_opts, 1, NULL, false, sizeof(int), false))
     {
         goto cleanup_alloc_opts;
     }
