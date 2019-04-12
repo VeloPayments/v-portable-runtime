@@ -10,14 +10,20 @@
 #include <gtest/gtest.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/hashmap.h>
+#include <vpr/parameters.h>
+
+// forward decls
+static bool always_equal(const void* lhs, const void* rhs);
+static bool never_equal(const void* lhs, const void* rhs);
 
 class hashmap_test : public ::testing::Test {
 protected:
-    void SetUp(uint32_t capacity, bool copy_on_insert, size_t item_size)
+    void SetUp(uint32_t capacity, hashmap_value_equals_t equals_func,
+        bool copy_on_put, size_t val_size)
     {
         malloc_allocator_options_init(&alloc_opts);
-        hashmap_options_init(&options, &alloc_opts, capacity,
-            copy_on_insert, item_size, false);
+        hashmap_options_init(&options, &alloc_opts, capacity, equals_func,
+            copy_on_put, val_size, false);
     }
 
     void TearDown() override
@@ -36,7 +42,7 @@ protected:
 TEST_F(hashmap_test, init_test)
 {
     // set up a hashmap with a capacity of 1000
-    SetUp(1000, false, sizeof(int));
+    SetUp(1000, NULL, false, sizeof(int));
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);
@@ -59,11 +65,11 @@ TEST_F(hashmap_test, init_test)
 }
 
 /**
- * Test a simple PUT and GET operation without copy-on-insert
+ * Test a simple PUT and GET operation without copy-on-put
  */
 TEST_F(hashmap_test, put_get_without_copy)
 {
-    SetUp(1024, false, sizeof(int));
+    SetUp(1024, NULL, false, sizeof(int));
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);
@@ -99,7 +105,7 @@ TEST_F(hashmap_test, put_get_without_copy)
  */
 TEST_F(hashmap_test, put_get_var_key)
 {
-    SetUp(1024, false, sizeof(long));
+    SetUp(1024, NULL, false, sizeof(long));
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);
@@ -126,9 +132,51 @@ TEST_F(hashmap_test, put_get_var_key)
     dispose((disposable_t*)&hmap);
 }
 
+
+/**
+ * Test that the user supplied equality function is triggered.
+ */
+TEST_F(hashmap_test, equality_function)
+{
+    SetUp(1024, &never_equal, false, sizeof(long));
+    hashmap hmap;
+
+    ASSERT_EQ(hashmap_init(&options, &hmap), 0);
+
+    uint64_t key = (uint64_t)1337;
+
+    // should be nothing in the bucket that key is mapped to
+    EXPECT_EQ(hashmap_get64(&hmap, key), nullptr);
+
+    // add the value to the hashmap
+    int val = 99;
+    ASSERT_EQ(hashmap_put64(&hmap, key, &val), 0);
+
+    // we should have one element now
+    EXPECT_EQ(hmap.elements, 1u);
+
+    // because the equality check always says "false", we shouldn't find the
+    // value
+    void* ptr = hashmap_get64(&hmap, key);
+    EXPECT_EQ(ptr, nullptr);
+
+    // now replace the equality check and try again
+    options.equals_func = &always_equal;
+    ptr = hashmap_get64(&hmap, key);
+    EXPECT_NE(ptr, nullptr);
+    EXPECT_EQ(*(int*)ptr, val);
+
+    // verify a hashed key match is required by querying for a non-existing value
+    EXPECT_EQ(hashmap_get64(&hmap, key + 1), nullptr);
+
+    //dispose of our hashmap
+    dispose((disposable_t*)&hmap);
+}
+
+
 /**
  * Test a simple PUT and GET operation using a complex
- * structure with copy-on-insert
+ * structure with copy-on-put
  */
 TEST_F(hashmap_test, put_get_with_copy)
 {
@@ -139,7 +187,7 @@ TEST_F(hashmap_test, put_get_with_copy)
         _Bool c;
     } test_type_t;
 
-    SetUp(1024, true, sizeof(test_type_t));
+    SetUp(1024, NULL, true, sizeof(test_type_t));
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);
@@ -186,7 +234,7 @@ TEST_F(hashmap_test, put_get_with_copy)
  */
 TEST_F(hashmap_test, add_multiple_items)
 {
-    SetUp(2, false, sizeof(int));
+    SetUp(2, NULL, false, sizeof(int));
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);
@@ -221,7 +269,7 @@ TEST_F(hashmap_test, add_multiple_items)
 TEST_F(hashmap_test, chaining_round_robin)
 {
     unsigned int capacity = 100;
-    SetUp(capacity, true, sizeof(unsigned int));
+    SetUp(capacity, NULL, true, sizeof(unsigned int));
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);
@@ -255,12 +303,12 @@ TEST_F(hashmap_test, chaining_round_robin)
 }
 
 /**
- * Test add all elements with same key
+ * Test add all values with same key
  */
 TEST_F(hashmap_test, duplicate_key)
 {
     unsigned int capacity = 100;
-    SetUp(capacity, true, sizeof(unsigned int));
+    SetUp(capacity, NULL, true, sizeof(unsigned int));
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);
@@ -281,4 +329,14 @@ TEST_F(hashmap_test, duplicate_key)
 
     //dispose of our hashmap
     dispose((disposable_t*)&hmap);
+}
+
+static bool always_equal(const void* UNUSED(lhs), const void* UNUSED(rhs))
+{
+    return true;
+}
+
+static bool never_equal(const void* UNUSED(lhs), const void* UNUSED(rhs))
+{
+    return false;
 }

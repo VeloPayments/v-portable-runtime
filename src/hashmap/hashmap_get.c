@@ -12,9 +12,7 @@
 #include <vpr/parameters.h>
 
 /**
- * \brief Retrieve a data item from a hashmap.
- *
- * Query a hashmap using a variable length key.
+ * \brief Retrieve a value from a hashmap using a variable length key.
  *
  * \param hmap              The hashmap to query
  * \param key               The key identifying the item.
@@ -29,8 +27,8 @@ void* hashmap_get(hashmap_t* hmap, uint8_t* key, size_t key_len)
     MODEL_ASSERT(key_len > 0);
 
     // figure out which bucket
-    uint64_t key64 = hmap->options->hash_func(key, key_len);
-    uint32_t bucket = key64 % hmap->options->capacity;
+    uint64_t hashed_key = hmap->options->hash_func(key, key_len);
+    uint32_t bucket = hashed_key % hmap->options->capacity;
 
     // get the doubly linked list from the bucket
     void** buckets = hmap->buckets;
@@ -47,9 +45,14 @@ void* hashmap_get(hashmap_t* hmap, uint8_t* key, size_t key_len)
     while (element != NULL)
     {
         hashmap_entry_t* hmap_entry = (hashmap_entry_t*)element->data;
-        if (hmap_entry->key == key64)  // TODO: use comparator
+        if (hmap_entry->hashed_key == hashed_key)
         {
-            return hmap_entry->val;
+            // the hashed keys match, which almost guarantees a match.  If an
+            // equality function was supplied, use it as a verification.
+            if (NULL == hmap->options->equals_func || hmap->options->equals_func(key, hmap_entry->val))
+            {
+                return hmap_entry->val;
+            }
         }
 
         element = element->next;

@@ -92,8 +92,8 @@ void hashmap_dispose(void* phmap)
         {
             doubly_linked_list_options_t* options = dll->options;
 
-            // are we responsible for the data items in each hashmap entry?
-            if (NULL != hmap->options->hashmap_item_dispose)
+            // are we responsible for the values in each hashmap entry?
+            if (NULL != hmap->options->dispose_method)
             {
                 dispose_hashmap_items_in_dll(dll, hmap->options);
             }
@@ -123,13 +123,13 @@ static void dispose_hashmap_items_in_dll(
     MODEL_ASSERT(NULL != dll);
     MODEL_ASSERT(NULL != hmap_options);
     MODEL_ASSERT(NULL != hmap_options->alloc_opts);
-    MODEL_ASSERT(NULL != hmap_options->hashmap_item_dispose);
+    MODEL_ASSERT(NULL != hmap_options->dispose_method);
 
     doubly_linked_list_element_t* element = dll->first;
     while (element != NULL)
     {
         hashmap_entry_t* hmap_entry = (hashmap_entry_t*)element->data;
-        hmap_options->hashmap_item_dispose(
+        hmap_options->dispose_method(
             hmap_options->alloc_opts, hmap_entry->val);
         element = element->next;
     }

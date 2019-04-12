@@ -22,24 +22,37 @@
 extern "C" {
 #endif  //__cplusplus
 
+
 /**
-* \brief The copy method to use when adding items to this hashmap.
+ * \brief The method to test equality of two values in this hashmap.
+ *
+ * \param lhs         The left-hand element
+ * \param rhs         The right-hand element.
+ *
+ * \returns true if the values are equal, otherwise false.
+ */
+typedef bool (*hashmap_value_equals_t)(
+    const void* lhs, const void* rhs);
+
+
+/**
+* \brief The copy method to use when adding values to this hashmap.
 *
 * \param destination   The destination to which this value will be copied.
 * \param source        The source data to be copied.
-* \param size          The size of the data being copied.
+* \param size          The size of the value being copied.
 */
-typedef void (*hashmap_item_copy_t)(
+typedef void (*hashmap_value_copy_t)(
     void* destination, const void* source, size_t size);
 
 /**
- * \brief The dispose method to use when disposing of an item in this hashmap.
+ * \brief The dispose method to use when disposing of a value in this hashmap.
  *
  * \param alloc_opts    The allocator options to use.
- * \param item          The item to be disposed of.
+ * \param val           The value to be disposed of.
  */
-typedef void (*hashmap_item_dispose_t)(
-    allocator_options_t* alloc_opts, void* item);
+typedef void (*hashmap_value_dispose_t)(
+    allocator_options_t* alloc_opts, void* val);
 
 /**
  * \brief This structure contains the options used by a hashmap instance.
@@ -62,9 +75,9 @@ typedef struct hashmap_options
     allocator_options_t* alloc_opts;
 
     /**
-     * \brief The size of items added to this hashmap.
+     * \brief The size of values added to this hashmap.
      */
-    size_t item_size;
+    size_t val_size;
 
     /**
      * \brief The number of buckets in this hashmap.
@@ -77,21 +90,31 @@ typedef struct hashmap_options
     hash_func_t hash_func;
 
     /**
-    * \brief The copy method to use when adding items to this hashmap.
+     * \brief The method to test equality of two values in this hashmap.
+     *
+     * \param lhs         The left-hand element
+     * \param rhs         The right-hand element.
+     *
+     * \returns true if the items are equal, otherwise false.
+     */
+    hashmap_value_equals_t equals_func;
+
+    /**
+    * \brief The copy method to use when adding values to this hashmap.
     *
     * \param destination   The destination to which this value will be copied.
     * \param source        The source data to be copied.
-    * \param size          The size of the data being copied.
+    * \param size          The size of the value being copied.
     */
-    hashmap_item_copy_t hashmap_item_copy;
+    hashmap_value_copy_t copy_method;
 
     /**
-     * \brief The dispose method to use when disposing of an item in this hashmap.
+     * \brief The dispose method to use when disposing of a value in this hashmap.
      *
      * \param alloc_opts    The allocator options to use.
-     * \param item          The item to be disposed of.
+     * \param val           The value to be disposed of.
      */
-    hashmap_item_dispose_t hashmap_item_dispose;
+    hashmap_value_dispose_t dispose_method;
 
 } hashmap_options_t;
 
@@ -101,7 +124,7 @@ typedef struct hashmap_options
  * hashmap_options_t structure.
  */
 #define MODEL_PROP_VALID_HASHMAP_OPTIONS(options, sz) \
-    (NULL != options && NULL != (options)->hdr.dispose && NULL != (options)->alloc_opts && (options)->item_size == sz && (NULL == (options)->hashmap_item_copy || sz > 0))
+    (NULL != options && NULL != (options)->hdr.dispose && NULL != (options)->alloc_opts && (options)->val_size == sz && (NULL == (options)->copy_method || sz > 0))
 
 
 /**
@@ -110,9 +133,9 @@ typedef struct hashmap_options
 typedef struct hashmap_entry
 {
     /**
-     * \brief The full key for this entry.
+     * \brief The hashed key for this entry.
      */
-    uint64_t key;
+    uint64_t hashed_key;
 
     /**
      * \brief Opaque pointer to the value being stored.
@@ -167,31 +190,32 @@ typedef struct hashmap
  * \param options             The hashmap options to initialize.
  * \param alloc_opts          The allocator options to use.
  * \param capacity            The number of buckets to allocate.
- * \param copy_on_insert      If true, data will be copied before adding to the
- *                            hashmap, leaving the caller with ownership of
- *                            the original data.  The hashmap assumes
- *                            ownership of the copied data and will free it
+ * \param equals_func         Optional - The function to test equality of two
+ *                            values.  If not supplied, values are considered
+ *                            equal if their hashed keys are equal.
+ * \param copy_on_put         If true, values will be copied before adding to
+ *                            the hashmap, leaving the caller with ownership of
+ *                            the original value.  The hashmap assumes
+ *                            ownership of the copied value and will free it
  *                            when disposed of.
  *                            If false, the release_on_dispose argument
  *                            dictates what happens when the hashmap is
  *                            disposed of.
- * \param item_size           The size in bytes of an individual data item.
- *                            This parameter is ignored when copy_on_insert is
- *                            false, but must be a positive integer value if
- *                            copy_on_insert is true.
- * \param release_on_dispose  This parameter is ignored if copy_on_insert is
- *                            true.  When copy_on_insert is false, this
- *                            argument determines whether memory storing data
- *                            items is released when the hashmap is disposed
- *                            of.
+ * \param val_size            The size in bytes of a value.  This parameter is
+ *                            ignored when copy_on_put is false, but must be a
+ *                            positive integer value if copy_on_put is true.
+ * \param release_on_dispose  This parameter is ignored if copy_on_put is
+ *                            true.  When copy_on_put is false, this
+ *                            argument determines whether memory storing values
+ *                            is released when the hashmap is disposed of.
  *
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
  */
 int hashmap_options_init(
     hashmap_options_t* options, allocator_options_t* alloc_opts,
-    uint32_t capacity, bool copy_on_insert, size_t item_size,
-    bool release_on_dispose);
+    uint32_t capacity, hashmap_value_equals_t equals_func,
+    bool copy_on_put, size_t val_size, bool release_on_dispose);
 
 /**
  * \brief Initialize hashmap options for a custom data type.
@@ -208,13 +232,13 @@ int hashmap_options_init(
  * \param capacity          The number of buckets to allocate.
  * \param hash_func         The hash function to use to convert variable
  *                          length keys to 64 bit keys.
- * \param copy_method       Optional - The method to use to copy elements.
- *                          If provided then elements are copied into
- *                          separate memory as they are added to the list.
- * \param item_size         Optional (when copy_method is NULL).
- *                          The size of an individual data item.
- * \param dispose_method    Optional - The method to use to dispose of data
- *                          items.
+ * \param equals_func       The function to test equality of two values.
+ * \param copy_method       Optional - The method to use to copy values.
+ *                          If provided then values are copied into separate
+ *                          memory as they are added to the map.
+ * \param val_size          Optional (when copy_method is NULL). The size of a
+ *                          value.
+ * \param dispose_method    Optional - The method to use to dispose of values.
  *                          If provided then this method is invoked on each
  *                          data item when the list is disposed of.
  *
@@ -224,9 +248,8 @@ int hashmap_options_init(
 int hashmap_options_init_ex(
     hashmap_options_t* options, allocator_options_t* alloc_opts,
     uint32_t capacity, hash_func_t hash_func,
-    hashmap_item_copy_t copy_method,
-    size_t item_size, hashmap_item_dispose_t dispose_method);
-
+    hashmap_value_equals_t equals_func, hashmap_value_copy_t copy_method,
+    size_t val_size, hashmap_value_dispose_t dispose_method);
 
 /**
  * \brief Initialize a hashmap.
@@ -249,21 +272,7 @@ int hashmap_options_init_ex(
 int hashmap_init(hashmap_options_t* options, hashmap_t* hmap);
 
 /**
- * \brief Retrieve a data item from a hashmap using a 64 bit key.
- *
- * Query a hashmap using a key that uniquely identifies a data item.
- *
- * \param hmap              The hashmap to query
- * \param key               The 64 bit key identifying the item.
- *
- * \returns an opaque pointer to the item, or NULL if it wasn't found.
- */
-void* hashmap_get64(hashmap_t* hmap, uint64_t key);
-
-/**
- * \brief Retrieve a data item from a hashmap.
- *
- * Query a hashmap using a variable length key.
+ * \brief Retrieve a value from a hashmap using a variable length key.
  *
  * \param hmap              The hashmap to query
  * \param key               The key identifying the item.
@@ -274,15 +283,42 @@ void* hashmap_get64(hashmap_t* hmap, uint64_t key);
 void* hashmap_get(hashmap_t* hmap, uint8_t* key, size_t key_len);
 
 /**
- * \brief Add an item to a hashmap using a 64 bit key.
+ * \brief Retrieve a value from a hashmap using a 64 bit key.
+ *
+ * \param hmap              The hashmap to query
+ * \param key               The 64 bit key
+ *
+ * \returns an opaque pointer to the value, or NULL if it wasn't found.
+ */
+void* hashmap_get64(hashmap_t* hmap, uint64_t key);
+
+/**
+ * \brief Add a value to a hashmap.
+ *
+ * Add a value to the hashmap using a variable length key.
+ *
+ * \param hmap              The hashmap to add the value to.
+ * \param key               A unique key that serves as an identifier for the
+ *                          value.
+ * \param key_len           The length of the key.
+ * \param val               Opaque pointer to the value.
+ *
+ * \returns a status code indicating success or failure.
+ *      - \ref VPR_STATUS_SUCCESS if successful.
+ *      - non-zero code on failure.
+ */
+int hashmap_put(hashmap_t* hmap, uint8_t* key, size_t key_len, void* val);
+
+/**
+ * \brief Add a value to a hashmap using a 64 bit key.
  *
  * Add a data item to the hashmap.  The 64 bit key should be a random value
  * to minimize chaining, which will decrease performance.
  *
- * \param hmap              The hashmap to add the item to.
+ * \param hmap              The hashmap to add the value to.
  * \param key               A unique key that serves as an identifier for the
- *                          data item.
- * \param val               Opaque pointer to the data item.
+ *                          value.
+ * \param val               Opaque pointer to the value.
  *
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
@@ -290,22 +326,6 @@ void* hashmap_get(hashmap_t* hmap, uint8_t* key, size_t key_len);
  */
 int hashmap_put64(hashmap_t* hmap, uint64_t key, void* val);
 
-/**
- * \brief Add an item to a hashmap.
- *
- * Add a data item to the hashmap using a variable length key.
- *
- * \param hmap              The hashmap to add the item to.
- * \param key               A unique key that serves as an identifier for the
- *                          data item.
- * \param key_len           The length of the key.
- * \param val               Opaque pointer to the data item.
- *
- * \returns a status code indicating success or failure.
- *      - \ref VPR_STATUS_SUCCESS if successful.
- *      - non-zero code on failure.
- */
-int hashmap_put(hashmap_t* hmap, uint8_t* key, size_t key_len, void* val);
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

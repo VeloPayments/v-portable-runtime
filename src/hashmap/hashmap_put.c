@@ -16,15 +16,15 @@ static void remove_hashmap_entry(hashmap_t*, hashmap_entry_t*,
 static doubly_linked_list_t* allocate_dll(allocator_options_t*);
 
 /**
- * \brief Add an item to a hashmap.
+ * \brief Add a value to a hashmap.
  *
- * Add a data item to the hashmap using a variable length key.
+ * Add a value to the hashmap using a variable length key.
  *
- * \param hmap              The hashmap to add the item to.
+ * \param hmap              The hashmap to add the value to.
  * \param key               A unique key that serves as an identifier for the
- *                          data item.
+ *                          value.
  * \param key_len           The length of the key.
- * \param val               Opaque pointer to the data item.
+ * \param val               Opaque pointer to the value.
  *
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
@@ -40,8 +40,8 @@ int hashmap_put(hashmap_t* hmap, uint8_t* key, size_t key_len, void* val)
     MODEL_ASSERT(NULL != val);
 
     // figure out which bucket
-    uint64_t key64 = hmap->options->hash_func(key, key_len);
-    uint32_t bucket = key64 % hmap->options->capacity;
+    uint64_t hashed_key = hmap->options->hash_func(key, key_len);
+    uint32_t bucket = hashed_key % hmap->options->capacity;
 
     // get the linked list in that bucket.  If there is not already one,
     // create one and add it to the bucket now.
@@ -67,15 +67,15 @@ int hashmap_put(hashmap_t* hmap, uint8_t* key, size_t key_len, void* val)
         return VPR_ERROR_HASHMAP_ENTRY_ALLOCATION_FAILED;
     }
 
-    hmap_entry->key = key64;  // TODO: full key
+    hmap_entry->hashed_key = hashed_key;
 
     // if this is a copy-on-insert, then allocate space for the data and copy
     // it into that buffer.  Otherwise, set the pointer to the original data.
-    if (NULL != hmap->options->hashmap_item_copy)
+    if (NULL != hmap->options->copy_method)
     {
         uint8_t* data_buffer = (uint8_t*)allocate(
             hmap->options->alloc_opts,
-            hmap->options->item_size);
+            hmap->options->val_size);
         hmap_entry->val = data_buffer;
         if (NULL == data_buffer)
         {
@@ -84,8 +84,8 @@ int hashmap_put(hashmap_t* hmap, uint8_t* key, size_t key_len, void* val)
         }
 
         // copy the data into the buffer
-        hmap->options->hashmap_item_copy(
-            hmap_entry->val, val, hmap->options->item_size);
+        hmap->options->copy_method(
+            hmap_entry->val, val, hmap->options->val_size);
     }
     else
     {
@@ -97,7 +97,7 @@ int hashmap_put(hashmap_t* hmap, uint8_t* key, size_t key_len, void* val)
     int dll_retval = doubly_linked_list_insert_beginning(dllptr, hmap_entry);
     if (0 != dll_retval)
     {
-        if (NULL != hmap->options->hashmap_item_copy)
+        if (NULL != hmap->options->copy_method)
         {
             release(hmap->options->alloc_opts, hmap_entry->val);
         }
@@ -115,9 +115,14 @@ int hashmap_put(hashmap_t* hmap, uint8_t* key, size_t key_len, void* val)
     {
         doubly_linked_list_element_t* next_element = element->next;
         hashmap_entry_t* hmap_entry = (hashmap_entry_t*)element->data;
-        if (hmap_entry->key == key64)  // TODO: use comparator
+        if (hmap_entry->hashed_key == hashed_key)
         {
-            remove_hashmap_entry(hmap, hmap_entry, dllptr, element);
+            // the hashed keys match, which almost guarantees a match.  If an
+            // equality function was supplied, use it as a verification.
+            if (NULL == hmap->options->equals_func || hmap->options->equals_func(key, hmap_entry->val))
+            {
+                remove_hashmap_entry(hmap, hmap_entry, dllptr, element);
+            }
         }
 
         element = next_element;
@@ -144,9 +149,9 @@ static void remove_hashmap_entry(hashmap_t* hmap, hashmap_entry_t* hmap_entry,
     doubly_linked_list_remove(dll, element);
 
     // this call frees the memory for the data, if appropriate
-    if (NULL != hmap_entry->val && NULL != hmap->options->hashmap_item_dispose)
+    if (NULL != hmap_entry->val && NULL != hmap->options->dispose_method)
     {
-        hmap->options->hashmap_item_dispose(
+        hmap->options->dispose_method(
             hmap->options->alloc_opts, hmap_entry->val);
     }
 

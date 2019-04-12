@@ -12,14 +12,12 @@
 #include <vpr/parameters.h>
 
 /**
- * \brief Retrieve a data item from a hashmap using a 64 bit key.
- *
- * Query a hashmap using a key that uniquely identifies a data item.
+ * \brief Retrieve a value from a hashmap using a 64 bit key.
  *
  * \param hmap              The hashmap to query
- * \param key               The 64 bit key identifying the item.
+ * \param key               The 64 bit key
  *
- * \returns an opaque pointer to the item, or NULL if it wasn't found.
+ * \returns an opaque pointer to the value, or NULL if it wasn't found.
  */
 void* hashmap_get64(hashmap_t* hmap, uint64_t key)
 {

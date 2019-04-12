@@ -11,15 +11,15 @@
 #include <vpr/parameters.h>
 
 /**
- * \brief Add an item to a hashmap using a 64 bit key.
+ * \brief Add a value to a hashmap using a 64 bit key.
  *
  * Add a data item to the hashmap.  The 64 bit key should be a random value
  * to minimize chaining, which will decrease performance.
  *
- * \param hmap              The hashmap to add the item to.
+ * \param hmap              The hashmap to add the value to.
  * \param key               A unique key that serves as an identifier for the
- *                          data item.
- * \param val               Opaque pointer to the data item.
+ *                          value.
+ * \param val               Opaque pointer to the value.
  *
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
