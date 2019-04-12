@@ -24,12 +24,15 @@ ALL:
 	../src/hashmap/hashmap_options_init.c \
 	../src/hashmap/hashmap_options_init_ex.c \
 	../src/hashmap/hashmap_get.c \
+	../src/hashmap/hashmap_get64.c \
 	../src/hashmap/hashmap_put.c \
+	../src/hashmap/hashmap_put64.c \
 	../src/doubly_linked_list/doubly_linked_list_options_init.c \
 	../src/doubly_linked_list/doubly_linked_list_options_init_ex.c \
 	../src/doubly_linked_list/doubly_linked_list_init_shadow.c \
 	../src/doubly_linked_list/doubly_linked_list_insert_beginning_shadow.c \
 	../src/doubly_linked_list/doubly_linked_list_remove.c \
+	../src/hash_func/hash_func.c \
 	../src/allocator/allocate_shadow.c \
 	../src/allocator/malloc_allocator_options_init_shadow.c \
 	../src/allocator/malloc_allocator_options_dispose_shadow.c \
