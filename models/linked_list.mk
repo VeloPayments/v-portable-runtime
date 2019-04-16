@@ -23,6 +23,8 @@ ALL:
 	../src/linked_list/linked_list_options_init.c \
 	../src/linked_list/linked_list_options_init_ex.c \
 	../src/linked_list/linked_list_insert_after.c \
+	../src/linked_list/linked_list_insert_before.c \
+	../src/linked_list/linked_list_insert_beginning.c \
 	../src/linked_list/linked_list_insert_end.c \
 	../src/linked_list/linked_list_remove.c \
 	../src/allocator/allocate_shadow.c \
@@ -31,5 +33,3 @@ ALL:
 	../src/allocator/release_shadow.c \
 	../src/disposable/dispose_shadow.c
 
-#	../src/doubly_linked_list/doubly_linked_list_insert_before.c \
-#	../src/doubly_linked_list/doubly_linked_list_insert_beginning.c \

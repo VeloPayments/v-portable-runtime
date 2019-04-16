@@ -15,6 +15,7 @@
 
 static void verify_empty_list();
 static void verify_singleton_list();
+static void verify_beginning_before();
 static void verify_after_end_remove();
 
 /**
@@ -27,9 +28,9 @@ _Bool nondet_bool();
 
 int main(int argc, char* argv[])
 {
-    //verify_empty_list();
-    //verify_singleton_list();
-    //verify_beginning_before();
+    verify_empty_list();
+    verify_singleton_list();
+    verify_beginning_before();
     verify_after_end_remove();
 
     return 0;
@@ -104,6 +105,55 @@ static void verify_singleton_list()
         MODEL_ASSERT(NULL != ll.last);
         MODEL_ASSERT(NULL != ll.first->data);
         MODEL_ASSERT(*(int*)(ll.first->data) == data);
+    }
+
+    //dispose of the linked list
+    dispose((disposable_t*)&ll);
+
+    //dispose of options
+    dispose((disposable_t*)&options);
+
+    //dispose of allocator
+    dispose((disposable_t*)&alloc_opts);
+}
+
+static void verify_beginning_before()
+{
+    allocator_options_t alloc_opts;
+    linked_list_options_t options;
+    linked_list_t ll;
+
+    //initialize the allocator
+    malloc_allocator_options_init(&alloc_opts);
+
+    // initialize linked list options
+    // note: if we do copy_on_insert the last argument (release_on_dispose) is
+    // ignored.  If we don't do copy_on_insert, we don't want to
+    // release_on_dispose either as the data element is in stack memory.
+    _Bool copy_on_insert = nondet_bool();
+    linked_list_options_init(
+        &options, &alloc_opts, copy_on_insert, sizeof(long),
+        copy_on_insert);
+
+    // verify the options are valid
+    MODEL_ASSERT(MODEL_PROP_VALID_LL_OPTIONS(&options, sizeof(long)));
+
+    //initialize the list
+    MODEL_ASSERT(0 == linked_list_init(&options, &ll));
+
+    long data_elements[] = { 0, 1 };
+
+    if (0 == linked_list_insert_beginning(&ll, &data_elements[0]) && 0 == linked_list_insert_before(&ll, ll.last, &data_elements[1]))
+    {
+        // verify the list is valid
+        MODEL_ASSERT(MODEL_PROP_VALID_LL(&ll));
+        MODEL_ASSERT(2 == ll.elements);
+        MODEL_ASSERT(NULL != ll.first);
+        MODEL_ASSERT(NULL != ll.last);
+
+        // verify data
+        MODEL_ASSERT(*(long*)(ll.first->data) == data_elements[1]);
+        MODEL_ASSERT(*(long*)(ll.last->data) == data_elements[0]);
     }
 
     //dispose of the linked list

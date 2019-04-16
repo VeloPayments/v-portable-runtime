@@ -32,8 +32,6 @@ int linked_list_remove(linked_list_t* ll, linked_list_element_t* element)
     MODEL_ASSERT(NULL != ll->options->alloc_opts);
     MODEL_ASSERT(NULL != element->data);
 
-    --ll->elements;
-
     // if this is the first element, just set the list first pointer to the
     // next element
     if (ll->first == element)
@@ -45,6 +43,8 @@ int linked_list_remove(linked_list_t* ll, linked_list_element_t* element)
         {
             ll->last = NULL;
         }
+
+        --ll->elements;
     }
     else
     {
@@ -70,6 +70,8 @@ int linked_list_remove(linked_list_t* ll, linked_list_element_t* element)
         {
             ll->last = prev;
         }
+
+        --ll->elements;
     }
 
 done:

@@ -34,7 +34,7 @@ protected:
 
 TEST_F(ll_remove_test, basic_test)
 {
-    linked_list ll;
+    linked_list_t ll;
 
     ASSERT_EQ(linked_list_init(&options, &ll), 0);
 

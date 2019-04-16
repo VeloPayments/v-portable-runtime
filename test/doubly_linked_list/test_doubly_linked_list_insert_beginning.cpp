@@ -33,7 +33,7 @@ TEST_F(dll_insert_beginning_test, basic_test)
 {
     SetUp(true);
 
-    doubly_linked_list dll;
+    doubly_linked_list_t dll;
 
     ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
 
@@ -77,7 +77,7 @@ TEST_F(dll_insert_beginning_test, with_copy_on_insert)
 {
     SetUp(true);
 
-    doubly_linked_list dll;
+    doubly_linked_list_t dll;
 
     ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
 
@@ -97,7 +97,7 @@ TEST_F(dll_insert_beginning_test, without_copy_on_insert)
 {
     SetUp(false);
 
-    doubly_linked_list dll;
+    doubly_linked_list_t dll;
 
     ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
 

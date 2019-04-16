@@ -159,16 +159,29 @@ extern "C" {
 #define VPR_ERROR_LL_AFTER_BUFFER_ALLOCATION_FAILED 0x1501
 
 /**
+ * \brief This error code is returned by linked_list_insert_before()
+ * when memory could not be allocated for a new element.
+ */
+#define VPR_ERROR_LL_BEFORE_ELEMENT_ALLOCATION_FAILED 0x1502
+
+/**
+ * \brief This error code is returned by linked_list_insert_before()
+ * when a buffer to hold a copy of the inserted data could not be allocated.
+ */
+#define VPR_ERROR_LL_BEFORE_BUFFER_ALLOCATION_FAILED 0x1503
+
+
+/**
  * \brief This error code is returned by linked_list_insert_end() when memory
  * could not be allocated for a new element.
  */
-#define VPR_ERROR_LL_END_ELEMENT_ALLOCATION_FAILED 0x1502
+#define VPR_ERROR_LL_END_ELEMENT_ALLOCATION_FAILED 0x1504
 
 /**
  * \brief This error code is returned by linked_list_insert_end() when a
  * buffer to hold a copy of the inserted data could not be allocated.
  */
-#define VPR_ERROR_LL_END_BUFFER_ALLOCATION_FAILED 0x1503
+#define VPR_ERROR_LL_END_BUFFER_ALLOCATION_FAILED 0x1505
 
 
 /**

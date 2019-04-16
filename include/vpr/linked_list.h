@@ -248,6 +248,25 @@ int linked_list_options_init_ex(
 int linked_list_init(linked_list_options_t* options, linked_list_t* ll);
 
 /**
+ * \brief Insert a new element at the beginning of a linked list.
+ *
+ * If successful, then this data will be encapsulated in an element and placed
+ * at the beginning of the linked list.
+ *
+ * WARNING: this function is not thread safe!
+ *
+ * \param ll                The linked list
+ * \param data              An opaque pointer to some data that should be
+ *                          encapsulated in a new element and inserted at the
+ *                          beginning of the linked list.
+ *
+ * \returns a status code indicating success or failure.
+ *          - \ref VPR_STATUS_SUCCESS if successful.
+ *          - a non-zero status code on failure.
+ */
+int linked_list_insert_beginning(linked_list_t* ll, void* data);
+
+/**
  * \brief Insert a new element at the end of a linked list.
  *
  * If successful, then this data will be encapsulated in an element and placed
@@ -265,6 +284,28 @@ int linked_list_init(linked_list_options_t* options, linked_list_t* ll);
  *          - a non-zero status code on failure.
  */
 int linked_list_insert_end(linked_list_t* ll, void* data);
+
+/**
+ * \brief Insert a new element before a specified element in a linked list.
+ *
+ * If successful, then this data will be encapsulated in an element and placed
+ * before the specified element in the linked list.
+ *
+ * WARNING: this function is not thread safe!
+ *
+ * \param ll                The linked list
+ * \param element           The existing element, which will succeed the
+ *                          new element.
+ * \param data              An opaque pointer to some data that should be
+ *                          encapsulated in a new element and inserted in the
+ *                          list.
+ *
+ * \returns a status code indicating success or failure.
+ *          - \ref VPR_STATUS_SUCCESS if successful.
+ *          - a non-zero status code on failure.
+ */
+int linked_list_insert_before(
+    linked_list_t* ll, linked_list_element_t* element, void* data);
 
 /**
  * \brief Insert a new element after a specified element in a linked list.

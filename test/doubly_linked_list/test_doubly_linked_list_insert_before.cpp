@@ -1,7 +1,7 @@
 /**
- * \file test_doubly_linked_list_init.cpp
+ * \file test_doubly_linked_list_insert_before.cpp
  *
- * Unit tests for doubly_linked_list_init.
+ * Unit tests for doubly_linked_list_insert_before.
  *
  * \copyright 2019 Velo-Payments, Inc.  All rights reserved.
  */
@@ -33,7 +33,7 @@ TEST_F(dll_insert_before_test, basic_test)
 {
     SetUp(true);
 
-    doubly_linked_list dll;
+    doubly_linked_list_t dll;
 
     ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
 
@@ -99,7 +99,7 @@ TEST_F(dll_insert_before_test, with_copy_on_insert)
 {
     SetUp(true);
 
-    doubly_linked_list dll;
+    doubly_linked_list_t dll;
 
     ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
 
@@ -127,7 +127,7 @@ TEST_F(dll_insert_before_test, without_copy_on_insert)
 {
     SetUp(false);
 
-    doubly_linked_list dll;
+    doubly_linked_list_t dll;
 
     ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
 
