@@ -22,7 +22,7 @@
  * \return The number of hash functions required.
  */
 unsigned int bloom_filter_calculate_num_hashes(
-    unsigned int num_expected_entries, size_t size_in_bytes)
+    size_t num_expected_entries, size_t size_in_bytes)
 {
 
     return round(

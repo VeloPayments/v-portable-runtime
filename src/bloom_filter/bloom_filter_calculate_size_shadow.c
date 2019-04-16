@@ -28,7 +28,7 @@ unsigned int nondet_uint();
  * \return size in bytes the filter would need to be to meet the
  *         target error rate.
  */
-size_t bloom_filter_calculate_size(unsigned int num_expected_entries,
+size_t bloom_filter_calculate_size(size_t num_expected_entries,
     float target_error_rate)
 {
     size_t sz = nondet_uint();

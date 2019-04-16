@@ -1,7 +1,7 @@
 /**
  * \file doubly_linked_list_init.c
  *
- * Implementation of doubly_linked_list_init.
+ * Shadow library implementation of doubly_linked_list_init.
  *
  * \copyright 2019 Velo Payments, Inc.  All rights reserved.
  */
@@ -10,8 +10,8 @@
 #include <vpr/doubly_linked_list.h>
 #include <vpr/parameters.h>
 
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_dll_shadowed
+/* this is the shadow implementation. */
+#ifdef MODEL_CHECK_vpr_dll_shadowed
 
 //forward decls
 static void dll_dispose(void*);
@@ -68,9 +68,9 @@ void dll_dispose(void* pdll)
     MODEL_ASSERT(NULL != dll->options);
     MODEL_ASSERT(NULL != dll->options->alloc_opts);
 
-    //dispose of each element in the list
+    // we only allow one element in the shadow impl
     doubly_linked_list_element_t* element = dll->first;
-    while (element != NULL)
+    if (element != NULL)
     {
 
         // this call frees the memory for the data pointed to by the element
@@ -80,13 +80,8 @@ void dll_dispose(void* pdll)
                 dll->options->alloc_opts, element->data);
         }
 
-        // free the space for the element itself, being careful to
-        // advance our pointer first
-        doubly_linked_list_element_t* curr = element;
-        element = element->next;
-
-        release(dll->options->alloc_opts, curr);
+        release(dll->options->alloc_opts, element);
     }
 }
 
-#endif /*!defined(MODEL_CHECK_vpr_dll_shadowed)*/
+#endif /*defined(MODEL_CHECK_vpr_dll_shadowed)*/

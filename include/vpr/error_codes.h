@@ -113,8 +113,38 @@ extern "C" {
 #define VPR_ERROR_DLL_BEGINNING_BUFFER_ALLOCATION_FAILED 0x1205
 
 
+/**
+ * \brief This error code is returned by bloom_filter_init() when memory could
+ * not be allocated for the bloom filter.
+ */
 #define VPR_ERROR_BLOOM_BITMAP_ALLOCATION_FAILED 0x1300
 
+
+/**
+ * \brief This error code is returned by hashmap_init() when memory could not
+ * be allocated to initialize the hashmap.
+ */
+#define VPR_ERROR_HASHMAP_ALLOCATION_FAILED 0x1400
+
+/**
+ * \brief This error code is returned by hashmap_put() when memory could not be
+ * allocated to create a container (e.g. linked list) to store in a bucket.
+ */
+#define VPR_ERROR_HASHMAP_BUCKET_ALLOCATION_FAILED 0x1401
+
+
+/**
+ * \brief This error code is returned by hashmap_put() when memory could not be
+ * allocated to create a new hashmap entry.
+ */
+#define VPR_ERROR_HASHMAP_ENTRY_ALLOCATION_FAILED 0x1402
+
+
+/**
+ * \brief This error code is returned by hashmap_put() when memory could not be
+ * allocated to create a buffer to copy the data item to.
+ */
+#define VPR_ERROR_HASHMAP_DATA_ITEM_ALLOCATION_FAILED 0x1403
 
 /**
  * @}

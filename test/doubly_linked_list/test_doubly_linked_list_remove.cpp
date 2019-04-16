@@ -63,6 +63,7 @@ TEST_F(dll_remove_test, basic_test)
 
     // now remove the fifth element
     EXPECT_EQ(0, doubly_linked_list_remove(&dll, element5));
+    release(&alloc_opts, element5);
     EXPECT_EQ(dll.elements, 9UL);
 
     // traverse the list again, ensuring the removed element isn't present
@@ -77,23 +78,32 @@ TEST_F(dll_remove_test, basic_test)
     EXPECT_EQ(i, 9);
 
     // remove the last element
+    doubly_linked_list_element_t* lastptr = dll.last;
     ASSERT_EQ(0, doubly_linked_list_remove(&dll, dll.last));
+    release(&alloc_opts, lastptr);
     EXPECT_EQ(dll.elements, 8UL);
     EXPECT_EQ(*(int*)dll.last->data, 8);
 
     // remove the first element
+    doubly_linked_list_element_t* firstptr = dll.first;
     ASSERT_EQ(0, doubly_linked_list_remove(&dll, dll.first));
+    release(&alloc_opts, firstptr);
     EXPECT_EQ(dll.elements, 7UL);
     EXPECT_EQ(*(int*)dll.first->data, 1);
 
     // remove all remaining elements
     for (i = 0; i < 7; i++)
     {
+        doubly_linked_list_element_t* curr = dll.first;
         ASSERT_EQ(0, doubly_linked_list_remove(&dll, dll.first));
+        release(&alloc_opts, curr);
     }
     EXPECT_EQ(dll.elements, 0UL);
     EXPECT_EQ(dll.first, nullptr);
     EXPECT_EQ(dll.last, nullptr);
+
+    //dispose of our list
+    dispose((disposable_t*)&dll);
 }
 
 void build_doubly_linked_list(doubly_linked_list_t* dll, int* data, int n)

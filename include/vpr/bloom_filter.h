@@ -19,6 +19,7 @@
 
 #include <vpr/allocator.h>
 #include <vpr/disposable.h>
+#include <vpr/hash_func.h>
 #include <vpr/error_codes.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -28,31 +29,6 @@
 extern "C" {
 #endif  //__cplusplus
 
-
-/**
- * \brief A hash function that hashes an arbitrary amount of data into a
- * 64 bit value.
- *
- * The bloom filter uses two hash functions to generate an artibrary
- * number of additional hash functions.  Good hash functions are an essential
- * component of the bloom filter.
- *
- * To minimize the error rate of the filter, each hash function should
- * 1) be completely determined by the input value (and therefore repeatable)
- * 2) use the entire input value
- * 3) uniformly distribute the hash values over the set of possible hash values
- *
- * Additionally, each hash function should be independent of the other.  Call
- * these hash functions hf0 and hf1.  For any given input value iv, the value
- * of each bit of hf0(iv) should have a 50% probability of being different
- * than the same bit of hf1(iv).
- *
- * \param data   The data to be hashed.
- * \param len    The length of the data to be hashed.
- *
- * \returns a 64 bit hash value
- */
-typedef uint64_t (*hash_func_t)(const void* data, size_t len);
 
 /**
  * \brief This structure contains the options used by a bloom filter instance.
@@ -77,7 +53,7 @@ typedef struct bloom_filter_options
     /**
      * \brief The number of expected entries into the filter.
      */
-    unsigned int num_expected_entries;
+    size_t num_expected_entries;
 
     /**
      * \brief The size in bytes of the filter.
@@ -95,7 +71,7 @@ typedef struct bloom_filter_options
      * positive value.  Each of the K hash functions is derived using two
      * supplied hash functions.
      */
-    unsigned int num_hash_functions;
+    uint32_t num_hash_functions;
 
     /**
      * \brief The first of two hash functions, used to derive additional hash
@@ -180,7 +156,7 @@ typedef struct bloom_filter
  *      - \ref VPR_STATUS_SUCCESS if successful.
  */
 int bloom_filter_options_init(bloom_filter_options_t* options,
-    allocator_options_t* alloc_opts, unsigned int num_expected_entries,
+    allocator_options_t* alloc_opts, size_t num_expected_entries,
     float target_error_rate, size_t max_size_in_bytes);
 
 
@@ -220,7 +196,7 @@ int bloom_filter_options_init(bloom_filter_options_t* options,
  *      - \ref VPR_STATUS_SUCCESS if successful.
  */
 int bloom_filter_options_init_ex(bloom_filter_options_t* options,
-    allocator_options_t* alloc_opts, unsigned int num_expected_entries,
+    allocator_options_t* alloc_opts, size_t num_expected_entries,
     float target_error_rate, size_t max_size_in_bytes,
     hash_func_t hash_function_1, hash_func_t hash_function_2);
 
@@ -297,7 +273,7 @@ _Bool bloom_filter_contains_item(bloom_filter_t* bloom, const void* data,
  * \return size in bytes the filter would need to be to meet the
  *         target error rate.
  */
-size_t bloom_filter_calculate_size(unsigned int num_expected_entries,
+size_t bloom_filter_calculate_size(size_t num_expected_entries,
     float target_error_rate);
 
 /**
@@ -310,7 +286,7 @@ size_t bloom_filter_calculate_size(unsigned int num_expected_entries,
  * \return The number of hash functions required.
  */
 unsigned int bloom_filter_calculate_num_hashes(
-    unsigned int num_expected_entries, size_t size_in_bytes);
+    size_t num_expected_entries, size_t size_in_bytes);
 
 /**
  * \brief Helper function to calculate the expected error rate of a bloom
@@ -324,7 +300,7 @@ unsigned int bloom_filter_calculate_num_hashes(
  * \return The expected error rate.
  */
 float bloom_filter_calculate_expected_error_rate(
-    unsigned int num_expected_entries, size_t size_in_bytes,
+    size_t num_expected_entries, size_t size_in_bytes,
     unsigned int num_hash_functions);
 
 

@@ -1,3 +1,11 @@
+/**
+ * \file doubly_linked_list_remove.c
+ *
+ * Implementation of doubly_linked_list_remove.
+ *
+ * \copyright 2019 Velo Payments, Inc.  All rights reserved.
+ */
+
 #include <cbmc/model_assert.h>
 #include <vpr/doubly_linked_list.h>
 

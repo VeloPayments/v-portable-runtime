@@ -1,3 +1,11 @@
+/**
+ * \file doubly_linked_list_insert_end.c
+ *
+ * Implementation of doubly_linked_list_insert_end.
+ *
+ * \copyright 2019 Velo Payments, Inc.  All rights reserved.
+ */
+
 #include <cbmc/model_assert.h>
 #include <vpr/doubly_linked_list.h>
 

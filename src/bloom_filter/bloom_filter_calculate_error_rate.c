@@ -21,7 +21,7 @@
  * \return The expected error rate.
  */
 float bloom_filter_calculate_expected_error_rate(
-    unsigned int num_expected_entries, size_t size_in_bytes,
+    size_t num_expected_entries, size_t size_in_bytes,
     unsigned int num_hash_functions)
 {
     return pow(1 -

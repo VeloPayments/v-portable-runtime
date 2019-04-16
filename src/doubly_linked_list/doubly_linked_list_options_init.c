@@ -19,8 +19,8 @@ static void dll_simple_elem_dispose(allocator_options_t*, void*);
  * \brief Initialize doubly linked list options for a POD data type.
  *
  * When the function completes successfully, the caller owns this
- * ::doubly_linked_list_t instance and must dispose of it by calling dispose()
- * when it is no longer needed.
+ * ::doubly_linked_list_options_t instance and must dispose of it by calling
+ * dispose() when it is no longer needed.
  *
  * \param options           The dynamic array options to initialize.
  * \param alloc_opts        The allocator options to use.
@@ -32,7 +32,7 @@ static void dll_simple_elem_dispose(allocator_options_t*, void*);
  *                          If false, the release_on_dispose argument dictates
  *                          what happens when the list is disposed of.
  * \param element_size      The size in bytes of an individual element.  This
- *                          parameter is ignored with copy_on_insert is false,
+ *                          parameter is ignored when copy_on_insert is false,
  *                          but must be a positive integer value if
  *                          copy_on_insert is true.
  * \param release_on_dispose  This parameter is ignored if copy_on_insert is
