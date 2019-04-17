@@ -34,7 +34,7 @@ protected:
 
 TEST_F(dll_remove_test, basic_test)
 {
-    doubly_linked_list dll;
+    doubly_linked_list_t dll;
 
     ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
 
