@@ -9,13 +9,14 @@ making too many assumptions about how the underlying system operates.
 Current Features
 -----------------
 
-* Disposable interface.
-* Portable Memory Allocation Library.
-* Dynamic Arrays.
-* Abstract Factory.
-* Doubly Linked Lists.
-* Bloom Filters.
-* Hashmaps.
+* Disposable interface
+* Portable Memory Allocation Library
+* Dynamic Arrays
+* Abstract Factory
+* Linked Lists
+* Doubly Linked Lists
+* Bloom Filters
+* Hashmaps
 
 Building
 ========
