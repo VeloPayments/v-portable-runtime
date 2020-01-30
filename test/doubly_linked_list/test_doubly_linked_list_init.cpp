@@ -15,16 +15,21 @@ protected:
     void SetUp() override
     {
         malloc_allocator_options_init(&alloc_opts);
-        doubly_linked_list_options_init(&options, &alloc_opts,
-            false, sizeof(int), false);
+        doubly_linked_list_options_init_status =
+            doubly_linked_list_options_init(&options, &alloc_opts,
+                false, sizeof(int), false);
     }
 
     void TearDown() override
     {
-        dispose((disposable_t*)&options);
+        if (VPR_STATUS_SUCCESS == doubly_linked_list_options_init_status)
+        {
+            dispose((disposable_t*)&options);
+        }
         dispose((disposable_t*)&alloc_opts);
     }
 
+    int doubly_linked_list_options_init_status;
     allocator_options_t alloc_opts;
     doubly_linked_list_options_t options;
 };
@@ -32,6 +37,9 @@ protected:
 TEST_F(dll_init_test, basic_test)
 {
     doubly_linked_list dll;
+
+    // verify that options init succeeded
+    ASSERT_EQ(VPR_STATUS_SUCCESS, doubly_linked_list_options_init_status);
 
     ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
 

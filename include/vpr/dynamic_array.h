@@ -17,6 +17,7 @@
 #include <vpr/compare.h>
 #include <vpr/disposable.h>
 #include <vpr/error_codes.h>
+#include <vpr/function_decl.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -175,7 +176,7 @@ typedef struct dynamic_array
  *      - \ref VPR_STATUS_SUCCESS if successful.
  *      - a non-zero status code on failure.
  */
-int dynamic_array_options_init(
+int VPR_DECL_MUST_CHECK dynamic_array_options_init(
     dynamic_array_options_t* options, allocator_options_t* alloc_opts,
     size_t element_size, compare_method_t compare_method);
 
@@ -202,7 +203,7 @@ int dynamic_array_options_init(
  *      - \ref VPR_STATUS_SUCCESS if successful.
  *      - a non-zero status code on failure.
  */
-int dynamic_array_options_init_ex(
+int VPR_DECL_MUST_CHECK dynamic_array_options_init_ex(
     dynamic_array_options_t* options, allocator_options_t* alloc_opts,
     size_t element_size, void* context,
     dynamic_array_element_copy_t copy_method,
@@ -236,7 +237,7 @@ int dynamic_array_options_init_ex(
  *      - \ref VPR_ERROR_DYNAMIC_ARRAY_INIT_ALLOCATION_FAILED if memory
  *             allocation failed when creating this dynamic array.
  */
-int dynamic_array_init(
+int VPR_DECL_MUST_CHECK dynamic_array_init(
     dynamic_array_options_t* options, dynamic_array_t* array,
     size_t reserve, size_t instance, void* copy);
 
@@ -259,7 +260,8 @@ int dynamic_array_init(
  *             allocate a larger array for growing the ::dynamic_array_t
  *             instance fails.
  */
-int dynamic_array_grow(dynamic_array_t* array, size_t reserve);
+int VPR_DECL_MUST_CHECK dynamic_array_grow(
+    dynamic_array_t* array, size_t reserve);
 
 /**
  * \brief Append an element to the end of the dynamic array.
@@ -280,7 +282,8 @@ int dynamic_array_grow(dynamic_array_t* array, size_t reserve);
  *          - \ref VPR_ERROR_DYNAMIC_ARRAY_APPEND_NO_RESERVE if there is no
  *                 reserve room left for appending this element.
  */
-int dynamic_array_append(dynamic_array_t* array, void* element);
+int VPR_DECL_MUST_CHECK dynamic_array_append(
+    dynamic_array_t* array, void* element);
 
 /**
  * \brief Sort the given dynamic array.
@@ -301,7 +304,8 @@ int dynamic_array_append(dynamic_array_t* array, void* element);
  *      - \ref VPR_ERROR_DYNAMIC_ARRAY_SORT_ALLOCATION_FAILED if memory
  *             allocation failed during the merge sort.
  */
-int dynamic_array_sort(dynamic_array_t* array);
+int VPR_DECL_MUST_CHECK dynamic_array_sort(
+    dynamic_array_t* array);
 
 /**
  * \brief Perform a linear search for an element matching the given key in this

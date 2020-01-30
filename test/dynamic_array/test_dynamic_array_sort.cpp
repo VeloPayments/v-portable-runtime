@@ -20,8 +20,9 @@ protected:
     void SetUp() override
     {
         malloc_allocator_options_init(&alloc_opts);
-        dynamic_array_options_init(
-            &options, &alloc_opts, sizeof(int), &compare_int);
+        dynamic_array_options_init_status =
+            dynamic_array_options_init(
+                &options, &alloc_opts, sizeof(int), &compare_int);
     }
 
     void TearDown() override
@@ -30,9 +31,18 @@ protected:
         dispose((disposable_t*)&alloc_opts);
     }
 
+    int dynamic_array_options_init_status;
     allocator_options_t alloc_opts;
     dynamic_array_options_t options;
 };
+
+/**
+ * Verify that dynamic_array_options_init succeeds.
+ */
+TEST_F(dynamic_array_sort_test, options_init)
+{
+    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_options_init_status);
+}
 
 /**
  * Create a dynamic array, add elements to it, and sort it.
@@ -43,7 +53,8 @@ TEST_F(dynamic_array_sort_test, basic_test)
     int sorted_values[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
     dynamic_array_t array;
-    dynamic_array_init(&options, &array, 10, 0, NULL);
+    ASSERT_EQ(VPR_STATUS_SUCCESS,
+        dynamic_array_init(&options, &array, 10, 0, NULL));
 
     //we should have a reserved space of 10
     ASSERT_EQ((size_t)10, array.reserved_elements);
@@ -86,7 +97,8 @@ TEST_F(dynamic_array_sort_test, sort1)
     do
     {
         dynamic_array_t array;
-        dynamic_array_init(&options, &array, 1, 0, NULL);
+        ASSERT_EQ(VPR_STATUS_SUCCESS,
+            dynamic_array_init(&options, &array, 1, 0, NULL));
 
         //we should have a reserved space of 1
         ASSERT_EQ((size_t)1, array.reserved_elements);
@@ -131,7 +143,8 @@ TEST_F(dynamic_array_sort_test, sort2)
     do
     {
         dynamic_array_t array;
-        dynamic_array_init(&options, &array, 2, 0, NULL);
+        ASSERT_EQ(VPR_STATUS_SUCCESS,
+            dynamic_array_init(&options, &array, 2, 0, NULL));
 
         //we should have a reserved space of 2
         ASSERT_EQ((size_t)2, array.reserved_elements);
@@ -176,7 +189,8 @@ TEST_F(dynamic_array_sort_test, sort3)
     do
     {
         dynamic_array_t array;
-        dynamic_array_init(&options, &array, 3, 0, NULL);
+        ASSERT_EQ(VPR_STATUS_SUCCESS,
+            dynamic_array_init(&options, &array, 3, 0, NULL));
 
         //we should have a reserved space of 3
         ASSERT_EQ((size_t)3, array.reserved_elements);
@@ -221,7 +235,8 @@ TEST_F(dynamic_array_sort_test, sort4)
     do
     {
         dynamic_array_t array;
-        dynamic_array_init(&options, &array, 4, 0, NULL);
+        ASSERT_EQ(VPR_STATUS_SUCCESS,
+            dynamic_array_init(&options, &array, 4, 0, NULL));
 
         //we should have a reserved space of 4
         ASSERT_EQ((size_t)4, array.reserved_elements);
@@ -266,7 +281,8 @@ TEST_F(dynamic_array_sort_test, sort5)
     do
     {
         dynamic_array_t array;
-        dynamic_array_init(&options, &array, 5, 0, NULL);
+        ASSERT_EQ(VPR_STATUS_SUCCESS,
+            dynamic_array_init(&options, &array, 5, 0, NULL));
 
         //we should have a reserved space of 5
         ASSERT_EQ((size_t)5, array.reserved_elements);
@@ -311,7 +327,8 @@ TEST_F(dynamic_array_sort_test, sort6)
     do
     {
         dynamic_array_t array;
-        dynamic_array_init(&options, &array, 6, 0, NULL);
+        ASSERT_EQ(VPR_STATUS_SUCCESS,
+            dynamic_array_init(&options, &array, 6, 0, NULL));
 
         //we should have a reserved space of 6
         ASSERT_EQ((size_t)6, array.reserved_elements);
@@ -356,7 +373,8 @@ TEST_F(dynamic_array_sort_test, sort7)
     do
     {
         dynamic_array_t array;
-        dynamic_array_init(&options, &array, 7, 0, NULL);
+        ASSERT_EQ(VPR_STATUS_SUCCESS,
+            dynamic_array_init(&options, &array, 7, 0, NULL));
 
         //we should have a reserved space of 7
         ASSERT_EQ((size_t)7, array.reserved_elements);
@@ -401,7 +419,8 @@ TEST_F(dynamic_array_sort_test, sort8)
     do
     {
         dynamic_array_t array;
-        dynamic_array_init(&options, &array, 8, 0, NULL);
+        ASSERT_EQ(VPR_STATUS_SUCCESS,
+            dynamic_array_init(&options, &array, 8, 0, NULL));
 
         //we should have a reserved space of 8
         ASSERT_EQ((size_t)8, array.reserved_elements);
@@ -446,7 +465,8 @@ TEST_F(dynamic_array_sort_test, sort9)
     do
     {
         dynamic_array_t array;
-        dynamic_array_init(&options, &array, 9, 0, NULL);
+        ASSERT_EQ(VPR_STATUS_SUCCESS,
+            dynamic_array_init(&options, &array, 9, 0, NULL));
 
         //we should have a reserved space of 9
         ASSERT_EQ((size_t)9, array.reserved_elements);
@@ -491,7 +511,8 @@ TEST_F(dynamic_array_sort_test, sort10)
     do
     {
         dynamic_array_t array;
-        dynamic_array_init(&options, &array, 10, 0, NULL);
+        ASSERT_EQ(VPR_STATUS_SUCCESS,
+            dynamic_array_init(&options, &array, 10, 0, NULL));
 
         //we should have a reserved space of 10
         ASSERT_EQ((size_t)10, array.reserved_elements);

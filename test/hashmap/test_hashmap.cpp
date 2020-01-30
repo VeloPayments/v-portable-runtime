@@ -22,19 +22,33 @@ protected:
         bool copy_on_put, size_t val_size)
     {
         malloc_allocator_options_init(&alloc_opts);
-        hashmap_options_init(&options, &alloc_opts, capacity, equals_func,
-            copy_on_put, val_size, false);
+        hashmap_options_init_status =
+            hashmap_options_init(&options, &alloc_opts, capacity, equals_func,
+                copy_on_put, val_size, false);
     }
 
     void TearDown() override
     {
-        dispose((disposable_t*)&options);
+        if (VPR_STATUS_SUCCESS == hashmap_options_init_status)
+        {
+            dispose((disposable_t*)&options);
+        }
         dispose((disposable_t*)&alloc_opts);
     }
 
+    int hashmap_options_init_status;
     allocator_options_t alloc_opts;
     hashmap_options_t options;
 };
+
+/**
+ * Test that hashmap_options_init was successful.
+ */
+TEST_F(hashmap_test, options_init)
+{
+    SetUp(1000, NULL, false, sizeof(int));
+    ASSERT_EQ(VPR_STATUS_SUCCESS, hashmap_options_init_status);
+}
 
 /**
  * Test that the hashmap is initialized properly.

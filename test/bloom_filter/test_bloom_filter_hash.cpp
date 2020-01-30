@@ -19,20 +19,25 @@ protected:
     void SetUp() override
     {
         malloc_allocator_options_init(&alloc_opts);
-        bloom_filter_options_init(&options, &alloc_opts,
-            100,  // number of expected entries
-            0.1,  // target_error_rate
-            64  // max size in bytes
-        );
+        bloom_filter_options_init_status =
+            bloom_filter_options_init(&options, &alloc_opts,
+                100,  // number of expected entries
+                0.1,  // target_error_rate
+                64  // max size in bytes
+            );
         srand(time(0));  // seed rng with current time
     }
 
     void TearDown() override
     {
-        dispose((disposable_t*)&options);
+        if (VPR_STATUS_SUCCESS == bloom_filter_options_init_status)
+        {
+            dispose((disposable_t*)&options);
+        }
         dispose((disposable_t*)&alloc_opts);
     }
 
+    int bloom_filter_options_init_status;
     allocator_options_t alloc_opts;
     bloom_filter_options_t options;
 };
@@ -56,6 +61,14 @@ TEST(hamming_distance_test, test_utility_function)
     ASSERT_EQ(hamming_distance(max64, 0), 64);
 
     ASSERT_EQ(hamming_distance(max32, max64), 32);
+}
+
+/**
+ * Test that options init worked as expected.
+ */
+TEST_F(bloom_filter_hash_test, options_init)
+{
+    ASSERT_EQ(VPR_STATUS_SUCCESS, bloom_filter_options_init_status);
 }
 
 /**

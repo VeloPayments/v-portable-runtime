@@ -15,19 +15,30 @@ protected:
     void SetUp(bool copy_on_insert)
     {
         malloc_allocator_options_init(&alloc_opts);
-        doubly_linked_list_options_init(&options, &alloc_opts,
-            copy_on_insert, sizeof(int), false);
+        doubly_linked_list_options_init_success =
+            doubly_linked_list_options_init(&options, &alloc_opts,
+                copy_on_insert, sizeof(int), false);
     }
 
     void TearDown() override
     {
-        dispose((disposable_t*)&options);
+        if (VPR_STATUS_SUCCESS == doubly_linked_list_options_init_success)
+        {
+            dispose((disposable_t*)&options);
+        }
         dispose((disposable_t*)&alloc_opts);
     }
 
+    int doubly_linked_list_options_init_success;
     allocator_options_t alloc_opts;
     doubly_linked_list_options_t options;
 };
+
+TEST_F(dll_insert_end_test, options_init)
+{
+    SetUp(true);
+    ASSERT_EQ(VPR_STATUS_SUCCESS, doubly_linked_list_options_init_success);
+}
 
 TEST_F(dll_insert_end_test, basic_test)
 {

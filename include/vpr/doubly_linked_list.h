@@ -15,6 +15,7 @@
 #include <vpr/allocator.h>
 #include <vpr/disposable.h>
 #include <vpr/error_codes.h>
+#include <vpr/function_decl.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -201,9 +202,9 @@ typedef struct doubly_linked_list
  *      - \ref VPR_STATUS_SUCCESS if successful.
  *      - a non-zero status code on failure.
  */
-int doubly_linked_list_options_init(doubly_linked_list_options_t* options,
-    allocator_options_t* alloc_opts, bool copy_on_insert,
-    size_t element_size, bool release_on_dispose);
+int VPR_DECL_MUST_CHECK doubly_linked_list_options_init(
+    doubly_linked_list_options_t* options, allocator_options_t* alloc_opts,
+    bool copy_on_insert, size_t element_size, bool release_on_dispose);
 
 /**
  * \brief Initialize doubly linked list options for a custom data type.
@@ -231,7 +232,7 @@ int doubly_linked_list_options_init(doubly_linked_list_options_t* options,
  *      - \ref VPR_STATUS_SUCCESS if successful.
  *      - a non-zero status code on failure.
  */
-int doubly_linked_list_options_init_ex(
+int VPR_DECL_MUST_CHECK doubly_linked_list_options_init_ex(
     doubly_linked_list_options_t* options, allocator_options_t* alloc_opts,
     doubly_linked_list_element_copy_t copy_method, size_t element_size,
     doubly_linked_list_element_dispose_t dispose_method);
@@ -254,8 +255,8 @@ int doubly_linked_list_options_init_ex(
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
  */
-int doubly_linked_list_init(doubly_linked_list_options_t* options,
-    doubly_linked_list_t* dll);
+int VPR_DECL_MUST_CHECK doubly_linked_list_init(
+    doubly_linked_list_options_t* options, doubly_linked_list_t* dll);
 
 /**
  * \brief Insert a new element at the beginning of a doubly linked list.
@@ -274,7 +275,8 @@ int doubly_linked_list_init(doubly_linked_list_options_t* options,
  *          - \ref VPR_STATUS_SUCCESS if successful.
  *          - a non-zero status code on failure.
  */
-int doubly_linked_list_insert_beginning(doubly_linked_list_t* dll, void* data);
+int VPR_DECL_MUST_CHECK doubly_linked_list_insert_beginning(
+    doubly_linked_list_t* dll, void* data);
 
 /**
  * \brief Insert a new element at the end of a doubly linked list.
@@ -293,7 +295,8 @@ int doubly_linked_list_insert_beginning(doubly_linked_list_t* dll, void* data);
  *          - \ref VPR_STATUS_SUCCESS if successful.
  *          - a non-zero status code on failure.
  */
-int doubly_linked_list_insert_end(doubly_linked_list_t* dll, void* data);
+int VPR_DECL_MUST_CHECK doubly_linked_list_insert_end(
+    doubly_linked_list_t* dll, void* data);
 
 /**
  * \brief Insert a new element before a specified element in a doubly linked
@@ -315,8 +318,9 @@ int doubly_linked_list_insert_end(doubly_linked_list_t* dll, void* data);
  *          - \ref VPR_STATUS_SUCCESS if successful.
  *          - a non-zero status code on failure.
  */
-int doubly_linked_list_insert_before(doubly_linked_list_t* dll,
-    doubly_linked_list_element_t* element, void* data);
+int VPR_DECL_MUST_CHECK doubly_linked_list_insert_before(
+    doubly_linked_list_t* dll, doubly_linked_list_element_t* element,
+    void* data);
 
 /**
  * \brief Insert a new element after a specified element in a doubly linked
@@ -338,8 +342,9 @@ int doubly_linked_list_insert_before(doubly_linked_list_t* dll,
  *          - \ref VPR_STATUS_SUCCESS if successful.
  *          - a non-zero status code on failure.
  */
-int doubly_linked_list_insert_after(doubly_linked_list_t* dll,
-    doubly_linked_list_element_t* element, void* data);
+int VPR_DECL_MUST_CHECK doubly_linked_list_insert_after(
+    doubly_linked_list_t* dll, doubly_linked_list_element_t* element,
+    void* data);
 
 /**
  * \brief Remove an element from a doubly linked list.
@@ -352,12 +357,9 @@ int doubly_linked_list_insert_after(doubly_linked_list_t* dll,
  *
  * \param dll               The doubly linked list.
  * \param element           The element to remove
- *
- * \returns a status code indicating success or failure.
- *          - \ref VPR_STATUS_SUCCESS if successful.
  */
-int doubly_linked_list_remove(doubly_linked_list_t* dll,
-    doubly_linked_list_element_t* element);
+void doubly_linked_list_remove(
+    doubly_linked_list_t* dll, doubly_linked_list_element_t* element);
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

@@ -16,19 +16,32 @@ protected:
     void SetUp() override
     {
         malloc_allocator_options_init(&alloc_opts);
-        dynamic_array_options_init(
-            &options, &alloc_opts, sizeof(int), &compare_int);
+        dynamic_array_options_init_status =
+            dynamic_array_options_init(
+                &options, &alloc_opts, sizeof(int), &compare_int);
     }
 
     void TearDown() override
     {
-        dispose((disposable_t*)&options);
+        if (VPR_STATUS_SUCCESS == dynamic_array_options_init_status)
+        {
+            dispose((disposable_t*)&options);
+        }
         dispose((disposable_t*)&alloc_opts);
     }
 
+    int dynamic_array_options_init_status;
     allocator_options_t alloc_opts;
     dynamic_array_options_t options;
 };
+
+/**
+ * dynamic_array_options_init should succeed.
+ */
+TEST_F(dynamic_array_grow_test, options_init)
+{
+    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_options_init_status);
+}
 
 /**
  * Create an empty array, and grow the reserved size by 1.
@@ -36,7 +49,10 @@ protected:
 TEST_F(dynamic_array_grow_test, basic_test)
 {
     dynamic_array_t array;
-    dynamic_array_init(&options, &array, 1, 0, NULL);
+
+    //we should be able to create a dynamic array
+    ASSERT_EQ(VPR_STATUS_SUCCESS,
+        dynamic_array_init(&options, &array, 1, 0, NULL));
 
     //we should have a reserved space of 1
     ASSERT_EQ((size_t)1, array.reserved_elements);
@@ -61,7 +77,10 @@ TEST_F(dynamic_array_grow_test, basic_test)
 TEST_F(dynamic_array_grow_test, shrink_failure)
 {
     dynamic_array_t array;
-    dynamic_array_init(&options, &array, 5, 0, NULL);
+
+    //we should be able to create a dynamic array
+    ASSERT_EQ(VPR_STATUS_SUCCESS,
+        dynamic_array_init(&options, &array, 5, 0, NULL));
 
     //we should have a reserved space of 5
     ASSERT_EQ((size_t)5, array.reserved_elements);
@@ -87,7 +106,10 @@ TEST_F(dynamic_array_grow_test, grow_copy)
 {
     int SEVENTEEN = 17;
     dynamic_array_t array;
-    dynamic_array_init(&options, &array, 5, 5, &SEVENTEEN);
+
+    //we should be able to create a dynamic array
+    ASSERT_EQ(VPR_STATUS_SUCCESS,
+        dynamic_array_init(&options, &array, 5, 5, &SEVENTEEN));
 
     //we should have a reserved space of 5
     ASSERT_EQ((size_t)5, array.reserved_elements);

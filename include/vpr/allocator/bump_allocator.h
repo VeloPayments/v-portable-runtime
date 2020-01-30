@@ -14,6 +14,7 @@
 #define VPR_ALLOCATOR_BUMP_ALLOCATOR_HEADER_GUARD
 
 #include <vpr/allocator.h>
+#include <vpr/function_decl.h>
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -68,8 +69,9 @@ extern const size_t bump_allocator_minimum_buffer_size;
  *        for the internal record keeping needed.
  *      - a non-zero error code indicating failure.
  */
-int bump_allocator_options_init(allocator_options_t* options, void* buffer,
-    size_t size);
+int VPR_DECL_MUST_CHECK
+bump_allocator_options_init(
+    allocator_options_t* options, void* buffer, size_t size);
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

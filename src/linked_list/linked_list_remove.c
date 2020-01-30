@@ -20,11 +20,8 @@
  *
  * \param ll                The linked list.
  * \param element           The element to remove
- *
- * \returns a status code indicating success or failure.
- *          - \ref VPR_STATUS_SUCCESS if successful.
  */
-int linked_list_remove(linked_list_t* ll, linked_list_element_t* element)
+void linked_list_remove(linked_list_t* ll, linked_list_element_t* element)
 {
     MODEL_ASSERT(NULL != ll);
     MODEL_ASSERT(ll->elements > 0);
@@ -59,7 +56,7 @@ int linked_list_remove(linked_list_t* ll, linked_list_element_t* element)
         // removed), there is nothing to do.
         if (NULL == prev)
         {
-            goto done;
+            return;
         }
 
         // we found it.  update the forward link to skip the removed element.
@@ -73,8 +70,4 @@ int linked_list_remove(linked_list_t* ll, linked_list_element_t* element)
 
         --ll->elements;
     }
-
-done:
-    //success
-    return VPR_STATUS_SUCCESS;
 }

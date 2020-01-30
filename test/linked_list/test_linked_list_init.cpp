@@ -15,19 +15,29 @@ protected:
     void SetUp() override
     {
         malloc_allocator_options_init(&alloc_opts);
-        linked_list_options_init(&options, &alloc_opts,
-            false, sizeof(int), false);
+        linked_list_options_init_status =
+            linked_list_options_init(&options, &alloc_opts,
+                false, sizeof(int), false);
     }
 
     void TearDown() override
     {
-        dispose((disposable_t*)&options);
+        if (VPR_STATUS_SUCCESS == linked_list_options_init_status)
+        {
+            dispose((disposable_t*)&options);
+        }
         dispose((disposable_t*)&alloc_opts);
     }
 
+    int linked_list_options_init_status;
     allocator_options_t alloc_opts;
     linked_list_options_t options;
 };
+
+TEST_F(ll_init_test, options_init)
+{
+    ASSERT_EQ(VPR_STATUS_SUCCESS, linked_list_options_init_status);
+}
 
 TEST_F(ll_init_test, basic_test)
 {

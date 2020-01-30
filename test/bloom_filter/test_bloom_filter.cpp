@@ -19,18 +19,23 @@ protected:
         size_t max_size_in_bytes)
     {
         malloc_allocator_options_init(&alloc_opts);
-        bloom_filter_options_init(
-            &options, &alloc_opts, num_expected_entries, target_error_rate,
-            max_size_in_bytes);
+        bloom_filter_options_init_status =
+            bloom_filter_options_init(
+                &options, &alloc_opts, num_expected_entries, target_error_rate,
+                max_size_in_bytes);
         srand(time(0));  // seed rng with current time
     }
 
     void TearDown() override
     {
-        dispose((disposable_t*)&options);
+        if (VPR_STATUS_SUCCESS == bloom_filter_options_init_status)
+        {
+            dispose((disposable_t*)&options);
+        }
         dispose((disposable_t*)&alloc_opts);
     }
 
+    int bloom_filter_options_init_status;
     allocator_options_t alloc_opts;
     bloom_filter_options_t options;
 };
@@ -40,6 +45,9 @@ protected:
  */
 TEST_F(bloom_filter_test, init_test)
 {
+    // verify that options were set up
+    ASSERT_EQ(VPR_STATUS_SUCCESS, bloom_filter_options_init_status);
+
     // set up a bloom filter with 1000 expected entries, a 10% error rate,
     // and maximum size of 1024 bytes.
     SetUp(1000, 0.1, 1024);
@@ -244,7 +252,7 @@ static void verify_false_positive_error_rate(bloom_filter* bloom,
     {
         uint8_t buf[17];
         generate_random_bytes(buf, 17);
-        bloom_filter_add_item(bloom, buf, 17);
+        ASSERT_EQ(VPR_STATUS_SUCCESS, bloom_filter_add_item(bloom, buf, 17));
         ASSERT_TRUE(bloom_filter_contains_item(bloom, buf, 17));
     }
 

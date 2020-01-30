@@ -24,7 +24,7 @@
  * \returns a status code indicating success or failure.
  *          - \ref VPR_STATUS_SUCCESS if successful.
  */
-int doubly_linked_list_remove(doubly_linked_list_t* dll,
+void doubly_linked_list_remove(doubly_linked_list_t* dll,
     doubly_linked_list_element_t* element)
 {
     MODEL_ASSERT(NULL != dll);
@@ -59,7 +59,4 @@ int doubly_linked_list_remove(doubly_linked_list_t* dll,
         /* update the reverse link in the next element */
         element->next->prev = element->prev;
     }
-
-    //success
-    return VPR_STATUS_SUCCESS;
 }
