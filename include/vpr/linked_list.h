@@ -193,7 +193,7 @@ typedef struct linked_list
  *      - \ref VPR_STATUS_SUCCESS if successful.
  *      - a non-zero status code on failure.
  */
-int linked_list_options_init(
+int VPR_DECL_MUST_CHECK linked_list_options_init(
     linked_list_options_t* options, allocator_options_t* alloc_opts,
     bool copy_on_insert, size_t element_size, bool release_on_dispose);
 
@@ -223,7 +223,7 @@ int linked_list_options_init(
  *      - \ref VPR_STATUS_SUCCESS if successful.
  *      - a non-zero status code on failure.
  */
-int linked_list_options_init_ex(
+int VPR_DECL_MUST_CHECK linked_list_options_init_ex(
     linked_list_options_t* options, allocator_options_t* alloc_opts,
     linked_list_element_copy_t copy_method, size_t element_size,
     linked_list_element_dispose_t dispose_method);
@@ -245,7 +245,8 @@ int linked_list_options_init_ex(
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
  */
-int linked_list_init(linked_list_options_t* options, linked_list_t* ll);
+int VPR_DECL_MUST_CHECK linked_list_init(
+    linked_list_options_t* options, linked_list_t* ll);
 
 /**
  * \brief Insert a new element at the beginning of a linked list.
@@ -264,7 +265,8 @@ int linked_list_init(linked_list_options_t* options, linked_list_t* ll);
  *          - \ref VPR_STATUS_SUCCESS if successful.
  *          - a non-zero status code on failure.
  */
-int linked_list_insert_beginning(linked_list_t* ll, void* data);
+int VPR_DECL_MUST_CHECK linked_list_insert_beginning(
+    linked_list_t* ll, void* data);
 
 /**
  * \brief Insert a new element at the end of a linked list.
@@ -283,7 +285,8 @@ int linked_list_insert_beginning(linked_list_t* ll, void* data);
  *          - \ref VPR_STATUS_SUCCESS if successful.
  *          - a non-zero status code on failure.
  */
-int linked_list_insert_end(linked_list_t* ll, void* data);
+int VPR_DECL_MUST_CHECK linked_list_insert_end(
+    linked_list_t* ll, void* data);
 
 /**
  * \brief Insert a new element before a specified element in a linked list.
@@ -304,7 +307,7 @@ int linked_list_insert_end(linked_list_t* ll, void* data);
  *          - \ref VPR_STATUS_SUCCESS if successful.
  *          - a non-zero status code on failure.
  */
-int linked_list_insert_before(
+int VPR_DECL_MUST_CHECK linked_list_insert_before(
     linked_list_t* ll, linked_list_element_t* element, void* data);
 
 /**
@@ -326,7 +329,7 @@ int linked_list_insert_before(
  *          - \ref VPR_STATUS_SUCCESS if successful.
  *          - a non-zero status code on failure.
  */
-int linked_list_insert_after(
+int VPR_DECL_MUST_CHECK linked_list_insert_after(
     linked_list_t* ll, linked_list_element_t* element, void* data);
 
 /**
@@ -340,11 +343,8 @@ int linked_list_insert_after(
  *
  * \param ll                The linked list.
  * \param element           The element to remove
- *
- * \returns a status code indicating success or failure.
- *          - \ref VPR_STATUS_SUCCESS if successful.
  */
-int linked_list_remove(linked_list_t* ll, linked_list_element_t* element);
+void linked_list_remove(linked_list_t* ll, linked_list_element_t* element);
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

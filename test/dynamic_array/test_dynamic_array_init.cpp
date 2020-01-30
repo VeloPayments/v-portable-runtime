@@ -16,18 +16,28 @@ protected:
     void SetUp() override
     {
         malloc_allocator_options_init(&alloc_opts);
-        dynamic_array_options_init(
-            &options, &alloc_opts, sizeof(int), &compare_int);
+        dynamic_array_options_init_status =
+            dynamic_array_options_init(
+                &options, &alloc_opts, sizeof(int), &compare_int);
     }
 
     void TearDown() override
     {
-        dispose((disposable_t*)&alloc_opts);
+        if (VPR_STATUS_SUCCESS == dynamic_array_options_init_status)
+        {
+            dispose((disposable_t*)&alloc_opts);
+        }
     }
 
+    int dynamic_array_options_init_status;
     allocator_options_t alloc_opts;
     dynamic_array_options_t options;
 };
+
+TEST_F(dynamic_array_init_test, options_init)
+{
+    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_options_init_status);
+}
 
 TEST_F(dynamic_array_init_test, basic_test)
 {

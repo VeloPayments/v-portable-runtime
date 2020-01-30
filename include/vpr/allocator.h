@@ -11,6 +11,7 @@
 #define VPR_ALLOCATOR_HEADER_GUARD
 
 #include <vpr/disposable.h>
+#include <vpr/function_decl.h>
 #include <vpr/error_codes.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -176,7 +177,8 @@ void* reallocate(allocator_options_t* options, void* mem, size_t old_size,
  *        invalid for the underlying allocator.
  *      - a non-zero error specific to a given control call on failure.
  */
-int allocator_control(allocator_options_t* options, uint32_t key, void* value);
+int VPR_DECL_MUST_CHECK
+allocator_control(allocator_options_t* options, uint32_t key, void* value);
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

@@ -16,19 +16,32 @@ protected:
     void SetUp() override
     {
         malloc_allocator_options_init(&alloc_opts);
-        dynamic_array_options_init(
-            &options, &alloc_opts, sizeof(int), &compare_int);
+        dynamic_array_options_init_status =
+            dynamic_array_options_init(
+                &options, &alloc_opts, sizeof(int), &compare_int);
     }
 
     void TearDown() override
     {
-        dispose((disposable_t*)&options);
+        if (VPR_STATUS_SUCCESS == dynamic_array_options_init_status)
+        {
+            dispose((disposable_t*)&options);
+        }
         dispose((disposable_t*)&alloc_opts);
     }
 
+    int dynamic_array_options_init_status;
     allocator_options_t alloc_opts;
     dynamic_array_options_t options;
 };
+
+/**
+ * dynamic_array_options_init should succeed.
+ */
+TEST_F(dynamic_array_append_test, options_init)
+{
+    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_options_init_status);
+}
 
 /**
  * Create an empty array and append an element to it.
@@ -37,7 +50,10 @@ TEST_F(dynamic_array_append_test, basic_test)
 {
     int SEVENTEEN = 17;
     dynamic_array_t array;
-    dynamic_array_init(&options, &array, 1, 0, NULL);
+
+    //this should succeed
+    ASSERT_EQ(VPR_STATUS_SUCCESS,
+        dynamic_array_init(&options, &array, 1, 0, NULL));
 
     //we should have a reserved space of 1
     ASSERT_EQ((size_t)1, array.reserved_elements);
@@ -69,7 +85,10 @@ TEST_F(dynamic_array_append_test, full_array)
 {
     int SEVENTEEN = 17;
     dynamic_array_t array;
-    dynamic_array_init(&options, &array, 1, 1, &SEVENTEEN);
+
+    //this should succeed
+    ASSERT_EQ(VPR_STATUS_SUCCESS,
+        dynamic_array_init(&options, &array, 1, 1, &SEVENTEEN));
 
     //we should have a reserved space of 1
     ASSERT_EQ((size_t)1, array.reserved_elements);

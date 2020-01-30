@@ -21,6 +21,7 @@
 #include <vpr/disposable.h>
 #include <vpr/hash_func.h>
 #include <vpr/error_codes.h>
+#include <vpr/function_decl.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -155,10 +156,9 @@ typedef struct bloom_filter
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
  */
-int bloom_filter_options_init(bloom_filter_options_t* options,
-    allocator_options_t* alloc_opts, size_t num_expected_entries,
-    float target_error_rate, size_t max_size_in_bytes);
-
+int VPR_DECL_MUST_CHECK bloom_filter_options_init(
+    bloom_filter_options_t* options, allocator_options_t* alloc_opts,
+    size_t num_expected_entries, float target_error_rate, size_t max_size_in_bytes);
 
 /**
  * \brief Initialize a bloom filter.
@@ -195,10 +195,11 @@ int bloom_filter_options_init(bloom_filter_options_t* options,
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
  */
-int bloom_filter_options_init_ex(bloom_filter_options_t* options,
-    allocator_options_t* alloc_opts, size_t num_expected_entries,
-    float target_error_rate, size_t max_size_in_bytes,
-    hash_func_t hash_function_1, hash_func_t hash_function_2);
+int VPR_DECL_MUST_CHECK bloom_filter_options_init_ex(
+    bloom_filter_options_t* options, allocator_options_t* alloc_opts,
+    size_t num_expected_entries, float target_error_rate,
+    size_t max_size_in_bytes, hash_func_t hash_function_1,
+    hash_func_t hash_function_2);
 
 /**
  * \brief Initialize a bloom filter.
@@ -218,7 +219,8 @@ int bloom_filter_options_init_ex(bloom_filter_options_t* options,
  *      - \ref VPR_ERROR_BLOOM_BITMAP_ALLOCATION_FAILED if memory could not
  *        be allocated for the bloom filter.
  */
-int bloom_filter_init(bloom_filter_options_t* options, bloom_filter_t* bloom);
+int VPR_DECL_MUST_CHECK bloom_filter_init(
+    bloom_filter_options_t* options, bloom_filter_t* bloom);
 
 /**
  * \brief Hash an input value to determine which bit of the filter to set.
@@ -245,8 +247,8 @@ unsigned int bloom_filter_hash(bloom_filter_options_t* options,
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
  */
-int bloom_filter_add_item(bloom_filter_t* bloom, const void* data,
-    size_t len);
+int VPR_DECL_MUST_CHECK bloom_filter_add_item(
+    bloom_filter_t* bloom, const void* data, size_t len);
 
 /**
  * \brief Query a bloom filter to determine if an item has been added.

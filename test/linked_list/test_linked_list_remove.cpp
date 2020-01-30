@@ -18,19 +18,29 @@ protected:
     void SetUp() override
     {
         malloc_allocator_options_init(&alloc_opts);
-        linked_list_options_init(&options, &alloc_opts,
-            false, sizeof(int), false);
+        linked_list_options_init_status =
+            linked_list_options_init(&options, &alloc_opts,
+                false, sizeof(int), false);
     }
 
     void TearDown() override
     {
-        dispose((disposable_t*)&options);
+        if (VPR_STATUS_SUCCESS == linked_list_options_init_status)
+        {
+            dispose((disposable_t*)&options);
+        }
         dispose((disposable_t*)&alloc_opts);
     }
 
+    int linked_list_options_init_status;
     allocator_options_t alloc_opts;
     linked_list_options_t options;
 };
+
+TEST_F(ll_remove_test, options_init)
+{
+    ASSERT_EQ(VPR_STATUS_SUCCESS, linked_list_options_init_status);
+}
 
 TEST_F(ll_remove_test, basic_test)
 {
@@ -62,7 +72,7 @@ TEST_F(ll_remove_test, basic_test)
     EXPECT_NE(element5, nullptr);
 
     // now remove the fifth element
-    EXPECT_EQ(0, linked_list_remove(&ll, element5));
+    linked_list_remove(&ll, element5);
     release(&alloc_opts, element5);
     EXPECT_EQ(ll.elements, 9UL);
 
@@ -79,14 +89,14 @@ TEST_F(ll_remove_test, basic_test)
 
     // remove the last element
     linked_list_element_t* lastptr = ll.last;
-    ASSERT_EQ(0, linked_list_remove(&ll, ll.last));
+    linked_list_remove(&ll, ll.last);
     release(&alloc_opts, lastptr);
     EXPECT_EQ(ll.elements, 8UL);
     EXPECT_EQ(*(int*)ll.last->data, 8);
 
     // remove the first element
     linked_list_element_t* firstptr = ll.first;
-    ASSERT_EQ(0, linked_list_remove(&ll, ll.first));
+    linked_list_remove(&ll, ll.first);
     release(&alloc_opts, firstptr);
     EXPECT_EQ(ll.elements, 7UL);
     EXPECT_EQ(*(int*)ll.first->data, 1);
@@ -95,7 +105,7 @@ TEST_F(ll_remove_test, basic_test)
     for (i = 0; i < 7; i++)
     {
         linked_list_element_t* curr = ll.first;
-        ASSERT_EQ(0, linked_list_remove(&ll, ll.first));
+        linked_list_remove(&ll, ll.first);
         release(&alloc_opts, curr);
     }
     EXPECT_EQ(ll.elements, 0UL);
@@ -114,6 +124,6 @@ void build_linked_list(linked_list_t* ll, int* data, int n)
 
     for (int i = 0; i < n; i++)
     {
-        linked_list_insert_end(ll, &data[i]);
+        ASSERT_EQ(VPR_STATUS_SUCCESS, linked_list_insert_end(ll, &data[i]));
     }
 }

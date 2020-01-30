@@ -14,6 +14,7 @@
 #include <vpr/disposable.h>
 #include <vpr/hash_func.h>
 #include <vpr/error_codes.h>
+#include <vpr/function_decl.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -212,7 +213,7 @@ typedef struct hashmap
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
  */
-int hashmap_options_init(
+int VPR_DECL_MUST_CHECK hashmap_options_init(
     hashmap_options_t* options, allocator_options_t* alloc_opts,
     uint32_t capacity, hashmap_value_equals_t equals_func,
     bool copy_on_put, size_t val_size, bool release_on_dispose);
@@ -247,7 +248,7 @@ int hashmap_options_init(
  * \returns a status code indicating success or failure.
  *      - \ref VPR_STATUS_SUCCESS if successful.
  */
-int hashmap_options_init_ex(
+int VPR_DECL_MUST_CHECK hashmap_options_init_ex(
     hashmap_options_t* options, allocator_options_t* alloc_opts,
     uint32_t capacity, hash_func_t hash_func,
     hashmap_value_equals_t equals_func, hashmap_value_copy_t copy_method,
@@ -271,7 +272,8 @@ int hashmap_options_init_ex(
  *      - \ref VPR_ERROR_HASHMAP_ALLOCATION_FAILED if memory could not
  *        be allocated for the hashmap
  */
-int hashmap_init(hashmap_options_t* options, hashmap_t* hmap);
+int VPR_DECL_MUST_CHECK hashmap_init(
+    hashmap_options_t* options, hashmap_t* hmap);
 
 /**
  * \brief Retrieve a value from a hashmap using a variable length key.

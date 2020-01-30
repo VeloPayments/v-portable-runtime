@@ -16,19 +16,32 @@ protected:
     void SetUp() override
     {
         malloc_allocator_options_init(&alloc_opts);
-        dynamic_array_options_init(
-            &options, &alloc_opts, sizeof(int), &compare_int);
+        dynamic_array_options_init_status =
+            dynamic_array_options_init(
+                &options, &alloc_opts, sizeof(int), &compare_int);
     }
 
     void TearDown() override
     {
-        dispose((disposable_t*)&options);
+        if (VPR_STATUS_SUCCESS == dynamic_array_options_init_status)
+        {
+            dispose((disposable_t*)&options);
+        }
         dispose((disposable_t*)&alloc_opts);
     }
 
+    int dynamic_array_options_init_status;
     allocator_options_t alloc_opts;
     dynamic_array_options_t options;
 };
+
+/**
+ * dynamic_array_options_init should succeed.
+ */
+TEST_F(dynamic_array_linear_search_test, options_init)
+{
+    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_options_init_status);
+}
 
 /**
  * Searching an empty array fails to find an element.
@@ -37,7 +50,10 @@ TEST_F(dynamic_array_linear_search_test, empty_array)
 {
     int SEVENTEEN = 17;
     dynamic_array_t array;
-    dynamic_array_init(&options, &array, 1, 0, NULL);
+
+    //we should be able to create an array
+    ASSERT_EQ(VPR_STATUS_SUCCESS,
+        dynamic_array_init(&options, &array, 1, 0, NULL));
 
     //there should be no element instances
     ASSERT_EQ((size_t)0, array.elements);
@@ -56,7 +72,10 @@ TEST_F(dynamic_array_linear_search_test, matching_element)
 {
     int SEVENTEEN = 17;
     dynamic_array_t array;
-    dynamic_array_init(&options, &array, 1, 1, &SEVENTEEN);
+
+    //we should be able to create an array
+    ASSERT_EQ(VPR_STATUS_SUCCESS,
+        dynamic_array_init(&options, &array, 1, 1, &SEVENTEEN));
 
     //there should be one element instance
     ASSERT_EQ((size_t)1, array.elements);
@@ -79,7 +98,10 @@ TEST_F(dynamic_array_linear_search_test, last_matching_element)
     int SEVENTEEN = 17;
     int SIXTEEN = 16;
     dynamic_array_t array;
-    dynamic_array_init(&options, &array, 5, 4, &SEVENTEEN);
+
+    //we should be able to create an array
+    ASSERT_EQ(VPR_STATUS_SUCCESS,
+        dynamic_array_init(&options, &array, 5, 4, &SEVENTEEN));
 
     //there should be four element instances
     ASSERT_EQ((size_t)4, array.elements);

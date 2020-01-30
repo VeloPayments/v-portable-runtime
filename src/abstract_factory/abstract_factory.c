@@ -108,7 +108,11 @@ void abstract_factory_register(abstract_factory_registration_t* impl)
     }
 
     /* register this instance */
-    dynamic_array_append(&abstract_factory_registry, &impl);
+    int retval = dynamic_array_append(&abstract_factory_registry, &impl);
+    if (VPR_STATUS_SUCCESS != retval)
+    {
+        /* TODO - we should bubble this up to the caller... */
+    }
 }
 
 /**
