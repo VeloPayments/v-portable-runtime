@@ -13,10 +13,9 @@ PWD?=$(shell pwd)
 #library source files
 SRCDIR=$(PWD)/src
 DIRS=$(SRCDIR) $(SRCDIR)/abstract_factory $(SRCDIR)/allocator \
-    $(SRCDIR)/compare $(SRCDIR)/hash_func \
-    $(SRCDIR)/disposable $(SRCDIR)/dynamic_array \
-    $(SRCDIR)/doubly_linked_list $(SRCDIR)/linked_list \
-    $(SRCDIR)/bloom_filter $(SRCDIR)/hashmap
+    $(SRCDIR)/bloom_filter $(SRCDIR)/compare $(SRCDIR)/disposable \
+    $(SRCDIR)/doubly_linked_list $(SRCDIR)/dynamic_array $(SRCDIR)/hash_func \
+    $(SRCDIR)/hashmap $(SRCDIR)/linked_list $(SRCDIR)/uuid
 SOURCES=$(foreach d,$(DIRS),$(wildcard $(d)/*.c))
 STRIPPED_SOURCES=$(patsubst $(SRCDIR)/%,%,$(SOURCES))
 MODELDIR=$(PWD)/model
@@ -26,9 +25,9 @@ MODEL_MAKEFILES?= \
 #library test files
 TESTDIR=$(PWD)/test
 TESTDIRS=$(TESTDIR) $(TESTDIR)/abstract_factory $(TESTDIR)/allocator \
-    $(TESTDIR)/compare $(TESTDIR)/hash_func \
-    $(TESTDIR)/dynamic_array $(TESTDIR)/doubly_linked_list \
-    $(TESTDIR)/linked_list  $(TESTDIR)/bloom_filter $(TESTDIR)/hashmap
+    $(TESTDIR)/bloom_filter $(TESTDIR)/compare $(TESTDIR)/hash_func \
+    $(TESTDIR)/hashmap $(TESTDIR)/doubly_linked_list $(TESTDIR)/dynamic_array \
+    $(TESTDIR)/linked_list $(TESTDIR)/uuid
 TEST_BUILD_DIR=$(HOST_CHECKED_BUILD_DIR)/test
 TEST_DIRS=$(filter-out $(TESTDIR), \
     $(patsubst $(TESTDIR)/%,$(TEST_BUILD_DIR)/%,$(TESTDIRS)))

@@ -183,6 +183,17 @@ extern "C" {
  */
 #define VPR_ERROR_LL_END_BUFFER_ALLOCATION_FAILED 0x1505
 
+/**
+ * \brief This error code is returned if the string representation of the UUID
+ * could not be allocated.
+ */
+#define VPR_ERROR_UUID_ALLOCATION_FAILED 0x1600
+
+/**
+ * \brief This error code is returned if it was not possible to convert a string
+ * to a uuid value.
+ */
+#define VPR_ERROR_UUID_CONVERSION_FAILED 0x1601
 
 /**
  * @}
