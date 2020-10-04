@@ -45,12 +45,13 @@ protected:
  */
 TEST_F(bloom_filter_test, init_test)
 {
-    // verify that options were set up
-    ASSERT_EQ(VPR_STATUS_SUCCESS, bloom_filter_options_init_status);
-
     // set up a bloom filter with 1000 expected entries, a 10% error rate,
     // and maximum size of 1024 bytes.
     SetUp(1000, 0.1, 1024);
+
+    // verify that options were set up
+    ASSERT_EQ(VPR_STATUS_SUCCESS, bloom_filter_options_init_status);
+
     bloom_filter bloom;
 
     ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
