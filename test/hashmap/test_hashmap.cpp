@@ -18,7 +18,7 @@ static bool never_equal(const void* lhs, const void* rhs);
 
 class hashmap_test : public ::testing::Test {
 protected:
-    void SetUp(uint32_t capacity, hashmap_value_equals_t equals_func,
+    void LocalSetUp(uint32_t capacity, hashmap_value_equals_t equals_func,
         bool copy_on_put, size_t val_size)
     {
         malloc_allocator_options_init(&alloc_opts);
@@ -46,7 +46,7 @@ protected:
  */
 TEST_F(hashmap_test, options_init)
 {
-    SetUp(1000, NULL, false, sizeof(int));
+    LocalSetUp(1000, NULL, false, sizeof(int));
     ASSERT_EQ(VPR_STATUS_SUCCESS, hashmap_options_init_status);
 }
 
@@ -56,7 +56,7 @@ TEST_F(hashmap_test, options_init)
 TEST_F(hashmap_test, init_test)
 {
     // set up a hashmap with a capacity of 1000
-    SetUp(1000, NULL, false, sizeof(int));
+    LocalSetUp(1000, NULL, false, sizeof(int));
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);
@@ -83,7 +83,7 @@ TEST_F(hashmap_test, init_test)
  */
 TEST_F(hashmap_test, put_get_without_copy)
 {
-    SetUp(1024, NULL, false, sizeof(int));
+    LocalSetUp(1024, NULL, false, sizeof(int));
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);
@@ -119,7 +119,7 @@ TEST_F(hashmap_test, put_get_without_copy)
  */
 TEST_F(hashmap_test, put_get_var_key)
 {
-    SetUp(1024, NULL, false, sizeof(long));
+    LocalSetUp(1024, NULL, false, sizeof(long));
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);
@@ -152,7 +152,7 @@ TEST_F(hashmap_test, put_get_var_key)
  */
 TEST_F(hashmap_test, equality_function)
 {
-    SetUp(1024, &never_equal, false, sizeof(long));
+    LocalSetUp(1024, &never_equal, false, sizeof(long));
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);
@@ -201,7 +201,7 @@ TEST_F(hashmap_test, put_get_with_copy)
         _Bool c;
     } test_type_t;
 
-    SetUp(1024, NULL, true, sizeof(test_type_t));
+    LocalSetUp(1024, NULL, true, sizeof(test_type_t));
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);
@@ -248,7 +248,7 @@ TEST_F(hashmap_test, put_get_with_copy)
  */
 TEST_F(hashmap_test, add_multiple_items)
 {
-    SetUp(2, NULL, false, sizeof(int));
+    LocalSetUp(2, NULL, false, sizeof(int));
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);
@@ -283,7 +283,7 @@ TEST_F(hashmap_test, add_multiple_items)
 TEST_F(hashmap_test, chaining_round_robin)
 {
     unsigned int capacity = 100;
-    SetUp(capacity, NULL, true, sizeof(unsigned int));
+    LocalSetUp(capacity, NULL, true, sizeof(unsigned int));
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);
@@ -322,7 +322,7 @@ TEST_F(hashmap_test, chaining_round_robin)
 TEST_F(hashmap_test, duplicate_key)
 {
     unsigned int capacity = 100;
-    SetUp(capacity, NULL, true, sizeof(unsigned int));
+    LocalSetUp(capacity, NULL, true, sizeof(unsigned int));
     hashmap hmap;
 
     ASSERT_EQ(hashmap_init(&options, &hmap), 0);

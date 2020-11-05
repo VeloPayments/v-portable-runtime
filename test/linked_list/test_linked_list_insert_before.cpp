@@ -12,7 +12,7 @@
 
 class ll_insert_before_test : public ::testing::Test {
 protected:
-    void SetUp(bool copy_on_insert)
+    void LocalSetUp(bool copy_on_insert)
     {
         malloc_allocator_options_init(&alloc_opts);
         linked_list_options_init_status =
@@ -36,13 +36,13 @@ protected:
 
 TEST_F(ll_insert_before_test, options_init)
 {
-    SetUp(true);
+    LocalSetUp(true);
     ASSERT_EQ(VPR_STATUS_SUCCESS, linked_list_options_init_status);
 }
 
 TEST_F(ll_insert_before_test, basic_test)
 {
-    SetUp(true);
+    LocalSetUp(true);
 
     linked_list_t ll;
 
@@ -98,7 +98,7 @@ TEST_F(ll_insert_before_test, basic_test)
 
 TEST_F(ll_insert_before_test, with_copy_on_insert)
 {
-    SetUp(true);
+    LocalSetUp(true);
 
     linked_list_t ll;
 
@@ -126,7 +126,7 @@ TEST_F(ll_insert_before_test, with_copy_on_insert)
 
 TEST_F(ll_insert_before_test, without_copy_on_insert)
 {
-    SetUp(false);
+    LocalSetUp(false);
 
     linked_list_t ll;
 

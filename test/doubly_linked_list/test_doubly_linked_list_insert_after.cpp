@@ -12,7 +12,7 @@
 
 class dll_insert_after_test : public ::testing::Test {
 protected:
-    void SetUp(bool copy_on_insert)
+    void LocalSetUp(bool copy_on_insert)
     {
         malloc_allocator_options_init(&alloc_opts);
         doubly_linked_list_options_init_status =
@@ -36,7 +36,7 @@ protected:
 
 TEST_F(dll_insert_after_test, basic_test)
 {
-    SetUp(true);
+    LocalSetUp(true);
 
     /* verify that options init succeeded. */
     ASSERT_EQ(VPR_STATUS_SUCCESS, doubly_linked_list_options_init_status);
@@ -81,7 +81,7 @@ TEST_F(dll_insert_after_test, basic_test)
 
 TEST_F(dll_insert_after_test, with_copy_on_insert)
 {
-    SetUp(true);
+    LocalSetUp(true);
 
     doubly_linked_list dll;
 
@@ -109,7 +109,7 @@ TEST_F(dll_insert_after_test, with_copy_on_insert)
 
 TEST_F(dll_insert_after_test, without_copy_on_insert)
 {
-    SetUp(false);
+    LocalSetUp(false);
 
     doubly_linked_list dll;
 

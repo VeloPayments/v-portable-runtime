@@ -15,7 +15,7 @@ static void generate_random_bytes(uint8_t*, size_t);
 
 class bloom_filter_test : public ::testing::Test {
 protected:
-    void SetUp(unsigned int num_expected_entries, float target_error_rate,
+    void LocalSetUp(unsigned int num_expected_entries, float target_error_rate,
         size_t max_size_in_bytes)
     {
         malloc_allocator_options_init(&alloc_opts);
@@ -47,7 +47,7 @@ TEST_F(bloom_filter_test, init_test)
 {
     // set up a bloom filter with 1000 expected entries, a 10% error rate,
     // and maximum size of 1024 bytes.
-    SetUp(1000, 0.1, 1024);
+    LocalSetUp(1000, 0.1, 1024);
 
     // verify that options were set up
     ASSERT_EQ(VPR_STATUS_SUCCESS, bloom_filter_options_init_status);
@@ -84,7 +84,7 @@ TEST_F(bloom_filter_test, init_test)
  */
 TEST_F(bloom_filter_test, not_enough_space)
 {
-    SetUp(1000, 0.1, 300);
+    LocalSetUp(1000, 0.1, 300);
     bloom_filter bloom;
 
     ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
@@ -115,7 +115,7 @@ TEST_F(bloom_filter_test, simple_add_item_test)
 {
     // set up a bloom filter with 1000 expected entries, a 10% error rate,
     // and maximum size of 1024 bytes.
-    SetUp(1000, 0.1, 1024);
+    LocalSetUp(1000, 0.1, 1024);
     bloom_filter bloom;
 
     ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
@@ -151,7 +151,7 @@ TEST_F(bloom_filter_test, simple_add_item_test)
  */
 TEST_F(bloom_filter_test, false_positive_error_rate_5pct_test)
 {
-    SetUp(10000, 0.05, 8192);
+    LocalSetUp(10000, 0.05, 8192);
 
     bloom_filter bloom;
 
@@ -172,7 +172,7 @@ TEST_F(bloom_filter_test, false_positive_error_rate_5pct_test)
  */
 TEST_F(bloom_filter_test, false_positive_error_rate_1pct_test)
 {
-    SetUp(10000, 0.01, 16384);
+    LocalSetUp(10000, 0.01, 16384);
 
     bloom_filter bloom;
 
@@ -192,7 +192,7 @@ TEST_F(bloom_filter_test, false_positive_error_rate_1pct_test)
  */
 TEST_F(bloom_filter_test, false_positive_error_rate_half_pct_test)
 {
-    SetUp(10000, 0.005, 16384);
+    LocalSetUp(10000, 0.005, 16384);
 
     bloom_filter bloom;
 
@@ -213,7 +213,7 @@ TEST_F(bloom_filter_test, false_positive_error_rate_half_pct_test)
  */
 TEST_F(bloom_filter_test, false_positive_error_rate_volume_test)
 {
-    SetUp(1000000, 0.01, 1198132);  // ~1.2 mb
+    LocalSetUp(1000000, 0.01, 1198132);  // ~1.2 mb
 
     bloom_filter bloom;
 
