@@ -61,6 +61,6 @@ vpr_test = executable(
   dependencies : gtest
 )
 
-test('testvpr', vpr_test)
+test('testvpr', vpr_test, timeout : 300)
 
 # vim: ts=2 sw=2 et colorcolumn=120
