@@ -5,7 +5,12 @@ MODEL_CHECK_DIR?=../../vcmodel
 
 include $(MODEL_CHECK_DIR)/model_check.mk
 
+.PHONY: ALL run_check
+
+#ALL: run_check
 ALL:
+
+run_check:
 	$(CBMC) --bounds-check --pointer-check --memory-leak-check \
 	--div-by-zero-check --signed-overflow-check --unsigned-overflow-check \
     --pointer-overflow-check --conversion-check \
