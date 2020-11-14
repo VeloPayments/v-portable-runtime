@@ -10,6 +10,7 @@
 #ifndef VPR_ALLOCATOR_HEADER_GUARD
 #define VPR_ALLOCATOR_HEADER_GUARD
 
+#include <vcmodel/model_tag.h>
 #include <vpr/disposable.h>
 #include <vpr/function_decl.h>
 #include <vpr/error_codes.h>
@@ -36,6 +37,11 @@ typedef struct allocator_options
      * \brief This structure is disposable.
      */
     disposable_t hdr;
+
+    /**
+     * \brief Create a model struct tag for liveness tracking.
+     */
+    MODEL_STRUCT_TAG(allocator);
 
     /**
      * \brief Allocate memory.
@@ -120,13 +126,6 @@ typedef struct allocator_options
 } allocator_options_t;
 
 /**
- * \brief This macro defines the model check property for a valid allocator
- * options structure.
- */
-#define MODEL_PROP_VALID_ALLOCATOR_OPTIONS(options) \
-    (NULL != (options) && MODEL_PROP_VALID_DISPOSABLE(&((options)->hdr)) && NULL != (options)->allocator_allocate && NULL != (options)->allocator_release && (NULL != (options)->allocator_reallocate || NULL == (options)->allocator_reallocate) /*&& NULL != (options)->allocator_control*/)  // FIXME: should this be optional?
-
-/**
  * \brief Allocate memory using the given allocator_options_t structure.
  *
  * \param options       Allocator options to use when allocating memory.
@@ -179,6 +178,17 @@ void* reallocate(allocator_options_t* options, void* mem, size_t old_size,
  */
 int VPR_DECL_MUST_CHECK
 allocator_control(allocator_options_t* options, uint32_t key, void* value);
+
+/**
+ * \brief Return true if the given allocator is valid.
+ *
+ * \note this function is only available for model checking.
+ *
+ * \param alloc     allocator instance to check.
+ *
+ * \returns true if valid and false otherwise.
+ */
+bool prop_allocator_valid(const allocator_options_t* alloc);
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

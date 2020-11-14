@@ -3,15 +3,12 @@
  *
  * Implementation of allocator.allocator_control.
  *
- * \copyright 2018 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2018-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
 #include <vpr/allocator.h>
 #include <string.h>
-
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_allocator_shadowed
 
 /**
  * \brief Make an allocator control call.
@@ -28,9 +25,7 @@
  */
 int allocator_control(allocator_options_t* options, uint32_t key, void* value)
 {
-    MODEL_ASSERT(MODEL_PROP_VALID_ALLOCATOR_OPTIONS(options));
+    MODEL_ASSERT(prop_allocator_valid(options));
 
     return options->allocator_control(options->context, key, value);
 }
-
-#endif /*!defined(MODEL_CHECK_vpr_allocator_shadowed)*/

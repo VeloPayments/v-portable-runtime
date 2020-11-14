@@ -7,6 +7,7 @@ static void mydispose(void* m);
 static void* myallocate(void* c, size_t s);
 static void myrelease(void* c, void* m);
 static void* myreallocate(void* c, void* m, size_t o, size_t n);
+static int mycontrol(void* context, uint32_t key, void* value);
 
 bool allocate_called = false;
 bool reallocate_called = false;
@@ -20,15 +21,21 @@ size_t size;
 size_t old_size;
 size_t new_size;
 
+MODEL_STRUCT_TAG_GLOBAL_EXTERN(allocator);
+
 int main(int argc, char* argv[])
 {
     allocator_options_t alloc_opts;
 
-    alloc_opts.hdr.dispose = &mydispose;
+    dispose_init(&alloc_opts.hdr, &mydispose);
+    MODEL_STRUCT_TAG_INIT(
+        alloc_opts.MODEL_STRUCT_TAG_REF(allocator), allocator);
     alloc_opts.allocator_allocate = &myallocate;
     alloc_opts.allocator_release = &myrelease;
     alloc_opts.allocator_reallocate = &myreallocate;
+    alloc_opts.allocator_control = &mycontrol;
     alloc_opts.context = &context;
+    MODEL_ASSERT(prop_allocator_valid(&alloc_opts));
 
     /* preconditions for allocate. */
     allocate_called = false;
@@ -143,4 +150,11 @@ static void* myreallocate(void* c, void* m, size_t o, size_t n)
         free(m);
 
     return ret;
+}
+
+/* Test the mechanism of control. */
+int nondet_int();
+static int mycontrol(void* context, uint32_t key, void* value)
+{
+    return nondet_int();
 }
