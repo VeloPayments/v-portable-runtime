@@ -66,4 +66,9 @@ vpr_test = executable(
 
 test('testvpr', vpr_test, timeout : 300)
 
+#Model checking
+run_target(
+    'model-check',
+    command : ['scripts/model-check.sh', 'models', meson.current_source_dir()])
+
 # vim: ts=2 sw=2 et colorcolumn=120
