@@ -3,15 +3,12 @@
  *
  * Implementation of allocator.reallocate.
  *
- * \copyright 2017 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
 #include <vpr/allocator.h>
 #include <string.h>
-
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_allocator_shadowed
 
 /**
  * \brief Reallocate memory using the given allocator_options_t structure.
@@ -36,8 +33,9 @@ void* reallocate(allocator_options_t* options, void* mem, size_t old_size,
     size_t copy_size;
     void* new_region;
 
-    MODEL_ASSERT(MODEL_PROP_VALID_ALLOCATOR_OPTIONS(options));
+    MODEL_ASSERT(prop_allocator_valid(options));
     MODEL_ASSERT(new_size > 0);
+
     /* don't overwrite the new memory region. */
     copy_size = old_size > new_size ? new_size : old_size;
     MODEL_ASSERT(copy_size <= new_size);
@@ -65,5 +63,3 @@ void* reallocate(allocator_options_t* options, void* mem, size_t old_size,
         return new_region;
     }
 }
-
-#endif /*!defined(MODEL_CHECK_vpr_allocator_shadowed)*/
