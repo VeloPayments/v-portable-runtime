@@ -41,22 +41,25 @@ vcmodel = dependency(
   fallback : ['vcmodel', 'vcmodel_dep']
 )
 
+vcmodel_sub = subproject('vcmodel')
+vcmodel_include = vcmodel_sub.get_variable('vcmodel_include')
+
 vpr_include = include_directories('include')
 
 vpr_lib = static_library('vpr', src,
   dependencies : vcmodel,
-  include_directories : vpr_include
+  include_directories : [vpr_include, vcmodel_include]
 )
 
 vpr_dep = declare_dependency(
   link_with : vpr_lib,
-  include_directories : vpr_include
+  include_directories : [vpr_include, vcmodel_include]
 )
 
 vpr_test = executable(
   'testvpr',
   test_src,
-  include_directories : vpr_include,
+  include_directories : [vpr_include, vcmodel_include],
   link_with : vpr_lib,
   dependencies : gtest
 )
