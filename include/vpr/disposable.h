@@ -16,6 +16,9 @@
 #ifndef VPR_DISPOSABLE_HEADER_GUARD
 #define VPR_DISPOSABLE_HEADER_GUARD
 
+#include <stdbool.h>
+#include <vcmodel/model_tag.h>
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 extern "C" {
@@ -43,14 +46,13 @@ typedef struct disposable
      * \brief The dispose method for this disposable type.
      */
     dispose_method_t dispose;
-} disposable_t;
 
-/**
- * \brief This macro defines the model check property for a valid disposable
- * structure.
- */
-#define MODEL_PROP_VALID_DISPOSABLE(options) \
-    (NULL != options && NULL != (options)->dispose)
+    /**
+     * \brief Create a model struct tag for lifetime tracking.
+     */
+    MODEL_STRUCT_TAG(disposable);
+
+} disposable_t;
 
 /**
  * \brief Initialize a disposable instance with the given dispose method.
@@ -68,6 +70,17 @@ void dispose_init(disposable_t* disp, dispose_method_t func);
  * \param disp      Disposable structure to be disposed.
  */
 void dispose(disposable_t* disp);
+
+/**
+ * \brief Return true if the given disposable is valid.
+ *
+ * \note this function is only available for model checking.
+ *
+ * \param disp      Disposable instance to check.
+ *
+ * \returns true if valid and false otherwise.
+ */
+bool prop_disposable_valid(const disposable_t* disp);
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
