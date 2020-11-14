@@ -53,6 +53,14 @@ typedef struct disposable
     (NULL != options && NULL != (options)->dispose)
 
 /**
+ * \brief Initialize a disposable instance with the given dispose method.
+ *
+ * \param disp      The disposable instance to initialize.
+ * \param func      The dispose method to use to dispose this instance.
+ */
+void dispose_init(disposable_t* disp, dispose_method_t func);
+
+/**
  * \brief Dispose of a disposable structure.
  *
  * Call its dispose method.
