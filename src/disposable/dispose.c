@@ -3,14 +3,13 @@
  *
  * Implementation of disposable.dispose.
  *
- * \copyright 2017 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
 #include <vpr/disposable.h>
 
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_dispose_shadowed
+MODEL_STRUCT_TAG_GLOBAL_EXTERN(disposable);
 
 /**
  * \brief Dispose of a disposable structure.
@@ -21,9 +20,7 @@
  */
 void dispose(disposable_t* disp)
 {
-    MODEL_ASSERT(MODEL_PROP_VALID_DISPOSABLE(disp));
+    MODEL_ASSERT(prop_disposable_valid(disp));
 
     disp->dispose(disp);
 }
-
-#endif /*!defined(MODEL_CHECK_vpr_dispose_shadowed)*/

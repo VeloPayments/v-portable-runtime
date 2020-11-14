@@ -9,6 +9,8 @@
 #include <cbmc/model_assert.h>
 #include <vpr/disposable.h>
 
+MODEL_STRUCT_TAG_GLOBAL_EXTERN(disposable);
+
 /**
  * \brief Initialize a disposable instance with the given dispose method.
  *
@@ -21,5 +23,12 @@ void dispose_init(disposable_t* disp, dispose_method_t func)
     MODEL_ASSERT(NULL != disp);
     MODEL_ASSERT(NULL != func);
 
+    /* set the dispose function. */
     disp->dispose = func;
+
+    /* set the struct tag for model checking. */
+    MODEL_STRUCT_TAG_INIT(disp->MODEL_STRUCT_TAG_REF(disposable), disposable);
+
+    /* verify that this disposable instance is valid. */
+    MODEL_ASSERT(prop_disposable_valid(disp));
 }
