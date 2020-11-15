@@ -35,6 +35,7 @@ void* reallocate(allocator_options_t* options, void* mem, size_t old_size,
 
     MODEL_ASSERT(prop_allocator_valid(options));
     MODEL_ASSERT(new_size > 0);
+    MODEL_ASSERT(mem != NULL);
 
     /* don't overwrite the new memory region. */
     copy_size = old_size > new_size ? new_size : old_size;
@@ -44,8 +45,9 @@ void* reallocate(allocator_options_t* options, void* mem, size_t old_size,
     /* if the user has defined a reallocate method, use it. */
     if (options->allocator_reallocate)
     {
-        return options->allocator_reallocate(options->context, mem, old_size,
-            new_size);
+        return
+            options->allocator_reallocate(
+                options->context, mem, old_size, new_size);
     }
     /* otherwise, reallocate in terms of allocate and deallocate */
     else
