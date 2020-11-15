@@ -7,8 +7,7 @@ include $(MODEL_CHECK_DIR)/model_check.mk
 
 .PHONY: ALL run_check
 
-#ALL: run_check
-ALL:
+ALL: run_check
 
 run_check:
 	$(CBMC) --bounds-check --pointer-check --memory-leak-check \
@@ -22,6 +21,9 @@ run_check:
     ../src/allocator/release.c \
     ../src/allocator/reallocate.c \
     ../src/disposable/dispose.c \
+    ../src/disposable/dispose_init.c \
     ../src/allocator/malloc_allocator_options_init.c \
     ../src/allocator/malloc_allocator_options_dispose.c \
+	shadow/allocator/prop_allocator_valid.c \
+	shadow/disposable/prop_disposable_valid.c \
 	malloc_allocate_main.c
