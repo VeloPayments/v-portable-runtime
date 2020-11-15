@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
     allocator_options_t alloc_opts;
 
     malloc_allocator_options_init(&alloc_opts);
-    MODEL_ASSERT(MODEL_PROP_VALID_ALLOCATOR_OPTIONS(&alloc_opts));
+    MODEL_ASSERT(prop_allocator_valid(&alloc_opts));
 
     /* call the allocator in our model check. */
     int* x = (int*)allocate(&alloc_opts, sizeof(int));

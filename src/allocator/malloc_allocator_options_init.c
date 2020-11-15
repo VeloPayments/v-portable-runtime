@@ -3,7 +3,7 @@
  *
  * Implementation of malloc_allocator.malloc_allocator_options_init.
  *
- * \copyright 2017 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
@@ -13,8 +13,7 @@
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/parameters.h>
 
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_malloc_allocator_shadowed
+MODEL_STRUCT_TAG_GLOBAL_EXTERN(allocator);
 
 /**
  * Internal allocation method.
@@ -76,7 +75,12 @@ void malloc_allocator_options_init(allocator_options_t* options)
     MODEL_ASSERT(options != NULL);
 
     /* use our internal dispose method for disposing of this structure. */
-    options->hdr.dispose = (dispose_method_t)&malloc_allocator_options_dispose;
+    dispose_init(
+        &options->hdr, (dispose_method_t)&malloc_allocator_options_dispose);
+
+    /* mark this structure as valid. */
+    MODEL_STRUCT_TAG_INIT(
+        options->MODEL_STRUCT_TAG_REF(allocator), allocator);
 
     /* use malloc() for allocation. */
     options->allocator_allocate = &allocate_malloc;
@@ -94,10 +98,8 @@ void malloc_allocator_options_init(allocator_options_t* options)
     options->context = NULL;
 
     /* the allocator options structure should now be valid. */
-    MODEL_ASSERT(MODEL_PROP_VALID_ALLOCATOR_OPTIONS(options));
+    MODEL_ASSERT(prop_allocator_valid(options));
 
     /* context should be set to NULL. */
     MODEL_ASSERT(options->context == NULL);
 }
-
-#endif /*!defined(MODEL_CHECK_vpr_malloc_allocator_shadowed)*/
