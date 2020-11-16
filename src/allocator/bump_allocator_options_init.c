@@ -3,7 +3,7 @@
  *
  * Implementation of bump_allocator.bump_allocator_options_init.
  *
- * \copyright 2018 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2018-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
@@ -13,8 +13,7 @@
 #include <vpr/allocator/bump_allocator.h>
 #include <vpr/parameters.h>
 
-/* this is the real implementation. */
-#ifndef MODEL_CHECK_vpr_bump_allocator_shadowed
+MODEL_STRUCT_TAG_GLOBAL_EXTERN(allocator);
 
 /**
  * \brief Bump allocator context.
@@ -172,7 +171,13 @@ int bump_allocator_options_init(allocator_options_t* options, void* buffer,
     ctx->max_size = size - sizeof(bump_allocator_ctx_t);
 
     /* use our internal dispose method for disposing of this structure. */
-    options->hdr.dispose = (dispose_method_t)&bump_allocator_options_dispose;
+    dispose_init(
+        &options->hdr,
+        (dispose_method_t)&bump_allocator_options_dispose);
+
+    /* mark this structure as valid. */
+    MODEL_STRUCT_TAG_INIT(
+        options->MODEL_STRUCT_TAG_REF(allocator), allocator);
 
     /* use our bump allocator to allocate. */
     options->allocator_allocate = &bump_allocate;
@@ -190,7 +195,7 @@ int bump_allocator_options_init(allocator_options_t* options, void* buffer,
     options->context = ctx;
 
     /* the allocator options structure should now be valid. */
-    MODEL_ASSERT(MODEL_PROP_VALID_ALLOCATOR_OPTIONS(options));
+    MODEL_ASSERT(prop_allocator_valid(options));
 
     /* context should be set. */
     MODEL_ASSERT(options->context == ctx);
@@ -198,5 +203,3 @@ int bump_allocator_options_init(allocator_options_t* options, void* buffer,
     /* success */
     return VPR_STATUS_SUCCESS;
 }
-
-#endif /*!defined(MODEL_CHECK_vpr_bump_allocator_shadowed)*/
