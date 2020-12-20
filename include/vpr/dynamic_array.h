@@ -7,19 +7,19 @@
  * provides model checking for array bounds, controlled initialization,
  * controlled resizing, sorting, and binary searching.
  *
- * \copyright 2017 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #ifndef VPR_DYNAMIC_ARRAY_HEADER_GUARD
 #define VPR_DYNAMIC_ARRAY_HEADER_GUARD
 
+#include <stdbool.h>
+#include <stdlib.h>
 #include <vpr/allocator.h>
 #include <vpr/compare.h>
 #include <vpr/disposable.h>
 #include <vpr/error_codes.h>
 #include <vpr/function_decl.h>
-#include <stdbool.h>
-#include <stdlib.h>
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
@@ -356,6 +356,37 @@ void* dynamic_array_linear_search(
  *      - NULL if no matching element found.
  */
 void* dynamic_array_binary_search(dynamic_array_t* array, const void* elem);
+
+/**
+ * \brief Get the disposable handle from a dynamic array options instance.
+ *
+ * \param array_opts        The dynamic array options instance from which the
+ *                          disposable handle is read.
+ *
+ * \returns the disposable handle for this dynamic array options instance.
+ */
+inline disposable_t* dynamic_array_options_disposable_handle(
+    dynamic_array_options_t* array_opts)
+{
+    MODEL_ASSERT(prop_dynamic_array_options_valid(array_opts));
+
+    return &(array_opts->hdr);
+}
+
+/**
+ * \brief Get the disposable handle from a dynamic array instance.
+ *
+ * \param array_opts        The dynamic array instance from which the disposable
+ *                          handle is read.
+ *
+ * \returns the disposable handle for this dynamic array instance.
+ */
+inline disposable_t* dynamic_array_disposable_handle(dynamic_array_t* array)
+{
+    MODEL_ASSERT(prop_dynamic_array_valid(array));
+
+    return &(array->hdr);
+}
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

@@ -3,11 +3,11 @@
  *
  * Unit tests for bloom_filter hashing.
  *
- * \copyright 2019 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <time.h>
 #include <gtest/gtest.h>
+#include <time.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/bloom_filter.h>
 
@@ -32,9 +32,9 @@ protected:
     {
         if (VPR_STATUS_SUCCESS == bloom_filter_options_init_status)
         {
-            dispose((disposable_t*)&options);
+            dispose(bloom_filter_options_disposable_handle(&options));
         }
-        dispose((disposable_t*)&alloc_opts);
+        dispose(allocator_options_disposable_handle(&alloc_opts));
     }
 
     int bloom_filter_options_init_status;

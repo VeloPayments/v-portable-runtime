@@ -3,7 +3,7 @@
  *
  * Unit tests for malloc_allocator_options_init.
  *
- * \copyright 2017 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
 #include <gtest/gtest.h>
@@ -27,7 +27,7 @@ TEST(malloc_allocator_options_init_test, initTest)
     EXPECT_NE(nullptr, (void*)options.allocator_control);
     EXPECT_EQ(0, options.context);
 
-    dispose((disposable_t*)&options);
+    dispose(allocator_options_disposable_handle(&options));
 }
 
 /**
@@ -42,5 +42,5 @@ TEST(malloc_allocator_options_init_test, allocator_control)
     EXPECT_EQ(VPR_ERROR_ALLOCATOR_CONTROL_INVALID_KEY,
         allocator_control(&options, 1, nullptr));
 
-    dispose((disposable_t*)&options);
+    dispose(allocator_options_disposable_handle(&options));
 }

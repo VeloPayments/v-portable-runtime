@@ -3,7 +3,7 @@
  *
  * Passing in a null options parameter trips the model checker.
  *
- * \copyright 2017 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
     dynamic_array_options_init(NULL, &alloc_opts, sz, compare_method);
 
     //dispose of allocator
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 
     return 0;
 }

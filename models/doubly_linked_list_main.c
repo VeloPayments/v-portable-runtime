@@ -3,7 +3,7 @@
  *
  * Simple model check of doubly linked list
  *
- * \copyright 2019 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2019-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
@@ -62,13 +62,13 @@ static void verify_empty_list()
     MODEL_ASSERT(NULL == dll.last);
 
     //dispose of the linked list
-    dispose((disposable_t*)&dll);
+    dispose(doubly_linked_list_disposable_handle(&dll));
 
     //dispose of options
-    dispose((disposable_t*)&options);
+    dispose(doubly_linked_list_options_disposable_handle(&options));
 
     //dispose of allocator
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 }
 
 static void verify_singleton_list()
@@ -108,13 +108,13 @@ static void verify_singleton_list()
     }
 
     //dispose of the linked list
-    dispose((disposable_t*)&dll);
+    dispose(doubly_linked_list_disposable_handle(&dll));
 
     //dispose of options
-    dispose((disposable_t*)&options);
+    dispose(doubly_linked_list_options_disposable_handle(&options));
 
     //dispose of allocator
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 }
 
 static void verify_beginning_before()
@@ -160,13 +160,13 @@ static void verify_beginning_before()
     }
 
     //dispose of the linked list
-    dispose((disposable_t*)&dll);
+    dispose(doubly_linked_list_disposable_handle(&dll));
 
     //dispose of options
-    dispose((disposable_t*)&options);
+    dispose(doubly_linked_list_options_disposable_handle(&options));
 
     //dispose of allocator
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 }
 
 static void verify_after_end_remove()
@@ -221,11 +221,11 @@ static void verify_after_end_remove()
     }
 
     //dispose of the linked list
-    dispose((disposable_t*)&dll);
+    dispose(doubly_linked_list_disposable_handle(&dll));
 
     //dispose of options
-    dispose((disposable_t*)&options);
+    dispose(doubly_linked_list_options_disposable_handle(&options));
 
     //dispose of allocator
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 }

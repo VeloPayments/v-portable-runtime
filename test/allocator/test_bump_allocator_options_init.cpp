@@ -3,7 +3,7 @@
  *
  * Unit tests for bump_allocator_options_init.
  *
- * \copyright 2018 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2018-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
 #include <gtest/gtest.h>
@@ -27,7 +27,7 @@ TEST(bump_allocator_options_init, small_buffer_large_allocation)
     ASSERT_EQ(nullptr, allocate(&options, 100));
 
     /* clean up. */
-    dispose((disposable_t*)&options);
+    dispose(allocator_options_disposable_handle(&options));
 }
 
 /**
@@ -55,7 +55,7 @@ TEST(bump_allocator_options_init, simple_allocation)
     EXPECT_EQ(0UL, ((size_t)ptr) % 16);
 
     /* clean up. */
-    dispose((disposable_t*)&options);
+    dispose(allocator_options_disposable_handle(&options));
 }
 
 /**
@@ -92,5 +92,5 @@ TEST(bump_allocator_options_init, bump_reset)
     EXPECT_EQ(ptr_y1, ptr_y2);
 
     /* clean up. */
-    dispose((disposable_t*)&options);
+    dispose(allocator_options_disposable_handle(&options));
 }

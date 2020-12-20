@@ -3,7 +3,7 @@
  *
  * Unit tests for allocator.reallocate.
  *
- * \copyright 2017 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
 #include <gtest/gtest.h>
@@ -34,7 +34,7 @@ TEST(allocator_reallocate, reallocateOptionTest)
         mock_allocator_reallocate_called(&options, MEM, OLD_SIZE, NEW_SIZE));
 
     //dispose options now that we're done
-    dispose((disposable_t*)&options);
+    dispose(allocator_options_disposable_handle(&options));
 }
 
 /**
@@ -82,7 +82,7 @@ TEST(allocator_reallocate, noReallocateTest)
     EXPECT_EQ(0, memcmp(old_buffer, new_buffer, OLD_SIZE));
 
     //dispose options now that we're done
-    dispose((disposable_t*)&options);
+    dispose(allocator_options_disposable_handle(&options));
 }
 
 /**
@@ -130,5 +130,5 @@ TEST(allocator_reallocate, noReallocateTruncate)
     EXPECT_EQ(0, memcmp(old_buffer, new_buffer, NEW_SIZE));
 
     //dispose options now that we're done
-    dispose((disposable_t*)&options);
+    dispose(allocator_options_disposable_handle(&options));
 }

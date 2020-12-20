@@ -3,7 +3,7 @@
  *
  * Unit tests for linked_list_insert_end
  *
- * \copyright 2019 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
 #include <gtest/gtest.h>
@@ -24,9 +24,9 @@ protected:
     {
         if (VPR_STATUS_SUCCESS == linked_list_options_init_status)
         {
-            dispose((disposable_t*)&options);
+            dispose(linked_list_options_disposable_handle(&options));
         }
-        dispose((disposable_t*)&alloc_opts);
+        dispose(allocator_options_disposable_handle(&alloc_opts));
     }
 
     int linked_list_options_init_status;
@@ -92,7 +92,7 @@ TEST_F(ll_insert_end_test, basic_test)
     EXPECT_EQ(ll.last->next, nullptr);
 
     //dispose of our list
-    dispose((disposable_t*)&ll);
+    dispose(linked_list_disposable_handle(&ll));
 }
 
 TEST_F(ll_insert_end_test, with_copy_on_insert)
@@ -119,7 +119,7 @@ TEST_F(ll_insert_end_test, with_copy_on_insert)
     EXPECT_EQ(*(int*)(ll.last->data), data2 - 10);
 
     //dispose of our list
-    dispose((disposable_t*)&ll);
+    dispose(linked_list_disposable_handle(&ll));
 }
 
 TEST_F(ll_insert_end_test, without_copy_on_insert)
@@ -146,5 +146,5 @@ TEST_F(ll_insert_end_test, without_copy_on_insert)
     EXPECT_EQ(*(int*)(ll.last->data), data2);
 
     //dispose of our list
-    dispose((disposable_t*)&ll);
+    dispose(linked_list_disposable_handle(&ll));
 }

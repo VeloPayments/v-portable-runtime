@@ -3,7 +3,7 @@
  *
  * Passing in a null allocator will trip the model checker.
  *
- * \copyright 2017 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
         &options, NULL, sz, ctx, &my_copy, &my_dispose, &memcmp);
 
     //dispose of dynamic array options
-    dispose((disposable_t*)&options);
+    dispose(dynamic_array_options_disposable_handle(&options));
 
     return 0;
 }

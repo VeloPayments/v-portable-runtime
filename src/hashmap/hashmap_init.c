@@ -99,7 +99,7 @@ void hashmap_dispose(void* phmap)
             }
 
             // dispose of the DLL, which will also release the hashmap entries
-            dispose((disposable_t*)dll);
+            dispose(doubly_linked_list_disposable_handle(dll));
 
             // release memory for DLL and options
             release(hmap->options->alloc_opts, dll);

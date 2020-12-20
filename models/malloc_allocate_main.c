@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     release(&alloc_opts, x);
 
     /* dispose the allocator. */
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 
     return 0;
 }

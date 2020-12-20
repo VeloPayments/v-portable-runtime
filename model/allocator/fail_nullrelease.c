@@ -3,7 +3,7 @@
  *
  * Verify that releasing a null pointer results in a failure.
  *
- * \copyright 2017 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <stdlib.h>
@@ -21,5 +21,5 @@ int main(int argc, char* argv[])
 
     release(&options, foo);  //XXX - this will fail because foo can be NULL
 
-    dispose((disposable_t*)&options);
+    dispose(allocator_options_disposable_handle(&options));
 }
