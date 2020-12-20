@@ -15,7 +15,7 @@ run_check:
 	--div-by-zero-check --signed-overflow-check --unsigned-overflow-check \
 	--pointer-overflow-check --conversion-check \
 	--trace --stop-on-fail \
-	--object-bits 16 --unwind 3 --unwindset __builtin___memset_chk.0:60 \
+	--unwind 3 --unwindset __builtin___memset_chk.0:60 \
 	--unwinding-assertions --drop-unused-functions \
 	-I $(VCMODEL_DIR)/include -I ../include \
 	-DCBMC \

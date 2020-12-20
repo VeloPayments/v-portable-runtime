@@ -15,7 +15,7 @@ run_check:
 	--div-by-zero-check --signed-overflow-check --unsigned-overflow-check \
     --pointer-overflow-check --conversion-check \
 	--conversion-check --trace --stop-on-fail -DCBMC \
-    --object-bits 16 --drop-unused-functions \
+    --drop-unused-functions \
 	-I $(VCMODEL_DIR)/include -I ../include \
 	$(MODEL_CHECK_SOURCES) \
 	-DMODEL_CHECK_vpr_allocator_shadowed \

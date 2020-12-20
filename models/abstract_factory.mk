@@ -7,15 +7,15 @@ include $(MODEL_CHECK_DIR)/model_check.mk
 
 .PHONY: ALL run_check
 
-#ALL: run_check
 ALL:
+#ALL: run_check
 
 run_check:
 	$(CBMC) --bounds-check --pointer-check --memory-leak-check \
 	--div-by-zero-check --signed-overflow-check --unsigned-overflow-check \
     --pointer-overflow-check --conversion-check \
 	--conversion-check --trace --stop-on-fail -DCBMC \
-    --object-bits 16 --drop-unused-functions \
+    --drop-unused-functions \
     --unwind 10 \
     --unwindset __builtin___memset_chk.0:60,malloc_allocator_options_init.0:40,dynamic_array_grow.0:6,dynamic_array_grow.1:6 \
 	-I $(VCMODEL_DIR)/include -I ../include \
