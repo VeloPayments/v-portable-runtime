@@ -3,7 +3,7 @@
  *
  * Unit tests for allocator.allocate.
  *
- * \copyright 2017 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
 #include <gtest/gtest.h>
@@ -31,5 +31,5 @@ TEST(allocator_allocate, basicTest)
     EXPECT_TRUE(mock_allocator_allocate_called(&options, SIZE));
 
     //dispose options now that we're done
-    dispose((disposable_t*)&options);
+    dispose(allocator_options_disposable_handle(&options));
 }

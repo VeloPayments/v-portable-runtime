@@ -36,7 +36,7 @@ TEST(vpr_uuid_to_string, base_case_zero)
 
     /* cleanup. */
     release(&alloc_opts, value);
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 }
 
 /**
@@ -65,5 +65,5 @@ TEST(vpr_uuid_to_string, basic_uuid)
 
     /* cleanup. */
     release(&alloc_opts, value);
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 }

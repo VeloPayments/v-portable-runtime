@@ -3,7 +3,7 @@
  *
  * Unit tests for dynamic_array_sort.
  *
- * \copyright 2017 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
 #include <algorithm>
@@ -27,8 +27,8 @@ protected:
 
     void TearDown() override
     {
-        dispose((disposable_t*)&options);
-        dispose((disposable_t*)&alloc_opts);
+        dispose(dynamic_array_options_disposable_handle(&options));
+        dispose(allocator_options_disposable_handle(&alloc_opts));
     }
 
     int dynamic_array_options_init_status;
@@ -83,7 +83,7 @@ TEST_F(dynamic_array_sort_test, basic_test)
     }
 
     //dispose the array
-    dispose((disposable_t*)&array);
+    dispose(dynamic_array_disposable_handle(&array));
 }
 
 /**
@@ -127,7 +127,7 @@ TEST_F(dynamic_array_sort_test, sort1)
         }
 
         //dispose the array
-        dispose((disposable_t*)&array);
+        dispose(dynamic_array_disposable_handle(&array));
 
     } while (next_permutation(permutations, permutations + 1));
 }
@@ -173,7 +173,7 @@ TEST_F(dynamic_array_sort_test, sort2)
         }
 
         //dispose the array
-        dispose((disposable_t*)&array);
+        dispose(dynamic_array_disposable_handle(&array));
 
     } while (next_permutation(permutations, permutations + 2));
 }
@@ -219,7 +219,7 @@ TEST_F(dynamic_array_sort_test, sort3)
         }
 
         //dispose the array
-        dispose((disposable_t*)&array);
+        dispose(dynamic_array_disposable_handle(&array));
 
     } while (next_permutation(permutations, permutations + 3));
 }
@@ -265,7 +265,7 @@ TEST_F(dynamic_array_sort_test, sort4)
         }
 
         //dispose the array
-        dispose((disposable_t*)&array);
+        dispose(dynamic_array_disposable_handle(&array));
 
     } while (next_permutation(permutations, permutations + 4));
 }
@@ -311,7 +311,7 @@ TEST_F(dynamic_array_sort_test, sort5)
         }
 
         //dispose the array
-        dispose((disposable_t*)&array);
+        dispose(dynamic_array_disposable_handle(&array));
 
     } while (next_permutation(permutations, permutations + 5));
 }
@@ -357,7 +357,7 @@ TEST_F(dynamic_array_sort_test, sort6)
         }
 
         //dispose the array
-        dispose((disposable_t*)&array);
+        dispose(dynamic_array_disposable_handle(&array));
 
     } while (next_permutation(permutations, permutations + 6));
 }
@@ -403,7 +403,7 @@ TEST_F(dynamic_array_sort_test, sort7)
         }
 
         //dispose the array
-        dispose((disposable_t*)&array);
+        dispose(dynamic_array_disposable_handle(&array));
 
     } while (next_permutation(permutations, permutations + 7));
 }
@@ -449,7 +449,7 @@ TEST_F(dynamic_array_sort_test, sort8)
         }
 
         //dispose the array
-        dispose((disposable_t*)&array);
+        dispose(dynamic_array_disposable_handle(&array));
 
     } while (next_permutation(permutations, permutations + 8));
 }
@@ -495,7 +495,7 @@ TEST_F(dynamic_array_sort_test, sort9)
         }
 
         //dispose the array
-        dispose((disposable_t*)&array);
+        dispose(dynamic_array_disposable_handle(&array));
 
     } while (next_permutation(permutations, permutations + 9));
 }
@@ -541,7 +541,7 @@ TEST_F(dynamic_array_sort_test, sort10)
         }
 
         //dispose the array
-        dispose((disposable_t*)&array);
+        dispose(dynamic_array_disposable_handle(&array));
 
     } while (next_permutation(permutations, permutations + 10));
 }

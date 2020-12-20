@@ -3,7 +3,7 @@
  *
  * Unit tests for allocator.allocator_control.
  *
- * \copyright 2018 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2018-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
 #include <gtest/gtest.h>
@@ -32,5 +32,5 @@ TEST(allocator_control, happy_path)
         mock_allocator_control_called(&options, KEY, VALUE));
 
     //dispose options now that we're done
-    dispose((disposable_t*)&options);
+    dispose(allocator_options_disposable_handle(&options));
 }

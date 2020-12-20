@@ -6,18 +6,18 @@
  * The doubly linked list provides forward and backward traversal of a linked
  * list.
  *
- * \copyright 2019 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2019-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #ifndef VPR_DOUBLY_LINKED_LIST_HEADER_GUARD
 #define VPR_DOUBLY_LINKED_LIST_HEADER_GUARD
 
+#include <stdbool.h>
+#include <stdlib.h>
 #include <vpr/allocator.h>
 #include <vpr/disposable.h>
 #include <vpr/error_codes.h>
 #include <vpr/function_decl.h>
-#include <stdbool.h>
-#include <stdlib.h>
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
@@ -360,6 +360,38 @@ int VPR_DECL_MUST_CHECK doubly_linked_list_insert_after(
  */
 void doubly_linked_list_remove(
     doubly_linked_list_t* dll, doubly_linked_list_element_t* element);
+
+/**
+ * \brief Get the disposable handle from a doubly linked list options instance.
+ *
+ * \param dll_opts          The doubly linked list options instance from which
+ *                          the disposable handle is read.
+ *
+ * \returns the disposable handle for this doubly linked list options instance.
+ */
+inline disposable_t* doubly_linked_list_options_disposable_handle(
+    doubly_linked_list_options_t* dll_opts)
+{
+    MODEL_ASSERT(prop_doubly_linked_list_options_valid(dll_opts));
+
+    return &(dll_opts->hdr);
+}
+
+/**
+ * \brief Get the disposable handle from a doubly linked list instance.
+ *
+ * \param dll_opts          The doubly linked list instance from which the
+ *                          disposable handle is read.
+ *
+ * \returns the disposable handle for this doubly linked list instance.
+ */
+inline disposable_t* doubly_linked_list_disposable_handle(
+    doubly_linked_list_t* dll)
+{
+    MODEL_ASSERT(prop_doubly_linked_list_valid(dll));
+
+    return &(dll->hdr);
+}
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

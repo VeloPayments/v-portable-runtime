@@ -3,7 +3,7 @@
  *
  * Simple model check of hashmap
  *
- * \copyright 2019 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2019-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
@@ -52,14 +52,14 @@ static void verify_empty_hashmap()
     MODEL_ASSERT(MODEL_PROP_VALID_HASHMAP(&hmap));
 
     //dispose of the hashmap
-    dispose((disposable_t*)&hmap);
+    dispose(hashmap_disposable_handle(&hmap));
 
 cleanup_options:
     //dispose of options
-    dispose((disposable_t*)&options);
+    dispose(hashmap_options_disposable_handle(&options));
 
     //dispose of allocator
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 }
 
 static void verify_put()
@@ -92,15 +92,15 @@ static void verify_put()
     hashmap_put64(&hmap, key, &value);
 
     //dispose of the hashmap
-    dispose((disposable_t*)&hmap);
+    dispose(hashmap_disposable_handle(&hmap));
 
 cleanup_options:
     //dispose of options
-    dispose((disposable_t*)&options);
+    dispose(hashmap_options_disposable_handle(&options));
 
 cleanup_alloc_opts:
     //dispose of allocator
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 }
 
 static void verify_get()
@@ -132,13 +132,13 @@ static void verify_get()
     int* val = (int*)hashmap_get64(&hmap, key);
 
     //dispose of the hashmap
-    dispose((disposable_t*)&hmap);
+    dispose(hashmap_disposable_handle(&hmap));
 
 cleanup_options:
     //dispose of options
-    dispose((disposable_t*)&options);
+    dispose(hashmap_options_disposable_handle(&options));
 
 cleanup_alloc_opts:
     //dispose of allocator
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 }

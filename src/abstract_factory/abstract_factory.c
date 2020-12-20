@@ -3,7 +3,7 @@
  *
  * Implementation of the abstract factory.
  *
- * \copyright 2017 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
@@ -65,8 +65,10 @@ void abstract_factory_dispose()
     if (!abstract_factory_instantiated || abstract_factory_failure)
         return;
 
-    dispose((disposable_t*)&abstract_factory_registry);
-    dispose((disposable_t*)&abstract_factory_array_options);
+    dispose(dynamic_array_disposable_handle(&abstract_factory_registry));
+    dispose(
+        dynamic_array_options_disposable_handle(
+            &abstract_factory_array_options));
 }
 
 /**

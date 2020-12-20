@@ -3,7 +3,7 @@
  *
  * Simple model check of bloom filter
  *
- * \copyright 2019 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2019-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
@@ -51,14 +51,14 @@ static void verify_init()
 
 
     //dispose of the linked list
-    dispose((disposable_t*)&bloom);
+    dispose(bloom_filter_disposable_handle(&bloom));
 
 cleanup_options:
     //dispose of options
-    dispose((disposable_t*)&options);
+    dispose(bloom_filter_options_disposable_handle(&options));
 
     //dispose of allocator
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 }
 
 static void verify_add_item()
@@ -98,12 +98,12 @@ static void verify_add_item()
     MODEL_ASSERT(MODEL_PROP_VALID_BLOOM_FILTER(&bloom));
 
     //dispose of the linked list
-    dispose((disposable_t*)&bloom);
+    dispose(bloom_filter_disposable_handle(&bloom));
 
 cleanup_options:
     //dispose of options
-    dispose((disposable_t*)&options);
+    dispose(bloom_filter_options_disposable_handle(&options));
 
     //dispose of allocator
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 }

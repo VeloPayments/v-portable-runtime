@@ -3,20 +3,19 @@
  *
  * \brief Hashmap
  *
- *
- * \copyright 2019 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2019-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #ifndef VPR_HASHMAP_HEADER_GUARD
 #define VPR_HASHMAP_HEADER_GUARD
 
-#include <vpr/allocator.h>
-#include <vpr/disposable.h>
-#include <vpr/hash_func.h>
-#include <vpr/error_codes.h>
-#include <vpr/function_decl.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <vpr/allocator.h>
+#include <vpr/disposable.h>
+#include <vpr/error_codes.h>
+#include <vpr/function_decl.h>
+#include <vpr/hash_func.h>
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
@@ -330,6 +329,36 @@ int hashmap_put(hashmap_t* hmap, uint8_t* key, size_t key_len, void* val);
  */
 int hashmap_put64(hashmap_t* hmap, uint64_t key, void* val);
 
+/**
+ * \brief Get the disposable handle from a hashmap options instance.
+ *
+ * \param hmap_opts         The hashmap options instance from which the
+ *                          disposable handle is read.
+ *
+ * \returns the disposable handle for this hashmap options instance.
+ */
+inline disposable_t* hashmap_options_disposable_handle(
+    hashmap_options_t* hmap_opts)
+{
+    MODEL_ASSERT(prop_hashmap_options_valid(hmap_opts));
+
+    return &(hmap_opts->hdr);
+}
+
+/**
+ * \brief Get the disposable handle from a hashmap instance.
+ *
+ * \param hmap              The hashmap instance from which the disposable
+ *                          handle is read.
+ *
+ * \returns the disposable handle for this hashmap instance.
+ */
+inline disposable_t* hashmap_disposable_handle(hashmap_t* hmap)
+{
+    MODEL_ASSERT(prop_hashmap_valid(hmap));
+
+    return &(hmap->hdr);
+}
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

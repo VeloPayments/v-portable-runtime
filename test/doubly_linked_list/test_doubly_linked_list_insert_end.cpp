@@ -3,7 +3,7 @@
  *
  * Unit tests for doubly_linked_list_insert_end
  *
- * \copyright 2019 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
 #include <gtest/gtest.h>
@@ -24,9 +24,9 @@ protected:
     {
         if (VPR_STATUS_SUCCESS == doubly_linked_list_options_init_success)
         {
-            dispose((disposable_t*)&options);
+            dispose(doubly_linked_list_options_disposable_handle(&options));
         }
-        dispose((disposable_t*)&alloc_opts);
+        dispose(allocator_options_disposable_handle(&alloc_opts));
     }
 
     int doubly_linked_list_options_init_success;
@@ -103,7 +103,7 @@ TEST_F(dll_insert_end_test, basic_test)
     EXPECT_EQ(dll.last->next, nullptr);
 
     //dispose of our list
-    dispose((disposable_t*)&dll);
+    dispose(doubly_linked_list_disposable_handle(&dll));
 }
 
 TEST_F(dll_insert_end_test, with_copy_on_insert)
@@ -130,7 +130,7 @@ TEST_F(dll_insert_end_test, with_copy_on_insert)
     EXPECT_EQ(*(int*)(dll.last->data), data2 - 10);
 
     //dispose of our list
-    dispose((disposable_t*)&dll);
+    dispose(doubly_linked_list_disposable_handle(&dll));
 }
 
 TEST_F(dll_insert_end_test, without_copy_on_insert)
@@ -157,5 +157,5 @@ TEST_F(dll_insert_end_test, without_copy_on_insert)
     EXPECT_EQ(*(int*)(dll.last->data), data2);
 
     //dispose of our list
-    dispose((disposable_t*)&dll);
+    dispose(doubly_linked_list_disposable_handle(&dll));
 }

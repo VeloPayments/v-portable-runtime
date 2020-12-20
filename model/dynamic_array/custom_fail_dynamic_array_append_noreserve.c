@@ -4,7 +4,7 @@
  * If there isn't enough reserved space for an append, this will trip the model
  * checker.
  *
- * \copyright 2017 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
@@ -38,13 +38,13 @@ int main(int argc, char* argv[])
     dynamic_array_append(&array, &SEVENTEEN);
 
     //dispose of the array
-    dispose((disposable_t*)&array);
+    dispose(dynamic_array_disposable_handle(&array));
 
     //dispose of dynamic array options
-    dispose((disposable_t*)&options);
+    dispose(dynamic_array_options_disposable_handle(&options));
 
     //dispose of allocator
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 
     return 0;
 }

@@ -3,7 +3,7 @@
  *
  * Verify that passing a null in for options fails the model check.
  *
- * \copyright 2017 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
         NULL, &alloc_opts, sz, ctx, &my_copy, &my_dispose, &memcmp);
 
     //dispose of allocator
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 
     return 0;
 }

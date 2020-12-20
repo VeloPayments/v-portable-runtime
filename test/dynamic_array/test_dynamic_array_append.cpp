@@ -3,7 +3,7 @@
  *
  * Unit tests for dynamic_array_append.
  *
- * \copyright 2017 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
 #include <gtest/gtest.h>
@@ -25,9 +25,9 @@ protected:
     {
         if (VPR_STATUS_SUCCESS == dynamic_array_options_init_status)
         {
-            dispose((disposable_t*)&options);
+            dispose(dynamic_array_options_disposable_handle(&options));
         }
-        dispose((disposable_t*)&alloc_opts);
+        dispose(allocator_options_disposable_handle(&alloc_opts));
     }
 
     int dynamic_array_options_init_status;
@@ -74,7 +74,7 @@ TEST_F(dynamic_array_append_test, basic_test)
     EXPECT_EQ(SEVENTEEN, intArray[0]);
 
     //dispose the array
-    dispose((disposable_t*)&array);
+    dispose(dynamic_array_disposable_handle(&array));
 }
 
 /**
@@ -116,5 +116,5 @@ TEST_F(dynamic_array_append_test, full_array)
     EXPECT_EQ(SEVENTEEN, intArray[1]);
 
     //dispose the array
-    dispose((disposable_t*)&array);
+    dispose(dynamic_array_disposable_handle(&array));
 }

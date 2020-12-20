@@ -4,18 +4,19 @@
  * \brief The allocator provides a user-customizable mechanism for managing
  * allocation concerns.
  *
- * \copyright 2017 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #ifndef VPR_ALLOCATOR_HEADER_GUARD
 #define VPR_ALLOCATOR_HEADER_GUARD
 
-#include <vcmodel/model_tag.h>
-#include <vpr/disposable.h>
-#include <vpr/function_decl.h>
-#include <vpr/error_codes.h>
+#include <cbmc/model_assert.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <vcmodel/model_tag.h>
+#include <vpr/disposable.h>
+#include <vpr/error_codes.h>
+#include <vpr/function_decl.h>
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
@@ -189,6 +190,22 @@ allocator_control(allocator_options_t* options, uint32_t key, void* value);
  * \returns true if valid and false otherwise.
  */
 bool prop_allocator_valid(const allocator_options_t* alloc);
+
+/**
+ * \brief Get the disposable handle from an allocator options instance.
+ *
+ * \param alloc     the allocator options instance from which the disposable
+ *                  handle is read.
+ *
+ * \returns the disposable handle for this allocator options instance.
+ */
+inline disposable_t* allocator_options_disposable_handle(
+    allocator_options_t* alloc)
+{
+    MODEL_ASSERT(prop_allocator_valid(alloc));
+
+    return &(alloc->hdr);
+}
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

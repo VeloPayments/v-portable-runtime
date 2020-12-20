@@ -3,11 +3,11 @@
  *
  * Unit tests for hashmap.
  *
- * \copyright 2019 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <stdbool.h>
 #include <gtest/gtest.h>
+#include <stdbool.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/hashmap.h>
 #include <vpr/parameters.h>
@@ -31,9 +31,9 @@ protected:
     {
         if (VPR_STATUS_SUCCESS == hashmap_options_init_status)
         {
-            dispose((disposable_t*)&options);
+            dispose(hashmap_options_disposable_handle(&options));
         }
-        dispose((disposable_t*)&alloc_opts);
+        dispose(allocator_options_disposable_handle(&alloc_opts));
     }
 
     int hashmap_options_init_status;
@@ -75,7 +75,7 @@ TEST_F(hashmap_test, init_test)
     EXPECT_EQ(hmap.elements, 0u);
 
     //dispose of our hashmap
-    dispose((disposable_t*)&hmap);
+    dispose(hashmap_disposable_handle(&hmap));
 }
 
 /**
@@ -111,7 +111,7 @@ TEST_F(hashmap_test, put_get_without_copy)
     EXPECT_EQ(*(int*)hashmap_get64(&hmap, key), val);
 
     //dispose of our hashmap
-    dispose((disposable_t*)&hmap);
+    dispose(hashmap_disposable_handle(&hmap));
 }
 
 /**
@@ -143,7 +143,7 @@ TEST_F(hashmap_test, put_get_var_key)
     EXPECT_EQ(*found, val);
 
     // dispose of our hashmap
-    dispose((disposable_t*)&hmap);
+    dispose(hashmap_disposable_handle(&hmap));
 }
 
 
@@ -184,7 +184,7 @@ TEST_F(hashmap_test, equality_function)
     EXPECT_EQ(hashmap_get64(&hmap, key + 1), nullptr);
 
     //dispose of our hashmap
-    dispose((disposable_t*)&hmap);
+    dispose(hashmap_disposable_handle(&hmap));
 }
 
 
@@ -240,7 +240,7 @@ TEST_F(hashmap_test, put_get_with_copy)
     EXPECT_EQ(found->c, val.c);  // unchanged
 
     //dispose of our hashmap
-    dispose((disposable_t*)&hmap);
+    dispose(hashmap_disposable_handle(&hmap));
 }
 
 /**
@@ -271,7 +271,7 @@ TEST_F(hashmap_test, add_multiple_items)
     EXPECT_EQ(*found, val2);
 
     //dispose of our hashmap
-    dispose((disposable_t*)&hmap);
+    dispose(hashmap_disposable_handle(&hmap));
 }
 
 
@@ -313,7 +313,7 @@ TEST_F(hashmap_test, chaining_round_robin)
     EXPECT_EQ(hmap.elements, capacity * 10);
 
     //dispose of our hashmap
-    dispose((disposable_t*)&hmap);
+    dispose(hashmap_disposable_handle(&hmap));
 }
 
 /**
@@ -342,7 +342,7 @@ TEST_F(hashmap_test, duplicate_key)
     EXPECT_EQ(hmap.elements, 1u);
 
     //dispose of our hashmap
-    dispose((disposable_t*)&hmap);
+    dispose(hashmap_disposable_handle(&hmap));
 }
 
 static bool always_equal(const void* UNUSED(lhs), const void* UNUSED(rhs))

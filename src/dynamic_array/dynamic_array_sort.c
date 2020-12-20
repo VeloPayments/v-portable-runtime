@@ -3,7 +3,7 @@
  *
  * Implementation of dynamic_array_sort.
  *
- * \copyright 2017 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #include <cbmc/model_assert.h>
@@ -77,7 +77,7 @@ int dynamic_array_sort(dynamic_array_t* array)
 
 dispose_output:
     /* dispose of the output array to reclaim memory. */
-    dispose((disposable_t*)&output);
+    dispose(dynamic_array_disposable_handle(&output));
 
     return retval;
 }

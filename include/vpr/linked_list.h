@@ -5,17 +5,17 @@
  *
  * The linked list provides forward traversal of a linked list.
  *
- * \copyright 2019 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2019-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #ifndef VPR_LINKED_LIST_HEADER_GUARD
 #define VPR_LINKED_LIST_HEADER_GUARD
 
+#include <stdbool.h>
+#include <stdlib.h>
 #include <vpr/allocator.h>
 #include <vpr/disposable.h>
 #include <vpr/error_codes.h>
-#include <stdbool.h>
-#include <stdlib.h>
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
@@ -345,6 +345,37 @@ int VPR_DECL_MUST_CHECK linked_list_insert_after(
  * \param element           The element to remove
  */
 void linked_list_remove(linked_list_t* ll, linked_list_element_t* element);
+
+/**
+ * \brief Get the disposable handle from a linked list options instance.
+ *
+ * \param ll_opts           The linked list options instance from which the
+ *                          disposable handle is read.
+ *
+ * \returns the disposable handle for this linked list options instance.
+ */
+inline disposable_t* linked_list_options_disposable_handle(
+    linked_list_options_t* ll_opts)
+{
+    MODEL_ASSERT(prop_linked_list_options_valid(ll_opts));
+
+    return &(ll_opts->hdr);
+}
+
+/**
+ * \brief Get the disposable handle from a linked list instance.
+ *
+ * \param ll                The linked list instance from which the disposable
+ *                          handle is read.
+ *
+ * \returns the disposable handle for this linked list instance.
+ */
+inline disposable_t* linked_list_disposable_handle(linked_list_t* ll)
+{
+    MODEL_ASSERT(prop_linked_list_valid(ll));
+
+    return &(ll->hdr);
+}
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

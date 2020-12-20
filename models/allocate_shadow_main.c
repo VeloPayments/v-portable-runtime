@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
     dispose_called = false;
 
     /* dispose of allocator options. */
-    dispose((disposable_t*)&alloc_opts);
+    dispose(allocator_options_disposable_handle(&alloc_opts));
 
     /* postconditions for dispose. */
     MODEL_ASSERT(dispose_called);

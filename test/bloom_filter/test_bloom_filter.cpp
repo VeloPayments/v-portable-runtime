@@ -3,7 +3,7 @@
  *
  * Unit tests for bloom_filter.
  *
- * \copyright 2019 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
 #include <gtest/gtest.h>
@@ -30,9 +30,9 @@ protected:
     {
         if (VPR_STATUS_SUCCESS == bloom_filter_options_init_status)
         {
-            dispose((disposable_t*)&options);
+            dispose(bloom_filter_options_disposable_handle(&options));
         }
-        dispose((disposable_t*)&alloc_opts);
+        dispose(allocator_options_disposable_handle(&alloc_opts));
     }
 
     int bloom_filter_options_init_status;
@@ -72,7 +72,7 @@ TEST_F(bloom_filter_test, init_test)
         memcmp(testblock, bloom.bitmap, bloom.options->size_in_bytes), 0);
 
     //dispose of our filter
-    dispose((disposable_t*)&bloom);
+    dispose(bloom_filter_disposable_handle(&bloom));
 }
 
 /**
@@ -104,7 +104,7 @@ TEST_F(bloom_filter_test, not_enough_space)
         memcmp(testblock, bloom.bitmap, bloom.options->size_in_bytes), 0);
 
     //dispose of our filter
-    dispose((disposable_t*)&bloom);
+    dispose(bloom_filter_disposable_handle(&bloom));
 }
 
 
@@ -134,7 +134,7 @@ TEST_F(bloom_filter_test, simple_add_item_test)
     EXPECT_TRUE(bloom_filter_contains_item(&bloom, data, sz_data));
 
     //dispose of our filter
-    dispose((disposable_t*)&bloom);
+    dispose(bloom_filter_disposable_handle(&bloom));
 }
 
 /**
@@ -164,7 +164,7 @@ TEST_F(bloom_filter_test, false_positive_error_rate_5pct_test)
     verify_false_positive_error_rate(&bloom, 0.05, 10000);
 
     //dispose of our filter
-    dispose((disposable_t*)&bloom);
+    dispose(bloom_filter_disposable_handle(&bloom));
 }
 
 /**
@@ -184,7 +184,7 @@ TEST_F(bloom_filter_test, false_positive_error_rate_1pct_test)
     verify_false_positive_error_rate(&bloom, 0.01, 10000);
 
     //dispose of our filter
-    dispose((disposable_t*)&bloom);
+    dispose(bloom_filter_disposable_handle(&bloom));
 }
 
 /**
@@ -204,7 +204,7 @@ TEST_F(bloom_filter_test, false_positive_error_rate_half_pct_test)
     verify_false_positive_error_rate(&bloom, 0.005, 10000);
 
     //dispose of our filter
-    dispose((disposable_t*)&bloom);
+    dispose(bloom_filter_disposable_handle(&bloom));
 }
 
 /**
@@ -222,7 +222,7 @@ TEST_F(bloom_filter_test, false_positive_error_rate_volume_test)
     verify_false_positive_error_rate(&bloom, 0.01, 1000000);
 
     //dispose of our filter
-    dispose((disposable_t*)&bloom);
+    dispose(bloom_filter_disposable_handle(&bloom));
 }
 
 

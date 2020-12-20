@@ -11,19 +11,19 @@
  * probability of a false positive is a function of the size of the filter
  * and the number of items inserted, and is configurable.
  *
- * \copyright 2019 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2019-2020 Velo Payments, Inc.  All rights reserved.
  */
 
 #ifndef VPR_BLOOM_FILTER_HEADER_GUARD
 #define VPR_BLOOM_FILTER_HEADER_GUARD
 
-#include <vpr/allocator.h>
-#include <vpr/disposable.h>
-#include <vpr/hash_func.h>
-#include <vpr/error_codes.h>
-#include <vpr/function_decl.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <vpr/allocator.h>
+#include <vpr/disposable.h>
+#include <vpr/error_codes.h>
+#include <vpr/function_decl.h>
+#include <vpr/hash_func.h>
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
@@ -305,6 +305,36 @@ float bloom_filter_calculate_expected_error_rate(
     size_t num_expected_entries, size_t size_in_bytes,
     unsigned int num_hash_functions);
 
+/**
+ * \brief Get the disposable handle from a bloom filter options instance.
+ *
+ * \param bloom             The bloom filter options instance from which the
+ *                          disposable handle is read.
+ *
+ * \returns the disposable handle for this bloom filter options instance.
+ */
+inline disposable_t* bloom_filter_options_disposable_handle(
+    bloom_filter_options_t* bloom_opts)
+{
+    MODEL_ASSERT(prop_bloom_filter_options_valid(bloom_opts));
+
+    return &(bloom_opts->hdr);
+}
+
+/**
+ * \brief Get the disposable handle from a bloom filter instance.
+ *
+ * \param bloom             The bloom filter instance from which the disposable
+ *                          handle is read.
+ *
+ * \returns the disposable handle for this bloom filter instance.
+ */
+inline disposable_t* bloom_filter_disposable_handle(bloom_filter_t* bloom)
+{
+    MODEL_ASSERT(prop_bloom_filter_valid(bloom));
+
+    return &(bloom->hdr);
+}
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus

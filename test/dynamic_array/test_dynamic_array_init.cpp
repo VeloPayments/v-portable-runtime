@@ -3,7 +3,7 @@
  *
  * Unit tests for dynamic_array_init.
  *
- * \copyright 2017 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2017-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
 #include <gtest/gtest.h>
@@ -25,8 +25,9 @@ protected:
     {
         if (VPR_STATUS_SUCCESS == dynamic_array_options_init_status)
         {
-            dispose((disposable_t*)&alloc_opts);
+            dispose(dynamic_array_options_disposable_handle(&options));
         }
+        dispose(allocator_options_disposable_handle(&alloc_opts));
     }
 
     int dynamic_array_options_init_status;
@@ -56,5 +57,5 @@ TEST_F(dynamic_array_init_test, basic_test)
     }
 
     //dispose of our array
-    dispose((disposable_t*)&array);
+    dispose(dynamic_array_disposable_handle(&array));
 }
