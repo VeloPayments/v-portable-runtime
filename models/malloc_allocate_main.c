@@ -4,6 +4,8 @@
 #include <vpr/allocator.h>
 #include <vpr/allocator/malloc_allocator.h>
 
+uint32_t nondet_u32();
+
 int main(int argc, char* argv[])
 {
     allocator_options_t alloc_opts;
@@ -21,8 +23,22 @@ int main(int argc, char* argv[])
     /* make sure we can use this memory location. */
     *x = 17;
 
+    /* reallocate the memory. */
+    x = reallocate(&alloc_opts, x, sizeof(int), 2 * sizeof(int));
+
+    /* we can write to both locations now. */
+    x[0] = 19;
+    x[1] = 20;
+
     /* call release in our model check. */
     release(&alloc_opts, x);
+
+    /* the control function always returns an invalid key. */
+    uint32_t key = nondet_u32();
+    void* value = NULL;
+    MODEL_ASSERT(
+        VPR_ERROR_ALLOCATOR_CONTROL_INVALID_KEY ==
+            allocator_control(&alloc_opts, key, &value));
 
     /* dispose the allocator. */
     dispose(allocator_options_disposable_handle(&alloc_opts));
