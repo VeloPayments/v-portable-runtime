@@ -6,6 +6,8 @@
 
 uint8_t backing_buffer[16384];
 
+uint32_t nondet_u32();
+
 int main(int argc, char* argv[])
 {
     allocator_options_t alloc_opts;
@@ -17,6 +19,20 @@ int main(int argc, char* argv[])
 
     MODEL_ASSERT(prop_allocator_valid(&alloc_opts));
 
+    /* any key other than the RESET key fails. */
+    uint32_t key = nondet_u32();
+    MODEL_ASSUME(key != ALLOCATOR_CONTROL_KEY_BUMP_ALLOCATOR_RESET);
+    MODEL_ASSERT(
+        VPR_ERROR_ALLOCATOR_CONTROL_INVALID_KEY
+            == allocator_control(&alloc_opts, key, NULL));
+
+    /* we can call a reset control to reset the pointer. */
+    MODEL_ASSERT(
+        VPR_STATUS_SUCCESS
+            == allocator_control(
+                    &alloc_opts, ALLOCATOR_CONTROL_KEY_BUMP_ALLOCATOR_RESET,
+                    NULL));
+
     /* call the allocator in our model check. */
     int* x = (int*)allocate(&alloc_opts, sizeof(int));
     if (NULL == x)
@@ -26,6 +42,14 @@ int main(int argc, char* argv[])
 
     /* make sure we can use this memory location. */
     *x = 17;
+
+    /* we can reallocate the x pointer. */
+    x = reallocate(&alloc_opts, x, sizeof(int), 2 * sizeof(int));
+    MODEL_ASSERT(NULL != x);
+
+    /* we can write to the x addresses. */
+    x[0] = 1;
+    x[1] = 2;
 
     /* call release in our model check. */
     release(&alloc_opts, x);

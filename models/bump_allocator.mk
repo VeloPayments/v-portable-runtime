@@ -18,6 +18,7 @@ run_check:
 	-I $(VCMODEL_DIR)/include -I ../include \
 	$(MODEL_CHECK_SOURCES) \
     ../src/allocator/allocate.c \
+    ../src/allocator/allocator_control.c \
     ../src/allocator/release.c \
     ../src/allocator/reallocate.c \
     ../src/disposable/dispose.c \
