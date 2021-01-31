@@ -174,41 +174,44 @@ static void abstract_factory_init_one_shot()
 static int interface_impl_feature_compare(
     const void* x, const void* y, size_t UNUSED(size))
 {
+    int cmp;
     MODEL_ASSERT(x != NULL);
     MODEL_ASSERT(y != NULL);
     MODEL_ASSERT(size == sizeof(abstract_factory_registration_t*));
 
     abstract_factory_registration_t* rx = *(abstract_factory_registration_t**)x;
-    abstract_factory_registration_t* ry = (abstract_factory_registration_t*)y;
+    abstract_factory_registration_t* ry = *(abstract_factory_registration_t**)y;
 
-    if (rx->interface != ry->interface)
+    /* compare the interfaces. */
+    cmp = compare_uint32(&rx->interface, &ry->interface, sizeof(uint32_t));
+    if (cmp != VPR_COMPARE_EQUAL)
     {
-        return compare_uint32(&rx->interface,
-            &ry->interface,
+        return cmp;
+    }
+
+    /* compare the features. */
+    cmp =
+        compare_uint32(
+            &rx->implementation_features, &ry->implementation_features,
             sizeof(uint32_t));
-    }
-    else if (rx->implementation_features != ry->implementation_features)
+    if (cmp != VPR_COMPARE_EQUAL)
     {
-        return compare_uint32(&rx->implementation_features,
-            &ry->implementation_features,
-            sizeof(uint32_t));
+        return cmp;
     }
-    else
+
+    /* compare the implementations. */
+
+    /* if implementation is not specified, then we don't care about these
+     * results. */
+    if (0 == rx->implementation || 0 == ry->implementation)
     {
-        /* if implementation is not specified, then features are what we care
-         * about. */
-        if (0 == rx->implementation || 0 == ry->implementation)
-        {
-            return VPR_COMPARE_EQUAL;
-        }
-        else
-        {
-            /* return the difference in implementation. */
-            return
-                compare_uint32(
-                    &rx->implementation, &ry->implementation, sizeof(uint32_t));
-        }
+        return VPR_COMPARE_EQUAL;
     }
+
+    /* return the difference in implementation. */
+    return
+        compare_uint32(
+            &rx->implementation, &ry->implementation, sizeof(uint32_t));
 }
 
 /**
@@ -251,9 +254,11 @@ abstract_factory_find(uint32_t interface, uint32_t features)
     elem.implementation = 0;
     elem.implementation_features = features;
 
+    abstract_factory_registration_t* pelem = &elem;
+
     /* get the pointer to the matching registration. */
     abstract_factory_registration_t** ret = (abstract_factory_registration_t**)
-        dynamic_array_binary_search(&abstract_factory_registry, &elem);
+        dynamic_array_binary_search(&abstract_factory_registry, &pelem);
 
     /* if the pointer is not null, dereference it. */
     if (ret != NULL)

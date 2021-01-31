@@ -50,9 +50,12 @@ void* dynamic_array_binary_search(dynamic_array_t* array, const void* elem)
         return NULL;
     }
 
-    /* if there are no elements, return no result. */
+    /* get the element size for this array. */
     size_t element_size = array->options->element_size;
-    if (0 == element_size)
+
+    /* if there are no elements, return no result. */
+    size_t elements = array->elements;
+    if (0 == elements)
     {
         return NULL;
     }
@@ -62,13 +65,13 @@ void* dynamic_array_binary_search(dynamic_array_t* array, const void* elem)
 
     /* set the initial bounds. */
     size_t lower_bound = 0;
-    size_t upper_bound = array->elements;
+    size_t upper_bound = array->elements - 1;
 
     /* loop over the bounds. */
-    while (upper_bound >= lower_bound)
+    while (lower_bound <= upper_bound)
     {
         /* compute the midpoint. */
-        size_t midpoint = lower_bound + ((upper_bound - lower_bound) / 2);
+        size_t midpoint = (lower_bound + upper_bound) / 2;
 
         /* calculate the offset of the midpoint element. */
         uint8_t* midpoint_elem = byte_array + midpoint * element_size;
