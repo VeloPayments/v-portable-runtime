@@ -17,11 +17,23 @@
 #include <vpr/function_decl.h>
 #include <vpr/hash_func.h>
 
+/* define the following macro only if we are extracting concrete implementations
+ * for inline functions.
+ */
+#if defined(VPR_HASHMAP_CONCRETE_IMPLEMENTATION)
+# define VPR_CONCRETE_IMPLEMENTATION
+#endif
+
+#include <vpr/inline_support.h>
+
+#if defined(VPR_HASHMAP_CONCRETE_IMPLEMENTATION)
+# undef VPR_CONCRETE_IMPLEMENTATION
+#endif
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 extern "C" {
 #endif  //__cplusplus
-
 
 /**
  * \brief The method to test equality of two values in this hashmap.
@@ -337,13 +349,15 @@ int hashmap_put64(hashmap_t* hmap, uint64_t key, void* val);
  *
  * \returns the disposable handle for this hashmap options instance.
  */
-inline disposable_t* hashmap_options_disposable_handle(
+VPR_INLINE disposable_t* hashmap_options_disposable_handle(
     hashmap_options_t* hmap_opts)
-{
-    MODEL_ASSERT(prop_hashmap_options_valid(hmap_opts));
+VPR_INLINE_DEFINITION(
+    {
+        MODEL_ASSERT(prop_hashmap_options_valid(hmap_opts));
 
-    return &(hmap_opts->hdr);
-}
+        return &(hmap_opts->hdr);
+    }
+)
 
 /**
  * \brief Get the disposable handle from a hashmap instance.
@@ -353,12 +367,14 @@ inline disposable_t* hashmap_options_disposable_handle(
  *
  * \returns the disposable handle for this hashmap instance.
  */
-inline disposable_t* hashmap_disposable_handle(hashmap_t* hmap)
-{
-    MODEL_ASSERT(prop_hashmap_valid(hmap));
+VPR_INLINE disposable_t* hashmap_disposable_handle(hashmap_t* hmap)
+VPR_INLINE_DEFINITION(
+    {
+        MODEL_ASSERT(prop_hashmap_valid(hmap));
 
-    return &(hmap->hdr);
-}
+        return &(hmap->hdr);
+    }
+)
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
