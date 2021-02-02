@@ -9,4 +9,4 @@
 
 #define VPR_ALLOCATOR_CONCRETE_IMPLEMENTATION
 
-#include <vpr/dynamic_array.h>
+#include <vpr/allocator.h>
