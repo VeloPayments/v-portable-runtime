@@ -17,6 +17,19 @@
 #include <vpr/disposable.h>
 #include <vpr/error_codes.h>
 
+/* define the following macro only if we are extracting concrete implementations
+ * for inline functions.
+ */
+#if defined(VPR_LINKED_LIST_CONCRETE_IMPLEMENTATION)
+# define VPR_CONCRETE_IMPLEMENTATION
+#endif
+
+#include <vpr/inline_support.h>
+
+#if defined(VPR_LINKED_LIST_CONCRETE_IMPLEMENTATION)
+# undef VPR_CONCRETE_IMPLEMENTATION
+#endif
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 extern "C" {
@@ -354,13 +367,15 @@ void linked_list_remove(linked_list_t* ll, linked_list_element_t* element);
  *
  * \returns the disposable handle for this linked list options instance.
  */
-inline disposable_t* linked_list_options_disposable_handle(
+VPR_INLINE disposable_t* linked_list_options_disposable_handle(
     linked_list_options_t* ll_opts)
-{
-    MODEL_ASSERT(prop_linked_list_options_valid(ll_opts));
+VPR_INLINE_DEFINITION(
+    {
+        MODEL_ASSERT(prop_linked_list_options_valid(ll_opts));
 
-    return &(ll_opts->hdr);
-}
+        return &(ll_opts->hdr);
+    }
+)
 
 /**
  * \brief Get the disposable handle from a linked list instance.
@@ -370,12 +385,14 @@ inline disposable_t* linked_list_options_disposable_handle(
  *
  * \returns the disposable handle for this linked list instance.
  */
-inline disposable_t* linked_list_disposable_handle(linked_list_t* ll)
-{
-    MODEL_ASSERT(prop_linked_list_valid(ll));
+VPR_INLINE disposable_t* linked_list_disposable_handle(linked_list_t* ll)
+VPR_INLINE_DEFINITION(
+    {
+        MODEL_ASSERT(prop_linked_list_valid(ll));
 
-    return &(ll->hdr);
-}
+        return &(ll->hdr);
+    }
+)
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
