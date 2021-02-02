@@ -21,6 +21,19 @@
 #include <vpr/error_codes.h>
 #include <vpr/function_decl.h>
 
+/* define the following macro only if we are extracting concrete implementations
+ * for inline functions.
+ */
+#if defined(VPR_DYNAMIC_ARRAY_CONCRETE_IMPLEMENTATION)
+# define VPR_CONCRETE_IMPLEMENTATION
+#endif
+
+#include <vpr/inline_support.h>
+
+#if defined(VPR_DYNAMIC_ARRAY_CONCRETE_IMPLEMENTATION)
+# undef VPR_CONCRETE_IMPLEMENTATION
+#endif
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 extern "C" {
@@ -365,13 +378,15 @@ void* dynamic_array_binary_search(dynamic_array_t* array, const void* elem);
  *
  * \returns the disposable handle for this dynamic array options instance.
  */
-inline disposable_t* dynamic_array_options_disposable_handle(
+VPR_INLINE disposable_t* dynamic_array_options_disposable_handle(
     dynamic_array_options_t* array_opts)
-{
-    MODEL_ASSERT(prop_dynamic_array_options_valid(array_opts));
+VPR_INLINE_DEFINITION(
+    {
+        MODEL_ASSERT(prop_dynamic_array_options_valid(array_opts));
 
-    return &(array_opts->hdr);
-}
+        return &(array_opts->hdr);
+    }
+)
 
 /**
  * \brief Get the disposable handle from a dynamic array instance.
@@ -381,12 +396,14 @@ inline disposable_t* dynamic_array_options_disposable_handle(
  *
  * \returns the disposable handle for this dynamic array instance.
  */
-inline disposable_t* dynamic_array_disposable_handle(dynamic_array_t* array)
-{
-    MODEL_ASSERT(prop_dynamic_array_valid(array));
+VPR_INLINE disposable_t* dynamic_array_disposable_handle(dynamic_array_t* array)
+VPR_INLINE_DEFINITION(
+    {
+        MODEL_ASSERT(prop_dynamic_array_valid(array));
 
-    return &(array->hdr);
-}
+        return &(array->hdr);
+    }
+)
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
