@@ -25,11 +25,23 @@
 #include <vpr/function_decl.h>
 #include <vpr/hash_func.h>
 
+/* define the following macro only if we are extracting concrete implementations
+ * for inline functions.
+ */
+#if defined(VPR_BLOOM_FILTER_CONCRETE_IMPLEMENTATION)
+# define VPR_CONCRETE_IMPLEMENTATION
+#endif
+
+#include <vpr/inline_support.h>
+
+#if defined(VPR_BLOOM_FILTER_CONCRETE_IMPLEMENTATION)
+# undef VPR_CONCRETE_IMPLEMENTATION
+#endif
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 extern "C" {
 #endif  //__cplusplus
-
 
 /**
  * \brief This structure contains the options used by a bloom filter instance.
@@ -313,13 +325,15 @@ float bloom_filter_calculate_expected_error_rate(
  *
  * \returns the disposable handle for this bloom filter options instance.
  */
-inline disposable_t* bloom_filter_options_disposable_handle(
+VPR_INLINE disposable_t* bloom_filter_options_disposable_handle(
     bloom_filter_options_t* bloom_opts)
-{
-    MODEL_ASSERT(prop_bloom_filter_options_valid(bloom_opts));
+VPR_INLINE_DEFINITION(
+    {
+        MODEL_ASSERT(prop_bloom_filter_options_valid(bloom_opts));
 
-    return &(bloom_opts->hdr);
-}
+        return &(bloom_opts->hdr);
+    }
+)
 
 /**
  * \brief Get the disposable handle from a bloom filter instance.
@@ -329,12 +343,14 @@ inline disposable_t* bloom_filter_options_disposable_handle(
  *
  * \returns the disposable handle for this bloom filter instance.
  */
-inline disposable_t* bloom_filter_disposable_handle(bloom_filter_t* bloom)
-{
-    MODEL_ASSERT(prop_bloom_filter_valid(bloom));
+VPR_INLINE disposable_t* bloom_filter_disposable_handle(bloom_filter_t* bloom)
+VPR_INLINE_DEFINITION(
+    {
+        MODEL_ASSERT(prop_bloom_filter_valid(bloom));
 
-    return &(bloom->hdr);
-}
+        return &(bloom->hdr);
+    }
+)
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
