@@ -18,6 +18,19 @@
 #include <vpr/error_codes.h>
 #include <vpr/function_decl.h>
 
+/* define the following macro only if we are extracting concrete implementations
+ * for inline functions.
+ */
+#if defined(VPR_ALLOCATOR_CONCRETE_IMPLEMENTATION)
+# define VPR_CONCRETE_IMPLEMENTATION
+#endif
+
+#include <vpr/inline_support.h>
+
+#if defined(VPR_ALLOCATOR_CONCRETE_IMPLEMENTATION)
+# undef VPR_CONCRETE_IMPLEMENTATION
+#endif
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 extern "C" {
@@ -199,13 +212,15 @@ bool prop_allocator_valid(const allocator_options_t* alloc);
  *
  * \returns the disposable handle for this allocator options instance.
  */
-inline disposable_t* allocator_options_disposable_handle(
+VPR_INLINE disposable_t* allocator_options_disposable_handle(
     allocator_options_t* alloc)
-{
-    MODEL_ASSERT(prop_allocator_valid(alloc));
+VPR_INLINE_DEFINITION(
+    {
+        MODEL_ASSERT(prop_allocator_valid(alloc));
 
-    return &(alloc->hdr);
-}
+        return &(alloc->hdr);
+    }
+)
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
