@@ -19,6 +19,19 @@
 #include <vpr/error_codes.h>
 #include <vpr/function_decl.h>
 
+/* define the following macro only if we are extracting concrete implementations
+ * for inline functions.
+ */
+#if defined(VPR_DOUBLY_LINKED_LIST_CONCRETE_IMPLEMENTATION)
+# define VPR_CONCRETE_IMPLEMENTATION
+#endif
+
+#include <vpr/inline_support.h>
+
+#if defined(VPR_DOUBLY_LINKED_LIST_CONCRETE_IMPLEMENTATION)
+# undef VPR_CONCRETE_IMPLEMENTATION
+#endif
+
 /* make this header C++ friendly. */
 #ifdef __cplusplus
 extern "C" {
@@ -369,13 +382,15 @@ void doubly_linked_list_remove(
  *
  * \returns the disposable handle for this doubly linked list options instance.
  */
-inline disposable_t* doubly_linked_list_options_disposable_handle(
+VPR_INLINE disposable_t* doubly_linked_list_options_disposable_handle(
     doubly_linked_list_options_t* dll_opts)
-{
-    MODEL_ASSERT(prop_doubly_linked_list_options_valid(dll_opts));
+VPR_INLINE_DEFINITION(
+    {
+        MODEL_ASSERT(prop_doubly_linked_list_options_valid(dll_opts));
 
-    return &(dll_opts->hdr);
-}
+        return &(dll_opts->hdr);
+    }
+)
 
 /**
  * \brief Get the disposable handle from a doubly linked list instance.
@@ -385,13 +400,15 @@ inline disposable_t* doubly_linked_list_options_disposable_handle(
  *
  * \returns the disposable handle for this doubly linked list instance.
  */
-inline disposable_t* doubly_linked_list_disposable_handle(
+VPR_INLINE disposable_t* doubly_linked_list_disposable_handle(
     doubly_linked_list_t* dll)
-{
-    MODEL_ASSERT(prop_doubly_linked_list_valid(dll));
+VPR_INLINE_DEFINITION(
+    {
+        MODEL_ASSERT(prop_doubly_linked_list_valid(dll));
 
-    return &(dll->hdr);
-}
+        return &(dll->hdr);
+    }
+)
 
 /* make this header C++ friendly. */
 #ifdef __cplusplus
