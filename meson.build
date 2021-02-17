@@ -46,10 +46,11 @@ vcmodel_sub = subproject('vcmodel')
 vcmodel_include = vcmodel_sub.get_variable('vcmodel_include')
 
 vpr_include = include_directories('include')
+config_include = include_directories('.')
 
 vpr_lib = static_library('vpr', src,
   dependencies : vcmodel,
-  include_directories : [vpr_include, vcmodel_include]
+  include_directories : [vpr_include, config_include, vcmodel_include]
 )
 
 vpr_dep = declare_dependency(
@@ -60,12 +61,20 @@ vpr_dep = declare_dependency(
 vpr_test = executable(
   'testvpr',
   test_src,
-  include_directories : [vpr_include, vcmodel_include],
+  include_directories : [vpr_include, config_include, vcmodel_include],
   link_with : vpr_lib,
   dependencies : gtest
 )
 
 test('testvpr', vpr_test, timeout : 300)
+
+conf_data = configuration_data()
+conf_data.set('VERSION', meson.project_version())
+configure_file(
+  input : 'config.h.in',
+  output : 'config.h',
+  configuration : conf_data
+)
 
 #Model checking
 run_target(
