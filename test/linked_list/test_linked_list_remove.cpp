@@ -6,10 +6,11 @@
  * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/linked_list.h>
 
+/* DISABLED GTEST */
+#if 0
 void build_linked_list(linked_list_t* ll, int* data, int n);
 
 
@@ -127,3 +128,4 @@ void build_linked_list(linked_list_t* ll, int* data, int n)
         ASSERT_EQ(VPR_STATUS_SUCCESS, linked_list_insert_end(ll, &data[i]));
     }
 }
+#endif

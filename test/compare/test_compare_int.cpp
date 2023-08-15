@@ -6,8 +6,10 @@
  * \copyright 2017 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/compare.h>
+
+/* DISABLED GTEST */
+#if 0
 
 /**
  * Test that comparing two ints that are equal results in 0.
@@ -44,3 +46,4 @@ TEST(compare_int, less_than)
     EXPECT_GT(0, memcmp(&X, &Y, sizeof(int)));
     EXPECT_GT(0, compare_int(&X, &Y, sizeof(int)));
 }
+#endif

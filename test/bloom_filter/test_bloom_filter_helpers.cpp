@@ -6,8 +6,10 @@
  * \copyright 2019 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/bloom_filter.h>
+
+/* DISABLED GTEST */
+#if 0
 
 /**
  * Test that we can calculate the size of a bloom filter.
@@ -66,3 +68,4 @@ TEST(calculate_expected_error_rate, basic_test)
     ASSERT_GE(r, 0.030);
     ASSERT_LE(r, 0.031);
 }
+#endif

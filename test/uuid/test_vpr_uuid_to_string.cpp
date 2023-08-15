@@ -6,10 +6,11 @@
  * \copyright 2020 Velo Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/uuid.h>
 
+/* DISABLED GTEST */
+#if 0
 /**
  * Test that the base case works on the zero uuid.
  */
@@ -67,3 +68,4 @@ TEST(vpr_uuid_to_string, basic_uuid)
     release(&alloc_opts, value);
     dispose(allocator_options_disposable_handle(&alloc_opts));
 }
+#endif

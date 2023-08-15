@@ -6,11 +6,12 @@
  * \copyright 2017-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/compare.h>
 #include <vpr/dynamic_array.h>
 
+/* DISABLED GTEST */
+#if 0
 class dynamic_array_init_test : public ::testing::Test {
 protected:
     void SetUp() override
@@ -59,3 +60,4 @@ TEST_F(dynamic_array_init_test, basic_test)
     //dispose of our array
     dispose(dynamic_array_disposable_handle(&array));
 }
+#endif

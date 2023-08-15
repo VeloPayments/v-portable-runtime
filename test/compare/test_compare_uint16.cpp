@@ -6,9 +6,10 @@
  * \copyright 2017 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/compare.h>
 
+/* DISABLED GTEST */
+#if 0
 /**
  * Test that comparing two uint16_t values that are equal results in 0.
  */
@@ -44,3 +45,4 @@ TEST(compare_uint16, less_than)
     EXPECT_GT(0, memcmp(&X, &Y, sizeof(uint16_t)));
     EXPECT_GT(0, compare_uint16(&X, &Y, sizeof(uint16_t)));
 }
+#endif

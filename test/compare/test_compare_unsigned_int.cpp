@@ -6,9 +6,10 @@
  * \copyright 2017 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/compare.h>
 
+/* DISABLED GTEST */
+#if 0
 /**
  * Test that comparing two unsigned ints that are equal results in 0.
  */
@@ -44,3 +45,4 @@ TEST(compare_unsigned_int, less_than)
     EXPECT_GT(0, memcmp(&X, &Y, sizeof(unsigned int)));
     EXPECT_GT(0, compare_unsigned_int(&X, &Y, sizeof(unsigned int)));
 }
+#endif

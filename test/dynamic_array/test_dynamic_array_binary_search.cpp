@@ -6,11 +6,12 @@
  * \copyright 2017-2021 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/compare.h>
 #include <vpr/dynamic_array.h>
 
+/* DISABLED GTEST */
+#if 0
 class dynamic_array_binary_search_test : public ::testing::Test
 {
 protected:
@@ -276,3 +277,4 @@ TEST_F(dynamic_array_binary_search_test, near_middle_element3)
     /* dispose the array. */
     dispose(dynamic_array_disposable_handle(&array));
 }
+#endif

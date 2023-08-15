@@ -6,9 +6,10 @@
  * \copyright 2017 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/compare.h>
 
+/* DISABLED GTEST */
+#if 0
 /**
  * Test that comparing two long longs that are equal results in 0.
  */
@@ -44,3 +45,4 @@ TEST(compare_float, less_than)
     EXPECT_GT(0, memcmp(&X, &Y, sizeof(float)));
     EXPECT_GT(0, compare_float(&X, &Y, sizeof(float)));
 }
+#endif

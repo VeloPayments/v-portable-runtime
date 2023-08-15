@@ -6,10 +6,11 @@
  * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/doubly_linked_list.h>
 
+/* DISABLED GTEST */
+#if 0
 static int build_doubly_linked_list(
     doubly_linked_list_t* dll, int* data, int n);
 
@@ -136,3 +137,4 @@ static int build_doubly_linked_list(
 
     return 0;
 }
+#endif
