@@ -3,17 +3,16 @@
  *
  * Unit tests for doubly_linked_list_init.
  *
- * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2019-2023 Velo-Payments, Inc.  All rights reserved.
  */
 
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/doubly_linked_list.h>
+#include <minunit/minunit.h>
 
-/* DISABLED GTEST */
-#if 0
-class dll_init_test : public ::testing::Test {
-protected:
-    void SetUp() override
+class dll_init_test {
+public:
+    void setUp()
     {
         malloc_allocator_options_init(&alloc_opts);
         doubly_linked_list_options_init_status =
@@ -21,7 +20,7 @@ protected:
                 false, sizeof(int), false);
     }
 
-    void TearDown() override
+    void tearDown()
     {
         if (VPR_STATUS_SUCCESS == doubly_linked_list_options_init_status)
         {
@@ -35,22 +34,33 @@ protected:
     doubly_linked_list_options_t options;
 };
 
-TEST_F(dll_init_test, basic_test)
-{
+TEST_SUITE(dll_init_dest);
+
+#define BEGIN_TEST_F(name) \
+TEST(name) \
+{ \
+    dll_init_test fixture; \
+    fixture.setUp();
+
+#define END_TEST_F() \
+    fixture.tearDown(); \
+}
+
+BEGIN_TEST_F(basic_test)
     doubly_linked_list dll;
 
     // verify that options init succeeded
-    ASSERT_EQ(VPR_STATUS_SUCCESS, doubly_linked_list_options_init_status);
+    TEST_ASSERT(
+        VPR_STATUS_SUCCESS == fixture.doubly_linked_list_options_init_status);
 
-    ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
+    TEST_ASSERT(doubly_linked_list_init(&fixture.options, &dll) == 0);
 
     // the number of elements should be initialized to 0, with
     // the first and last pointers pointing to NULL
-    EXPECT_EQ(dll.elements, 0UL);
-    EXPECT_EQ(dll.first, nullptr);
-    EXPECT_EQ(dll.last, nullptr);
+    TEST_EXPECT(dll.elements == 0UL);
+    TEST_EXPECT(dll.first == nullptr);
+    TEST_EXPECT(dll.last == nullptr);
 
     //dispose of our list
     dispose(doubly_linked_list_disposable_handle(&dll));
-}
-#endif
+END_TEST_F()
