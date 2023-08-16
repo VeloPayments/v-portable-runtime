@@ -3,21 +3,21 @@
  *
  * Unit tests for allocator.release.
  *
- * \copyright 2017-2020 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2017-2023 Velo-Payments, Inc.  All rights reserved.
  */
 
 #include <vpr/allocator.h>
-
-/* DISABLED GTEST */
-#if 0
+#include <minunit/minunit.h>
 
 #include "mock_allocator.h"
+
+TEST_SUITE(allocator_release);
 
 /**
  * Test that release calls the allocator_release method in the options
  * structure.
  */
-TEST(allocator_release, basicTest)
+TEST(basicTest)
 {
     void* MEM = (void*)5678;
 
@@ -30,9 +30,8 @@ TEST(allocator_release, basicTest)
     release(&options, MEM);
 
     //the allocator_release mock should have been called with our arguments
-    EXPECT_TRUE(mock_allocator_release_called(&options, MEM));
+    TEST_EXPECT(mock_allocator_release_called(&options, MEM));
 
     //dispose options now that we're done
     dispose(allocator_options_disposable_handle(&options));
 }
-#endif
