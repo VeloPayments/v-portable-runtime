@@ -3,20 +3,20 @@
  *
  * Unit tests for allocator.allocator_control.
  *
- * \copyright 2018-2020 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2018-2023 Velo-Payments, Inc.  All rights reserved.
  */
 
+#include <minunit/minunit.h>
 #include <vpr/allocator.h>
 
-/* DISABLED GTEST */
-#if 0
-
 #include "mock_allocator.h"
+
+TEST_SUITE(allocator_control);
 
 /**
  * Test that allocator_control calls the allocator_control method.
  */
-TEST(allocator_control, happy_path)
+TEST(happy_path)
 {
     const int KEY = 0x12340000;
     void* VALUE = (void*)0x00100000;
@@ -27,13 +27,12 @@ TEST(allocator_control, happy_path)
     mock_allocator_options_init(&options, false);
 
     //calling the mock returns success
-    EXPECT_EQ(VPR_STATUS_SUCCESS, allocator_control(&options, KEY, VALUE));
+    TEST_EXPECT(VPR_STATUS_SUCCESS == allocator_control(&options, KEY, VALUE));
 
     //the allocator_reallocate mock should have been called with our arguments
-    EXPECT_TRUE(
+    TEST_EXPECT(
         mock_allocator_control_called(&options, KEY, VALUE));
 
     //dispose options now that we're done
     dispose(allocator_options_disposable_handle(&options));
 }
-#endif
