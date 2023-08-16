@@ -3,20 +3,22 @@
  *
  * Unit tests for bloom_filter.
  *
- * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2019-2023 Velo-Payments, Inc.  All rights reserved.
  */
 
+#include <minunit/minunit.h>
+#include <string.h>
+#include <time.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/bloom_filter.h>
 
-/* DISABLED GTEST */
-#if 0
 static void verify_false_positive_error_rate(bloom_filter*, double, const int);
 static void generate_random_bytes(uint8_t*, size_t);
 
-class bloom_filter_test : public ::testing::Test {
-protected:
-    void LocalSetUp(unsigned int num_expected_entries, float target_error_rate,
+class bloom_filter_test {
+public:
+    void localSetUp(
+        unsigned int num_expected_entries, float target_error_rate,
         size_t max_size_in_bytes)
     {
         malloc_allocator_options_init(&alloc_opts);
@@ -27,7 +29,7 @@ protected:
         srand(time(0));  // seed rng with current time
     }
 
-    void TearDown() override
+    void tearDown()
     {
         if (VPR_STATUS_SUCCESS == bloom_filter_options_init_status)
         {
@@ -41,40 +43,50 @@ protected:
     bloom_filter_options_t options;
 };
 
+TEST_SUITE(bloom_filter_test);
+
+#define BEGIN_TEST_F(name) \
+TEST(name) \
+{ \
+    bloom_filter_test fixture; \
+
+#define END_TEST_F() \
+    fixture.tearDown(); \
+}
+
 /**
  * Test the bloom filter is initialized properly.
  */
-TEST_F(bloom_filter_test, init_test)
-{
+BEGIN_TEST_F(init_test)
     // set up a bloom filter with 1000 expected entries, a 10% error rate,
     // and maximum size of 1024 bytes.
-    LocalSetUp(1000, 0.1, 1024);
+    fixture.localSetUp(1000, 0.1, 1024);
 
     // verify that options were set up
-    ASSERT_EQ(VPR_STATUS_SUCCESS, bloom_filter_options_init_status);
+    TEST_ASSERT(VPR_STATUS_SUCCESS == fixture.bloom_filter_options_init_status);
 
     bloom_filter bloom;
 
-    ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
+    TEST_ASSERT(bloom_filter_init(&fixture.options, &bloom) == 0);
 
-    ASSERT_EQ(bloom.options->num_expected_entries, 1000u);
+    TEST_ASSERT(bloom.options->num_expected_entries == 1000u);
 
     // the actual size of the bloom filter should be 600 bytes
-    EXPECT_EQ(bloom.options->size_in_bytes, (size_t)600);
-    EXPECT_NE(bloom.bitmap, nullptr);
+    TEST_EXPECT(bloom.options->size_in_bytes == (size_t)600);
+    TEST_EXPECT(bloom.bitmap != nullptr);
 
     // we should use three hash functions
-    EXPECT_EQ(bloom.options->num_hash_functions, 3u);
+    TEST_EXPECT(bloom.options->num_hash_functions == 3u);
 
     // verify the bitmap is initialized to all 0s
     char testblock[bloom.options->size_in_bytes];
     memset(testblock, 0, bloom.options->size_in_bytes);
-    EXPECT_EQ(
-        memcmp(testblock, bloom.bitmap, bloom.options->size_in_bytes), 0);
+    TEST_EXPECT(
+        memcmp(testblock, bloom.bitmap, bloom.options->size_in_bytes) == 0);
 
     //dispose of our filter
     dispose(bloom_filter_disposable_handle(&bloom));
-}
+END_TEST_F()
 
 /**
  * Test the bloom filter initialization when there is not enough space
@@ -83,60 +95,58 @@ TEST_F(bloom_filter_test, init_test)
  * A filter with 1000 items and an error rate of 0.1 requires 600 bytes.
  * In this case we will only allow 300 bytes.
  */
-TEST_F(bloom_filter_test, not_enough_space)
-{
-    LocalSetUp(1000, 0.1, 300);
+BEGIN_TEST_F(not_enough_space)
+    fixture.localSetUp(1000, 0.1, 300);
     bloom_filter bloom;
 
-    ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
+    TEST_ASSERT(bloom_filter_init(&fixture.options, &bloom) == 0);
 
-    ASSERT_EQ(bloom.options->num_expected_entries, 1000u);
+    TEST_ASSERT(bloom.options->num_expected_entries == 1000u);
 
-    EXPECT_EQ(bloom.options->size_in_bytes, (size_t)300);
-    EXPECT_NE(bloom.bitmap, nullptr);
+    TEST_EXPECT(bloom.options->size_in_bytes == (size_t)300);
+    TEST_EXPECT(bloom.bitmap != nullptr);
 
     // we should use two hash functions
-    EXPECT_EQ(bloom.options->num_hash_functions, 2u);
+    TEST_EXPECT(bloom.options->num_hash_functions == 2u);
 
     // verify the bitmap is initialized to all 0s
     char testblock[bloom.options->size_in_bytes];
     memset(testblock, 0, bloom.options->size_in_bytes);
-    EXPECT_EQ(
-        memcmp(testblock, bloom.bitmap, bloom.options->size_in_bytes), 0);
+    TEST_EXPECT(
+        memcmp(testblock, bloom.bitmap, bloom.options->size_in_bytes) == 0);
 
     //dispose of our filter
     dispose(bloom_filter_disposable_handle(&bloom));
-}
+END_TEST_F()
 
 
 /**
  * Test that we can add an item and query for it.
  */
-TEST_F(bloom_filter_test, simple_add_item_test)
-{
+BEGIN_TEST_F(simple_add_item_test)
     // set up a bloom filter with 1000 expected entries, a 10% error rate,
     // and maximum size of 1024 bytes.
-    LocalSetUp(1000, 0.1, 1024);
+    fixture.localSetUp(1000, 0.1, 1024);
     bloom_filter bloom;
 
-    ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
+    TEST_ASSERT(bloom_filter_init(&fixture.options, &bloom) == 0);
 
     const char* data = "add me to the bloom filter!";
     size_t sz_data = strlen(data);
 
     // initially that is NOT in the filter
-    EXPECT_FALSE(bloom_filter_contains_item(&bloom, data, sz_data));
+    TEST_EXPECT(!bloom_filter_contains_item(&bloom, data, sz_data));
 
 
-    ASSERT_EQ(bloom_filter_add_item(&bloom, data, sz_data), 0);
+    TEST_ASSERT(bloom_filter_add_item(&bloom, data, sz_data) == 0);
 
     // now the item should be in the filter
     // (no false positives possible when its the only item!)
-    EXPECT_TRUE(bloom_filter_contains_item(&bloom, data, sz_data));
+    TEST_EXPECT(bloom_filter_contains_item(&bloom, data, sz_data));
 
     //dispose of our filter
     dispose(bloom_filter_disposable_handle(&bloom));
-}
+END_TEST_F()
 
 /**
  * Test of the error rate.  Given a fault tolerance p of 0.05,
@@ -150,81 +160,77 @@ TEST_F(bloom_filter_test, simple_add_item_test)
  *               = (62352 / 10000) ln 2
  *               = 4.3
  */
-TEST_F(bloom_filter_test, false_positive_error_rate_5pct_test)
-{
-    LocalSetUp(10000, 0.05, 8192);
+BEGIN_TEST_F(false_positive_error_rate_5pct_test)
+    fixture.localSetUp(10000, 0.05, 8192);
 
     bloom_filter bloom;
 
-    ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
+    TEST_ASSERT(bloom_filter_init(&fixture.options, &bloom) == 0);
 
-    EXPECT_EQ(bloom.options->size_in_bytes, (size_t)7795);
-    EXPECT_EQ(bloom.options->num_hash_functions, 4u);
+    TEST_EXPECT(bloom.options->size_in_bytes == (size_t)7795);
+    TEST_EXPECT(bloom.options->num_hash_functions == 4u);
 
 
     verify_false_positive_error_rate(&bloom, 0.05, 10000);
 
     //dispose of our filter
     dispose(bloom_filter_disposable_handle(&bloom));
-}
+END_TEST_F()
 
 /**
  * Test the error rate with a fault tolerance of 0.01.
  */
-TEST_F(bloom_filter_test, false_positive_error_rate_1pct_test)
-{
-    LocalSetUp(10000, 0.01, 16384);
+BEGIN_TEST_F(false_positive_error_rate_1pct_test)
+    fixture.localSetUp(10000, 0.01, 16384);
 
     bloom_filter bloom;
 
-    ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
+    TEST_ASSERT(bloom_filter_init(&fixture.options, &bloom) == 0);
 
-    EXPECT_EQ(bloom.options->size_in_bytes, (size_t)11982);
-    EXPECT_EQ(bloom.options->num_hash_functions, 7u);
+    TEST_EXPECT(bloom.options->size_in_bytes == (size_t)11982);
+    TEST_EXPECT(bloom.options->num_hash_functions == 7u);
 
     verify_false_positive_error_rate(&bloom, 0.01, 10000);
 
     //dispose of our filter
     dispose(bloom_filter_disposable_handle(&bloom));
-}
+END_TEST_F()
 
 /**
  * Test the error rate with a fault tolerance of 0.005.
  */
-TEST_F(bloom_filter_test, false_positive_error_rate_half_pct_test)
-{
-    LocalSetUp(10000, 0.005, 16384);
+BEGIN_TEST_F(false_positive_error_rate_half_pct_test)
+    fixture.localSetUp(10000, 0.005, 16384);
 
     bloom_filter bloom;
 
-    ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
+    TEST_ASSERT(bloom_filter_init(&fixture.options, &bloom) == 0);
 
-    EXPECT_EQ(bloom.options->size_in_bytes, (size_t)13785);
-    EXPECT_EQ(bloom.options->num_hash_functions, 8u);
+    TEST_EXPECT(bloom.options->size_in_bytes == (size_t)13785);
+    TEST_EXPECT(bloom.options->num_hash_functions == 8u);
 
     verify_false_positive_error_rate(&bloom, 0.005, 10000);
 
     //dispose of our filter
     dispose(bloom_filter_disposable_handle(&bloom));
-}
+END_TEST_F()
 
 /**
  * Test the error rate with a fault tolerance of 0.01 and
  * one million insertions.
  */
-TEST_F(bloom_filter_test, false_positive_error_rate_volume_test)
-{
-    LocalSetUp(1000000, 0.01, 1198132);  // ~1.2 mb
+BEGIN_TEST_F(false_positive_error_rate_volume_test)
+    fixture.localSetUp(1000000, 0.01, 1198132);  // ~1.2 mb
 
     bloom_filter bloom;
 
-    ASSERT_EQ(bloom_filter_init(&options, &bloom), 0);
+    TEST_ASSERT(bloom_filter_init(&fixture.options, &bloom) == 0);
 
     verify_false_positive_error_rate(&bloom, 0.01, 1000000);
 
     //dispose of our filter
     dispose(bloom_filter_disposable_handle(&bloom));
-}
+END_TEST_F()
 
 
 /**
@@ -254,8 +260,9 @@ static void verify_false_positive_error_rate(bloom_filter* bloom,
     {
         uint8_t buf[17];
         generate_random_bytes(buf, 17);
-        ASSERT_EQ(VPR_STATUS_SUCCESS, bloom_filter_add_item(bloom, buf, 17));
-        ASSERT_TRUE(bloom_filter_contains_item(bloom, buf, 17));
+        assert(
+            VPR_STATUS_SUCCESS == bloom_filter_add_item(bloom, buf, 17));
+        assert(bloom_filter_contains_item(bloom, buf, 17));
     }
 
     // since this test is probabilistic, we'll try it a few times
@@ -284,7 +291,6 @@ static void verify_false_positive_error_rate(bloom_filter* bloom,
 
     } while (!met_target && ++attempts <= 5);
 
-    EXPECT_GE(false_positive_rate, lower);
-    EXPECT_LE(false_positive_rate, upper);
+    assert(false_positive_rate >= lower);
+    assert(false_positive_rate < upper);
 }
-#endif

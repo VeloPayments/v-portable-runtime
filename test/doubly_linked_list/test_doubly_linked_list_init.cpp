@@ -6,9 +6,9 @@
  * \copyright 2019-2023 Velo-Payments, Inc.  All rights reserved.
  */
 
+#include <minunit/minunit.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/doubly_linked_list.h>
-#include <minunit/minunit.h>
 
 class dll_init_test {
 public:
