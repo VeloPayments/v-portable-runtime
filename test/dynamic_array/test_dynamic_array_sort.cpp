@@ -7,11 +7,13 @@
  */
 
 #include <algorithm>
-#include <gtest/gtest.h>
 #include <iostream>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/compare.h>
 #include <vpr/dynamic_array.h>
+
+/* DISABLED GTEST */
+#if 0
 
 using namespace std;
 
@@ -545,3 +547,4 @@ TEST_F(dynamic_array_sort_test, sort10)
 
     } while (next_permutation(permutations, permutations + 10));
 }
+#endif

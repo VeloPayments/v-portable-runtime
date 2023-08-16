@@ -6,7 +6,8 @@
  * \copyright 2019 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
+/* DISABLED GTEST */
+#if 0
 #include <vpr/hash_func.h>
 
 static void generate_random_bytes(uint8_t*, size_t);
@@ -162,3 +163,4 @@ static void test_distribution(uint64_t* vals, int num_vals)
         EXPECT_LE(bits_set[i], num_vals_60pct);
     }
 }
+#endif

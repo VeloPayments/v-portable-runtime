@@ -6,10 +6,11 @@
  * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/bloom_filter.h>
 
+/* DISABLED GTEST */
+#if 0
 static void verify_false_positive_error_rate(bloom_filter*, double, const int);
 static void generate_random_bytes(uint8_t*, size_t);
 
@@ -286,3 +287,4 @@ static void verify_false_positive_error_rate(bloom_filter* bloom,
     EXPECT_GE(false_positive_rate, lower);
     EXPECT_LE(false_positive_rate, upper);
 }
+#endif

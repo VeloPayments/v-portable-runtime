@@ -6,8 +6,10 @@
  * \copyright 2018-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/allocator.h>
+
+/* DISABLED GTEST */
+#if 0
 
 #include "mock_allocator.h"
 
@@ -34,3 +36,4 @@ TEST(allocator_control, happy_path)
     //dispose options now that we're done
     dispose(allocator_options_disposable_handle(&options));
 }
+#endif

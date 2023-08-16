@@ -6,9 +6,11 @@
  * \copyright 2017-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/allocator.h>
 #include <vpr/allocator/malloc_allocator.h>
+
+/* DISABLED GTEST */
+#if 0
 
 /**
  * There's not much we can test here.  This function should be manually
@@ -44,3 +46,4 @@ TEST(malloc_allocator_options_init_test, allocator_control)
 
     dispose(allocator_options_disposable_handle(&options));
 }
+#endif

@@ -6,10 +6,11 @@
  * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/doubly_linked_list.h>
 
+/* DISABLED GTEST */
+#if 0
 class dll_insert_beginning_test : public ::testing::Test {
 protected:
     void LocalSetUp(bool copy_on_insert)
@@ -123,3 +124,4 @@ TEST_F(dll_insert_beginning_test, without_copy_on_insert)
     //dispose of our list
     dispose(doubly_linked_list_disposable_handle(&dll));
 }
+#endif

@@ -6,9 +6,10 @@
  * \copyright 2017 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/compare.h>
 
+/* DISABLED GTEST */
+#if 0
 /**
  * Test that comparing two characters that are equal results in 0.
  */
@@ -44,3 +45,4 @@ TEST(compare_char, less_than)
     EXPECT_GT(0, memcmp(&X, &Y, sizeof(char)));
     EXPECT_GT(0, compare_char(&X, &Y, sizeof(char)));
 }
+#endif

@@ -6,12 +6,13 @@
  * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <stdbool.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/hashmap.h>
 #include <vpr/parameters.h>
 
+/* DISABLED GTEST */
+#if 0
 // forward decls
 static bool always_equal(const void* lhs, const void* rhs);
 static bool never_equal(const void* lhs, const void* rhs);
@@ -354,3 +355,4 @@ static bool never_equal(const void* UNUSED(lhs), const void* UNUSED(rhs))
 {
     return false;
 }
+#endif

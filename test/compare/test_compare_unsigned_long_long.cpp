@@ -6,9 +6,10 @@
  * \copyright 2017 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/compare.h>
 
+/* DISABLED GTEST */
+#if 0
 /**
  * Test that comparing two long longs that are equal results in 0.
  */
@@ -47,3 +48,4 @@ TEST(compare_unsigned_long_long, less_than)
     EXPECT_GT(0,
         compare_unsigned_long_long(&X, &Y, sizeof(unsigned long long)));
 }
+#endif

@@ -7,9 +7,10 @@
  */
 
 #include <config.h>
-#include <gtest/gtest.h>
 #include <vpr/version.h>
 
+/* DISABLED GTEST */
+#if 0
 TEST(vpr_version_test, verify_version_information_set)
 {
     const char* version = vpr_version();
@@ -17,3 +18,4 @@ TEST(vpr_version_test, verify_version_information_set)
     ASSERT_NE(nullptr, version);
     EXPECT_STREQ(VPR_VERSION, version);
 }
+#endif

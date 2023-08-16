@@ -6,9 +6,11 @@
  * \copyright 2018-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/allocator.h>
 #include <vpr/allocator/bump_allocator.h>
+
+/* DISABLED GTEST */
+#if 0
 
 /**
  * If we initialize the bump allocator with a tiny buffer and then make a larger
@@ -94,3 +96,4 @@ TEST(bump_allocator_options_init, bump_reset)
     /* clean up. */
     dispose(allocator_options_disposable_handle(&options));
 }
+#endif

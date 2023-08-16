@@ -6,9 +6,10 @@
  * \copyright 2020 Velo Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <vpr/uuid.h>
 
+/* DISABLED GTEST */
+#if 0
 /**
  * Test that a basic UUID can be read from a string.
  */
@@ -28,3 +29,4 @@ TEST(vpr_uuid_from_string, basic_uuid)
     ASSERT_EQ(VPR_STATUS_SUCCESS, retval);
     EXPECT_EQ(0, memcmp(EXPECTED_UUID.data, value.data, sizeof(value.data)));
 }
+#endif

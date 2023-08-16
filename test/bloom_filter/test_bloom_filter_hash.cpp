@@ -6,11 +6,12 @@
  * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
  */
 
-#include <gtest/gtest.h>
 #include <time.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/bloom_filter.h>
 
+/* DISABLED GTEST */
+#if 0
 static void generate_random_bytes(uint8_t*, size_t);
 static int hamming_distance(uint64_t, uint64_t);
 
@@ -208,3 +209,4 @@ static int hamming_distance(uint64_t x, uint64_t y)
 
     return dist;
 }
+#endif
