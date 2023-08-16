@@ -3,47 +3,47 @@
  *
  * Unit tests for compare_int.
  *
- * \copyright 2017 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2017-2023 Velo-Payments, Inc.  All rights reserved.
  */
 
 #include <vpr/compare.h>
+#include <minunit/minunit.h>
+#include <string.h>
 
-/* DISABLED GTEST */
-#if 0
+TEST_SUITE(compare_int);
 
 /**
  * Test that comparing two ints that are equal results in 0.
  */
-TEST(compare_int, equality)
+TEST(equality)
 {
     const int X = 17;
     const int Y = 17;
 
-    EXPECT_EQ(0, memcmp(&X, &Y, sizeof(int)));
-    EXPECT_EQ(0, compare_int(&X, &Y, sizeof(int)));
+    TEST_EXPECT(0 == memcmp(&X, &Y, sizeof(int)));
+    TEST_EXPECT(0 == compare_int(&X, &Y, sizeof(int)));
 }
 
 /**
  * Test that X > Y results in a return value that is greater than zero.
  */
-TEST(compare_int, greater_than)
+TEST(greater_than)
 {
     const int X = 17;
     const int Y = 14;
 
-    EXPECT_LT(0, memcmp(&X, &Y, sizeof(int)));
-    EXPECT_LT(0, compare_int(&X, &Y, sizeof(int)));
+    TEST_EXPECT(0 < memcmp(&X, &Y, sizeof(int)));
+    TEST_EXPECT(0 < compare_int(&X, &Y, sizeof(int)));
 }
 
 /**
  * Test that X < Y results in a return value that is less than zero.
  */
-TEST(compare_int, less_than)
+TEST(less_than)
 {
     const int X = 17;
     const int Y = 19;
 
-    EXPECT_GT(0, memcmp(&X, &Y, sizeof(int)));
-    EXPECT_GT(0, compare_int(&X, &Y, sizeof(int)));
+    TEST_EXPECT(0 > memcmp(&X, &Y, sizeof(int)));
+    TEST_EXPECT(0 > compare_int(&X, &Y, sizeof(int)));
 }
-#endif
