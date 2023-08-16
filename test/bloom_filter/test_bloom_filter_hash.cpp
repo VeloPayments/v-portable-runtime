@@ -3,21 +3,21 @@
  *
  * Unit tests for bloom_filter hashing.
  *
- * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2019-2023 Velo-Payments, Inc.  All rights reserved.
  */
 
+#include <minunit/minunit.h>
+#include <string.h>
 #include <time.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/bloom_filter.h>
 
-/* DISABLED GTEST */
-#if 0
 static void generate_random_bytes(uint8_t*, size_t);
 static int hamming_distance(uint64_t, uint64_t);
 
-class bloom_filter_hash_test : public ::testing::Test {
-protected:
-    void SetUp() override
+class bloom_filter_hash_test {
+public:
+    void setUp()
     {
         malloc_allocator_options_init(&alloc_opts);
         bloom_filter_options_init_status =
@@ -29,7 +29,7 @@ protected:
         srand(time(0));  // seed rng with current time
     }
 
-    void TearDown() override
+    void tearDown()
     {
         if (VPR_STATUS_SUCCESS == bloom_filter_options_init_status)
         {
@@ -43,34 +43,47 @@ protected:
     bloom_filter_options_t options;
 };
 
+TEST_SUITE(hamming_distance_test);
+
 /**
  * Test that the test utility function to measure hamming distances is correct.
  */
-TEST(hamming_distance_test, test_utility_function)
+TEST(test_utility_function)
 {
-    ASSERT_EQ(hamming_distance(0, 0), 0);
-    ASSERT_EQ(hamming_distance(0, 1), 1);
-    ASSERT_EQ(hamming_distance(0, 3), 2);
-    ASSERT_EQ(hamming_distance(7, 1), 2);
+    TEST_ASSERT(hamming_distance(0, 0) == 0);
+    TEST_ASSERT(hamming_distance(0, 1) == 1);
+    TEST_ASSERT(hamming_distance(0, 3) == 2);
+    TEST_ASSERT(hamming_distance(7, 1) == 2);
 
     uint64_t max32 = 0xFFFFFFFF;
-    ASSERT_EQ(hamming_distance(0, max32), 32);
+    TEST_ASSERT(hamming_distance(0, max32) == 32);
 
     uint64_t max64 = 0xFFFFFFFFFFFFFFFF;
 
-    ASSERT_EQ(hamming_distance(0, max64), 64);
-    ASSERT_EQ(hamming_distance(max64, 0), 64);
+    TEST_ASSERT(hamming_distance(0, max64) == 64);
+    TEST_ASSERT(hamming_distance(max64, 0) == 64);
 
-    ASSERT_EQ(hamming_distance(max32, max64), 32);
+    TEST_ASSERT(hamming_distance(max32, max64) == 32);
+}
+
+TEST_SUITE(bloom_filter_hash_test);
+
+#define BEGIN_TEST_F(name) \
+TEST(name) \
+{ \
+    bloom_filter_hash_test fixture; \
+    fixture.setUp();
+
+#define END_TEST_F() \
+    fixture.tearDown(); \
 }
 
 /**
  * Test that options init worked as expected.
  */
-TEST_F(bloom_filter_hash_test, options_init)
-{
-    ASSERT_EQ(VPR_STATUS_SUCCESS, bloom_filter_options_init_status);
-}
+BEGIN_TEST_F(options_init)
+    TEST_ASSERT(VPR_STATUS_SUCCESS == fixture.bloom_filter_options_init_status);
+END_TEST_F()
 
 /**
  * Test that the hash function are independent of each other.
@@ -86,8 +99,7 @@ TEST_F(bloom_filter_hash_test, options_init)
  * of being different than the same bit of the hash value produced by
  * function 2.
  */
-TEST_F(bloom_filter_hash_test, hash_function_interdependence)
-{
+BEGIN_TEST_F(hash_function_interdependence)
     const int n = 10000;
     long total_distance = 0L;
     int bits_differ[64];
@@ -103,8 +115,8 @@ TEST_F(bloom_filter_hash_test, hash_function_interdependence)
         generate_random_bytes(buffer, len);
 
         // calculate the hash values using both functions
-        uint64_t hash_val1 = options.hash_function_1(buffer, len);
-        uint64_t hash_val2 = options.hash_function_2(buffer, len);
+        uint64_t hash_val1 = fixture.options.hash_function_1(buffer, len);
+        uint64_t hash_val2 = fixture.options.hash_function_2(buffer, len);
 
         total_distance += hamming_distance(hash_val1, hash_val2);
 
@@ -120,18 +132,18 @@ TEST_F(bloom_filter_hash_test, hash_function_interdependence)
     }
 
     double mean_distance = (double)total_distance / n;
-    EXPECT_GE(mean_distance, 31.0);
-    EXPECT_LE(mean_distance, 33.0);
+    TEST_EXPECT(mean_distance >= 31.0);
+    TEST_EXPECT(mean_distance <= 33.0);
 
     int num_vals_40pct = n * 0.4;
     int num_vals_60pct = n * 0.6;
 
     for (int i = 0; i < 64; i++)
     {
-        EXPECT_GE(bits_differ[i], num_vals_40pct);
-        EXPECT_LE(bits_differ[i], num_vals_60pct);
+        TEST_EXPECT(bits_differ[i] >= num_vals_40pct);
+        TEST_EXPECT(bits_differ[i] <= num_vals_60pct);
     }
-}
+END_TEST_F()
 
 /**
  * Test the hash generation function that uses the two core hash functions
@@ -142,14 +154,13 @@ TEST_F(bloom_filter_hash_test, hash_function_interdependence)
  * inputs to the same bit, and inputs are uniformly distributed to all bits
  * in the filter.
  */
-TEST_F(bloom_filter_hash_test, basic_test)
-{
+BEGIN_TEST_F(basic_test)
     const int n = 10000;  // number of insertions
 
     const char* data = "this is some test data to be added to the filter.";
     size_t sz_data = strlen(data);
 
-    unsigned int bits_in_filter = options.size_in_bytes * 8;
+    unsigned int bits_in_filter = fixture.options.size_in_bytes * 8;
     int bits_to_set[bits_in_filter];
     for (unsigned int i = 0; i < bits_in_filter; i++)
     {
@@ -159,13 +170,15 @@ TEST_F(bloom_filter_hash_test, basic_test)
     for (int i = 0; i < n; i++)
     {
         // which bit do we set?
-        unsigned int bit = bloom_filter_hash(&options, data, sz_data, i);
-        ASSERT_LT(bit, bits_in_filter);
+        unsigned int bit =
+            bloom_filter_hash(&fixture.options, data, sz_data, i);
+        TEST_ASSERT(bit < bits_in_filter);
 
         // do I always get the same bit?
         for (int j = 0; j < 100; j++)
         {
-            ASSERT_EQ(bloom_filter_hash(&options, data, sz_data, i), bit);
+            TEST_ASSERT(
+                bloom_filter_hash(&fixture.options, data, sz_data, i) == bit);
         }
 
         bits_to_set[bit]++;
@@ -176,10 +189,10 @@ TEST_F(bloom_filter_hash_test, basic_test)
     int upper = (double)n / bits_in_filter * 1.1;
     for (unsigned int i = 0; i < bits_in_filter; i++)
     {
-        EXPECT_GE(bits_to_set[i], lower);
-        EXPECT_LE(bits_to_set[i], upper);
+        TEST_EXPECT(bits_to_set[i] >= lower);
+        TEST_EXPECT(bits_to_set[i] <= upper);
     }
-}
+END_TEST_F()
 
 /**
  * Utility function to generate a random sequence of bytes
@@ -209,4 +222,3 @@ static int hamming_distance(uint64_t x, uint64_t y)
 
     return dist;
 }
-#endif
