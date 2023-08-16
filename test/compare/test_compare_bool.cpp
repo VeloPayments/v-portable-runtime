@@ -3,58 +3,59 @@
  *
  * Unit tests for compare_bool.
  *
- * \copyright 2017 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2017-2023 Velo-Payments, Inc.  All rights reserved.
  */
 
 #include <vpr/compare.h>
+#include <minunit/minunit.h>
+#include <string.h>
 
-/* DISABLED GTEST */
-#if 0
+TEST_SUITE(compare_bool);
+
 /**
  * Test that comparing two boolean values that are equal results in 0.
  */
-TEST(compare_bool, equality_true)
+TEST(equality_true)
 {
     const bool X = true;
     const bool Y = true;
 
-    EXPECT_EQ(0, memcmp(&X, &Y, sizeof(bool)));
-    EXPECT_EQ(0, compare_bool(&X, &Y, sizeof(bool)));
+    TEST_EXPECT(0 == memcmp(&X, &Y, sizeof(bool)));
+    TEST_EXPECT(0 == compare_bool(&X, &Y, sizeof(bool)));
 }
 
 /**
  * Test that comparing two boolean values that are equal results in 0.
  */
-TEST(compare_bool, equality_false)
+TEST(equality_false)
 {
     const bool X = false;
     const bool Y = false;
 
-    EXPECT_EQ(0, memcmp(&X, &Y, sizeof(bool)));
-    EXPECT_EQ(0, compare_bool(&X, &Y, sizeof(bool)));
+    TEST_EXPECT(0 == memcmp(&X, &Y, sizeof(bool)));
+    TEST_EXPECT(0 == compare_bool(&X, &Y, sizeof(bool)));
 }
 
 /**
  * Test that X > Y results in a return value that is greater than zero.
  */
-TEST(compare_bool, greater_than)
+TEST(greater_than)
 {
     const bool X = true;
     const bool Y = false;
 
-    EXPECT_LT(0, memcmp(&X, &Y, sizeof(bool)));
-    EXPECT_LT(0, compare_bool(&X, &Y, sizeof(bool)));
+    TEST_EXPECT(0 < memcmp(&X, &Y, sizeof(bool)));
+    TEST_EXPECT(0 < compare_bool(&X, &Y, sizeof(bool)));
 }
 
 /**
  * Test that X < Y results in a return value that is less than zero.
  */
-TEST(compare_bool, less_than)
+TEST(less_than)
 {
     const bool X = false;
     const bool Y = true;
 
-    EXPECT_GT(0, memcmp(&X, &Y, sizeof(bool)));
-    EXPECT_GT(0, compare_bool(&X, &Y, sizeof(bool)));
+    TEST_EXPECT(0 > memcmp(&X, &Y, sizeof(bool)));
+    TEST_EXPECT(0 > compare_bool(&X, &Y, sizeof(bool)));
 }
-#endif
