@@ -3,18 +3,17 @@
  *
  * Unit tests for dynamic_array_init.
  *
- * \copyright 2017-2020 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2017-2023 Velo-Payments, Inc.  All rights reserved.
  */
 
+#include <minunit/minunit.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/compare.h>
 #include <vpr/dynamic_array.h>
 
-/* DISABLED GTEST */
-#if 0
-class dynamic_array_init_test : public ::testing::Test {
-protected:
-    void SetUp() override
+class dynamic_array_init_test {
+public:
+    void setUp()
     {
         malloc_allocator_options_init(&alloc_opts);
         dynamic_array_options_init_status =
@@ -22,7 +21,7 @@ protected:
                 &options, &alloc_opts, sizeof(int), &compare_int);
     }
 
-    void TearDown() override
+    void tearDown()
     {
         if (VPR_STATUS_SUCCESS == dynamic_array_options_init_status)
         {
@@ -36,28 +35,39 @@ protected:
     dynamic_array_options_t options;
 };
 
-TEST_F(dynamic_array_init_test, options_init)
-{
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_options_init_status);
+TEST_SUITE(dynamic_array_init_test);
+
+#define BEGIN_TEST_F(name) \
+TEST(name) \
+{ \
+    dynamic_array_init_test fixture; \
+    fixture.setUp();
+
+#define END_TEST_F() \
+    fixture.tearDown(); \
 }
 
-TEST_F(dynamic_array_init_test, basic_test)
-{
+BEGIN_TEST_F(options_init)
+    TEST_ASSERT(
+        VPR_STATUS_SUCCESS == fixture.dynamic_array_options_init_status);
+END_TEST_F()
+
+BEGIN_TEST_F(basic_test)
     int SEVENTEEN = 17;
     dynamic_array_t array;
 
     //create an array of ints that is 10 elements in size all initialized with
     //our copy value.
-    EXPECT_EQ(0, dynamic_array_init(&options, &array, 10, 10, &SEVENTEEN));
+    TEST_EXPECT(
+        0 == dynamic_array_init(&fixture.options, &array, 10, 10, &SEVENTEEN));
 
     //iterate over the array, checking that each value matches
     const int* intarr = (const int*)array.array;
     for (int i = 0; i < 10; ++i)
     {
-        EXPECT_EQ(SEVENTEEN, intarr[i]);
+        TEST_EXPECT(SEVENTEEN == intarr[i]);
     }
 
     //dispose of our array
     dispose(dynamic_array_disposable_handle(&array));
-}
-#endif
+END_TEST_F()
