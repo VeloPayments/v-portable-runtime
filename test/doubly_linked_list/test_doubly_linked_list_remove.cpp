@@ -3,21 +3,20 @@
  *
  * Unit tests for doubly_linked_list_remove
  *
- * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2019-2023 Velo-Payments, Inc.  All rights reserved.
  */
 
+#include <minunit/minunit.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/doubly_linked_list.h>
 
-/* DISABLED GTEST */
-#if 0
 static int build_doubly_linked_list(
     doubly_linked_list_t* dll, int* data, int n);
 
 
-class dll_remove_test : public ::testing::Test {
-protected:
-    void SetUp() override
+class dll_remove_test {
+public:
+    void setUp()
     {
         malloc_allocator_options_init(&alloc_opts);
         doubly_linked_list_options_init_success =
@@ -25,7 +24,7 @@ protected:
                 false, sizeof(int), false);
     }
 
-    void TearDown() override
+    void tearDown()
     {
         if (VPR_STATUS_SUCCESS == doubly_linked_list_options_init_success)
         {
@@ -39,30 +38,41 @@ protected:
     doubly_linked_list_options_t options;
 };
 
-TEST_F(dll_remove_test, options_init)
-{
-    ASSERT_EQ(VPR_STATUS_SUCCESS, doubly_linked_list_options_init_success);
+TEST_SUITE(dll_remove_test);
+
+#define BEGIN_TEST_F(name) \
+TEST(name) \
+{ \
+    dll_remove_test fixture; \
+    fixture.setUp();
+
+#define END_TEST_F() \
+    fixture.tearDown(); \
 }
 
-TEST_F(dll_remove_test, basic_test)
-{
+BEGIN_TEST_F(options_init)
+    TEST_ASSERT(
+        VPR_STATUS_SUCCESS == fixture.doubly_linked_list_options_init_success);
+END_TEST_F()
+
+BEGIN_TEST_F(basic_test)
     doubly_linked_list_t dll;
 
-    ASSERT_EQ(doubly_linked_list_init(&options, &dll), 0);
+    TEST_ASSERT(doubly_linked_list_init(&fixture.options, &dll) == 0);
 
     int data_elements[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
-    ASSERT_EQ(0, build_doubly_linked_list(&dll, data_elements, 10));
+    TEST_ASSERT(0 == build_doubly_linked_list(&dll, data_elements, 10));
 
     // there should be 10 elements, all in order
-    EXPECT_EQ(dll.elements, 10UL);
+    TEST_EXPECT(dll.elements == 10UL);
     doubly_linked_list_element_t* element = dll.first;
     doubly_linked_list_element_t* element5 = NULL;
     int i = 0;
     while (element != NULL)
     {
 
-        EXPECT_EQ(*(int*)element->data, data_elements[i]);
+        TEST_EXPECT(*(int*)element->data == data_elements[i]);
         if (i == 5)
         {
             element5 = element;
@@ -70,53 +80,53 @@ TEST_F(dll_remove_test, basic_test)
         element = element->next;
         ++i;
     }
-    EXPECT_EQ(i, 10);
-    EXPECT_NE(element5, nullptr);
+    TEST_EXPECT(i == 10);
+    TEST_EXPECT(element5 != nullptr);
 
     // now remove the fifth element
     doubly_linked_list_remove(&dll, element5);
-    release(&alloc_opts, element5);
-    EXPECT_EQ(dll.elements, 9UL);
+    release(&fixture.alloc_opts, element5);
+    TEST_EXPECT(dll.elements == 9UL);
 
     // traverse the list again, ensuring the removed element isn't present
     i = 0;
     element = dll.first;
     while (element != NULL)
     {
-        EXPECT_NE(element, element5);
+        TEST_EXPECT(element != element5);
         element = element->next;
         ++i;
     }
-    EXPECT_EQ(i, 9);
+    TEST_EXPECT(i == 9);
 
     // remove the last element
     doubly_linked_list_element_t* lastptr = dll.last;
     doubly_linked_list_remove(&dll, dll.last);
-    release(&alloc_opts, lastptr);
-    EXPECT_EQ(dll.elements, 8UL);
-    EXPECT_EQ(*(int*)dll.last->data, 8);
+    release(&fixture.alloc_opts, lastptr);
+    TEST_EXPECT(dll.elements == 8UL);
+    TEST_EXPECT(*(int*)dll.last->data == 8);
 
     // remove the first element
     doubly_linked_list_element_t* firstptr = dll.first;
     doubly_linked_list_remove(&dll, dll.first);
-    release(&alloc_opts, firstptr);
-    EXPECT_EQ(dll.elements, 7UL);
-    EXPECT_EQ(*(int*)dll.first->data, 1);
+    release(&fixture.alloc_opts, firstptr);
+    TEST_EXPECT(dll.elements == 7UL);
+    TEST_EXPECT(*(int*)dll.first->data == 1);
 
     // remove all remaining elements
     for (i = 0; i < 7; i++)
     {
         doubly_linked_list_element_t* curr = dll.first;
         doubly_linked_list_remove(&dll, dll.first);
-        release(&alloc_opts, curr);
+        release(&fixture.alloc_opts, curr);
     }
-    EXPECT_EQ(dll.elements, 0UL);
-    EXPECT_EQ(dll.first, nullptr);
-    EXPECT_EQ(dll.last, nullptr);
+    TEST_EXPECT(dll.elements == 0UL);
+    TEST_EXPECT(dll.first == nullptr);
+    TEST_EXPECT(dll.last == nullptr);
 
     //dispose of our list
     dispose(doubly_linked_list_disposable_handle(&dll));
-}
+END_TEST_F()
 
 static int build_doubly_linked_list(
     doubly_linked_list_t* dll, int* data, int n)
@@ -137,4 +147,3 @@ static int build_doubly_linked_list(
 
     return 0;
 }
-#endif
