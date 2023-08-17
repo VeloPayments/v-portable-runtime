@@ -3,18 +3,17 @@
  *
  * Unit tests for dynamic_array_append.
  *
- * \copyright 2017-2020 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2017-2023 Velo-Payments, Inc.  All rights reserved.
  */
 
+#include <minunit/minunit.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/compare.h>
 #include <vpr/dynamic_array.h>
 
-/* DISABLED GTEST */
-#if 0
-class dynamic_array_append_test : public ::testing::Test {
-protected:
-    void SetUp() override
+class dynamic_array_append_test {
+public:
+    void setUp()
     {
         malloc_allocator_options_init(&alloc_opts);
         dynamic_array_options_init_status =
@@ -22,7 +21,7 @@ protected:
                 &options, &alloc_opts, sizeof(int), &compare_int);
     }
 
-    void TearDown() override
+    void tearDown()
     {
         if (VPR_STATUS_SUCCESS == dynamic_array_options_init_status)
         {
@@ -36,87 +35,98 @@ protected:
     dynamic_array_options_t options;
 };
 
+TEST_SUITE(dynamic_array_append_test);
+
+#define BEGIN_TEST_F(name) \
+TEST(name) \
+{ \
+    dynamic_array_append_test fixture; \
+    fixture.setUp();
+
+#define END_TEST_F() \
+    fixture.tearDown(); \
+}
+
 /**
  * dynamic_array_options_init should succeed.
  */
-TEST_F(dynamic_array_append_test, options_init)
-{
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_options_init_status);
-}
+BEGIN_TEST_F(options_init)
+    TEST_ASSERT(
+        VPR_STATUS_SUCCESS == fixture.dynamic_array_options_init_status);
+END_TEST_F()
 
 /**
  * Create an empty array and append an element to it.
  */
-TEST_F(dynamic_array_append_test, basic_test)
-{
+BEGIN_TEST_F(basic_test)
     int SEVENTEEN = 17;
     dynamic_array_t array;
 
     //this should succeed
-    ASSERT_EQ(VPR_STATUS_SUCCESS,
-        dynamic_array_init(&options, &array, 1, 0, NULL));
+    TEST_ASSERT(
+        VPR_STATUS_SUCCESS
+            == dynamic_array_init(&fixture.options, &array, 1, 0, NULL));
 
     //we should have a reserved space of 1
-    ASSERT_EQ((size_t)1, array.reserved_elements);
+    TEST_ASSERT((size_t)1 == array.reserved_elements);
     //there should be no element instances
-    ASSERT_EQ((size_t)0, array.elements);
+    TEST_ASSERT((size_t)0 == array.elements);
 
     //append a value to the array
-    EXPECT_EQ(0, dynamic_array_append(&array, &SEVENTEEN));
+    TEST_EXPECT(0 == dynamic_array_append(&array, &SEVENTEEN));
 
     //the reserved size should still be 1
-    EXPECT_EQ((size_t)1, array.reserved_elements);
+    TEST_EXPECT((size_t)1 == array.reserved_elements);
     //the instance size should be 1
-    EXPECT_EQ((size_t)1, array.elements);
+    TEST_EXPECT((size_t)1 == array.elements);
 
     //the first element in the array should be set to our value
-    ASSERT_NE((void*)NULL, (void*)array.array);
+    TEST_ASSERT((void*)NULL != (void*)array.array);
     int* intArray = (int*)array.array;
-    EXPECT_EQ(SEVENTEEN, intArray[0]);
+    TEST_EXPECT(SEVENTEEN == intArray[0]);
 
     //dispose the array
     dispose(dynamic_array_disposable_handle(&array));
-}
+END_TEST_F()
 
 /**
  * Appending should fail if the array is full, but should succeed if the array
  * is grown.
  */
-TEST_F(dynamic_array_append_test, full_array)
-{
+BEGIN_TEST_F(full_array)
     int SEVENTEEN = 17;
     dynamic_array_t array;
 
     //this should succeed
-    ASSERT_EQ(VPR_STATUS_SUCCESS,
-        dynamic_array_init(&options, &array, 1, 1, &SEVENTEEN));
+    TEST_ASSERT(
+        VPR_STATUS_SUCCESS
+            == dynamic_array_init(&fixture.options, &array, 1, 1, &SEVENTEEN));
 
     //we should have a reserved space of 1
-    ASSERT_EQ((size_t)1, array.reserved_elements);
+    TEST_ASSERT((size_t)1 == array.reserved_elements);
     //there should be one element instance
-    ASSERT_EQ((size_t)1, array.elements);
+    TEST_ASSERT((size_t)1 == array.elements);
 
     //appending fails
-    ASSERT_NE(0, dynamic_array_append(&array, &SEVENTEEN));
+    TEST_ASSERT(0 != dynamic_array_append(&array, &SEVENTEEN));
 
     //growing succeeds
-    ASSERT_EQ(0, dynamic_array_grow(&array, 2));
+    TEST_ASSERT(0 == dynamic_array_grow(&array, 2));
 
     //now, appending succeeds
-    ASSERT_EQ(0, dynamic_array_append(&array, &SEVENTEEN));
+    TEST_ASSERT(0 == dynamic_array_append(&array, &SEVENTEEN));
 
     //the reserved size should be 2
-    EXPECT_EQ((size_t)2, array.reserved_elements);
+    TEST_EXPECT((size_t)2 == array.reserved_elements);
     //the instance size should be 2
-    EXPECT_EQ((size_t)2, array.elements);
+    TEST_EXPECT((size_t)2 == array.elements);
 
     //the first two elements in the array should be set
-    ASSERT_NE((void*)NULL, (void*)array.array);
+    TEST_ASSERT((void*)NULL != (void*)array.array);
     int* intArray = (int*)array.array;
-    EXPECT_EQ(SEVENTEEN, intArray[0]);
-    EXPECT_EQ(SEVENTEEN, intArray[1]);
+    TEST_EXPECT(SEVENTEEN == intArray[0]);
+    TEST_EXPECT(SEVENTEEN == intArray[1]);
 
     //dispose the array
     dispose(dynamic_array_disposable_handle(&array));
-}
-#endif
+END_TEST_F()
