@@ -3,17 +3,16 @@
  *
  * Unit tests for linked_list_init.
  *
- * \copyright 2019-2020 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2019-2023 Velo-Payments, Inc.  All rights reserved.
  */
 
+#include <minunit/minunit.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/linked_list.h>
 
-/* DISABLED GTEST */
-#if 0
-class ll_init_test : public ::testing::Test {
-protected:
-    void SetUp() override
+class ll_init_test {
+public:
+    void setUp()
     {
         malloc_allocator_options_init(&alloc_opts);
         linked_list_options_init_status =
@@ -21,7 +20,7 @@ protected:
                 false, sizeof(int), false);
     }
 
-    void TearDown() override
+    void tearDown()
     {
         if (VPR_STATUS_SUCCESS == linked_list_options_init_status)
         {
@@ -35,24 +34,33 @@ protected:
     linked_list_options_t options;
 };
 
-TEST_F(ll_init_test, options_init)
-{
-    ASSERT_EQ(VPR_STATUS_SUCCESS, linked_list_options_init_status);
+TEST_SUITE(ll_init_test);
+
+#define BEGIN_TEST_F(name) \
+TEST(name) \
+{ \
+    ll_init_test fixture; \
+    fixture.setUp();
+
+#define END_TEST_F() \
+    fixture.tearDown(); \
 }
 
-TEST_F(ll_init_test, basic_test)
-{
+BEGIN_TEST_F(options_init)
+    TEST_ASSERT(VPR_STATUS_SUCCESS == fixture.linked_list_options_init_status);
+END_TEST_F()
+
+BEGIN_TEST_F(basic_test)
     linked_list ll;
 
-    ASSERT_EQ(linked_list_init(&options, &ll), 0);
+    TEST_ASSERT(linked_list_init(&fixture.options, &ll) == 0);
 
     // the number of elements should be initialized to 0, with
     // the first and last pointers pointing to NULL
-    EXPECT_EQ(ll.elements, 0UL);
-    EXPECT_EQ(ll.first, nullptr);
-    EXPECT_EQ(ll.last, nullptr);
+    TEST_EXPECT(ll.elements == 0UL);
+    TEST_EXPECT(ll.first == nullptr);
+    TEST_EXPECT(ll.last == nullptr);
 
     //dispose of our list
     dispose(linked_list_disposable_handle(&ll));
-}
-#endif
+END_TEST_F()
