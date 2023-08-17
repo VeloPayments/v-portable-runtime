@@ -3,11 +3,13 @@
  *
  * Unit tests for hash functions
  *
- * \copyright 2019 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2019-2023 Velo-Payments, Inc.  All rights reserved.
  */
 
-/* DISABLED GTEST */
-#if 0
+#include <assert.h>
+#include <minunit/minunit.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include <vpr/hash_func.h>
 
 static void generate_random_bytes(uint8_t*, size_t);
@@ -15,40 +17,44 @@ static int hamming_distance(uint64_t, uint64_t);
 static void test_hash_function(hash_func_t);
 static void test_distribution(uint64_t*, int);
 
+TEST_SUITE(test_hash_func);
+
 /**
  * Test that the test utility function to measure hamming distances is correct.
  */
-TEST(hamming_distance_testD, test_utility_functionD)
+TEST(hamming_distance_testD)
 {
-    ASSERT_EQ(hamming_distance(0, 0), 0);
-    ASSERT_EQ(hamming_distance(0, 1), 1);
-    ASSERT_EQ(hamming_distance(0, 3), 2);
-    ASSERT_EQ(hamming_distance(7, 1), 2);
+    TEST_ASSERT(hamming_distance(0, 0) == 0);
+    TEST_ASSERT(hamming_distance(0, 1) == 1);
+    TEST_ASSERT(hamming_distance(0, 3) == 2);
+    TEST_ASSERT(hamming_distance(7, 1) == 2);
 
     uint64_t max32 = 0xFFFFFFFF;
-    ASSERT_EQ(hamming_distance(0, max32), 32);
+    TEST_ASSERT(hamming_distance(0, max32) == 32);
 
     uint64_t max64 = 0xFFFFFFFFFFFFFFFF;
 
-    ASSERT_EQ(hamming_distance(0, max64), 64);
-    ASSERT_EQ(hamming_distance(max64, 0), 64);
+    TEST_ASSERT(hamming_distance(0, max64) == 64);
+    TEST_ASSERT(hamming_distance(max64, 0) == 64);
 
-    ASSERT_EQ(hamming_distance(max32, max64), 32);
+    TEST_ASSERT(hamming_distance(max32, max64) == 32);
 }
 
 /**
  * Test the sdbm hash function
  */
-TEST(sdbm_test, test_hash_functions)
+TEST(sdbm_test)
 {
+    TEST_ASSERT(true);
     test_hash_function(&sdbm);
 }
 
 /**
  * Test the jenkins hash function
  */
-TEST(jenkins_test, test_hash_functions)
+TEST(jenkins_test)
 {
+    TEST_ASSERT(true);
     test_hash_function(&jenkins);
 }
 
@@ -98,7 +104,7 @@ static void test_hash_function(hash_func_t hash_func)
     // verify the hash is repeatable
     for (int i = 0; i < 10; i++)
     {
-        ASSERT_EQ(hash_func(data, sz_data), hash_val);
+        assert(hash_func(data, sz_data) == hash_val);
     }
 
     // generate a large number of random values and ensure the corresponding
@@ -151,16 +157,15 @@ static void test_distribution(uint64_t* vals, int num_vals)
     }
 
     double mean_distance = (double)total_distance / num_distances;
-    EXPECT_GE(mean_distance, 31.0);
-    EXPECT_LE(mean_distance, 33.0);
+    assert(mean_distance >= 31.0);
+    assert(mean_distance <= 33.0);
 
     int num_vals_40pct = num_vals * 0.4;
     int num_vals_60pct = num_vals * 0.6;
 
     for (int i = 0; i < 64; i++)
     {
-        EXPECT_GE(bits_set[i], num_vals_40pct);
-        EXPECT_LE(bits_set[i], num_vals_60pct);
+        assert(bits_set[i] >= num_vals_40pct);
+        assert(bits_set[i] <= num_vals_60pct);
     }
 }
-#endif
