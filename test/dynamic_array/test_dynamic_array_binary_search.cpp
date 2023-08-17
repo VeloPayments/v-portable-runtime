@@ -3,19 +3,18 @@
  *
  * Unit tests for dynamic_array_binary_search.
  *
- * \copyright 2017-2021 Velo-Payments, Inc.  All rights reserved.
+ * \copyright 2017-2023 Velo-Payments, Inc.  All rights reserved.
  */
 
+#include <minunit/minunit.h>
 #include <vpr/allocator/malloc_allocator.h>
 #include <vpr/compare.h>
 #include <vpr/dynamic_array.h>
 
-/* DISABLED GTEST */
-#if 0
-class dynamic_array_binary_search_test : public ::testing::Test
+class dynamic_array_binary_search_test
 {
-protected:
-    void SetUp() override
+public:
+    void setUp()
     {
         malloc_allocator_options_init(&alloc_opts);
         dynamic_array_options_init_status =
@@ -23,7 +22,7 @@ protected:
                 &options, &alloc_opts, sizeof(int), &compare_int);
     }
 
-    void TearDown() override
+    void tearDown()
     {
         if (VPR_STATUS_SUCCESS == dynamic_array_options_init_status)
         {
@@ -37,78 +36,88 @@ protected:
     dynamic_array_options_t options;
 };
 
+TEST_SUITE(dynamic_array_binary_search_test);
+
+#define BEGIN_TEST_F(name) \
+TEST(name) \
+{ \
+    dynamic_array_binary_search_test fixture; \
+    fixture.setUp();
+
+#define END_TEST_F() \
+    fixture.tearDown(); \
+}
+
 /**
  * dynamic_array_options_init should succeed.
  */
-TEST_F(dynamic_array_binary_search_test, options_init)
-{
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_options_init_status);
-}
+BEGIN_TEST_F(options_init)
+    TEST_ASSERT(
+        VPR_STATUS_SUCCESS == fixture.dynamic_array_options_init_status);
+END_TEST_F()
 
 /**
  * Searching an empty array fails to find an element.
  */
-TEST_F(dynamic_array_binary_search_test, empty_array)
-{
+BEGIN_TEST_F(empty_array)
     int SEVENTEEN = 17;
     dynamic_array_t array;
 
     /* we should be able to create an array. */
-    ASSERT_EQ(
-        VPR_STATUS_SUCCESS,
-        dynamic_array_init(&options, &array, 1, 0, NULL));
+    TEST_ASSERT(
+        VPR_STATUS_SUCCESS
+            == dynamic_array_init(&fixture.options, &array, 1, 0, NULL));
 
     /* there should be no element instances. */
-    ASSERT_EQ((size_t)0, array.elements);
+    TEST_ASSERT((size_t)0 == array.elements);
 
     /* search for the element. */
-    EXPECT_EQ(NULL, dynamic_array_binary_search(&array, &SEVENTEEN));
+    TEST_EXPECT(NULL == dynamic_array_binary_search(&array, &SEVENTEEN));
 
     /* dispose of the array. */
     dispose(dynamic_array_disposable_handle(&array));
-}
+END_TEST_F()
 
 /**
  * Searching an array with a matching element succeeds.
  */
-TEST_F(dynamic_array_binary_search_test, matching_element)
-{
+BEGIN_TEST_F(matching_element)
     int SEVENTEEN = 17;
     dynamic_array_t array;
 
     /* create the array. */
-    ASSERT_EQ(
-        VPR_STATUS_SUCCESS,
-        dynamic_array_init(&options, &array, 1, 1, &SEVENTEEN));
+    TEST_ASSERT(
+        VPR_STATUS_SUCCESS
+            == dynamic_array_init(&fixture.options, &array, 1, 1, &SEVENTEEN));
 
     /* there should be one element instance. */
-    ASSERT_EQ((size_t)1, array.elements);
+    TEST_ASSERT((size_t)1 == array.elements);
 
     /* search for the element. */
     int* result = (int*)dynamic_array_binary_search(&array, &SEVENTEEN);
-    ASSERT_NE(nullptr, result);
-    EXPECT_EQ(SEVENTEEN, *result);
+    TEST_ASSERT(nullptr != result);
+    TEST_EXPECT(SEVENTEEN == *result);
 
     /* dispose of the array. */
     dispose(dynamic_array_disposable_handle(&array));
-}
+END_TEST_F()
 
 /**
  * Searching an array with a matching element succeeds when it is the first
  * element.
  */
-TEST_F(dynamic_array_binary_search_test, first_matching_element)
-{
+BEGIN_TEST_F(first_matching_element)
     int SIXTEEN = 16;
     int SEVENTEEN = 17;
     dynamic_array_t array;
 
     /* create an array of five elements. */
-    ASSERT_EQ(VPR_STATUS_SUCCESS,
-        dynamic_array_init(&options, &array, 5, 5, &SEVENTEEN));
+    TEST_ASSERT(
+        VPR_STATUS_SUCCESS
+            == dynamic_array_init(&fixture.options, &array, 5, 5, &SEVENTEEN));
 
     /* there should be five element instances. */
-    ASSERT_EQ((size_t)5, array.elements);
+    TEST_ASSERT((size_t)5 == array.elements);
 
     /* set the first element to SIXTEEN. */
     int* arr = (int*)array.array;
@@ -116,141 +125,107 @@ TEST_F(dynamic_array_binary_search_test, first_matching_element)
 
     /* search for the element. */
     int* result = (int*)dynamic_array_linear_search(&array, 0, &SIXTEEN);
-    ASSERT_NE(nullptr, result);
-    EXPECT_EQ(SIXTEEN, *result);
+    TEST_ASSERT(nullptr != result);
+    TEST_EXPECT(SIXTEEN == *result);
 
     /* dispose the array. */
     dispose(dynamic_array_disposable_handle(&array));
-}
+END_TEST_F()
 
 /**
  * Searching an array with a matching element succeeds when it is not the first
  * element.
  */
-TEST_F(dynamic_array_binary_search_test, last_matching_element)
-{
+BEGIN_TEST_F(last_matching_element)
     int SIXTEEN = 16;
     int SEVENTEEN = 17;
     dynamic_array_t array;
 
     /* we should be able to create an array. */
-    ASSERT_EQ(VPR_STATUS_SUCCESS,
-        dynamic_array_init(&options, &array, 5, 4, &SIXTEEN));
+    TEST_ASSERT(
+        VPR_STATUS_SUCCESS
+            == dynamic_array_init(&fixture.options, &array, 5, 4, &SIXTEEN));
 
     /* there should be four element instances. */
-    ASSERT_EQ((size_t)4, array.elements);
+    TEST_ASSERT((size_t)4 == array.elements);
 
     /* append the matching element. */
-    ASSERT_EQ(0, dynamic_array_append(&array, &SEVENTEEN));
+    TEST_ASSERT(0 == dynamic_array_append(&array, &SEVENTEEN));
 
     /* search for the element. */
     int* result = (int*)dynamic_array_linear_search(&array, 0, &SEVENTEEN);
-    ASSERT_NE(nullptr, result);
-    EXPECT_EQ(SEVENTEEN, *result);
+    TEST_ASSERT(nullptr != result);
+    TEST_EXPECT(SEVENTEEN == *result);
 
     /* dispose the array. */
     dispose(dynamic_array_disposable_handle(&array));
-}
+END_TEST_F()
 
 /**
  * Searching an array with a matching element succeeds when it is the middle
  * element.
  */
-TEST_F(dynamic_array_binary_search_test, middle_matching_element)
-{
+BEGIN_TEST_F(middle_matching_element)
     int ONE = 1;
     int TWO = 2;
     int THREE = 3;
     dynamic_array_t array;
 
     /* we should be able to create an array. */
-    ASSERT_EQ(VPR_STATUS_SUCCESS,
-        dynamic_array_init(&options, &array, 3, 0, NULL));
+    TEST_ASSERT(
+        VPR_STATUS_SUCCESS
+            == dynamic_array_init(&fixture.options, &array, 3, 0, NULL));
 
     /* append each element. */
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &ONE));
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &TWO));
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &THREE));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &ONE));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &TWO));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &THREE));
 
     /* search for the TWO element. */
     int* result = (int*)dynamic_array_linear_search(&array, 0, &TWO);
-    ASSERT_NE(nullptr, result);
-    EXPECT_EQ(TWO, *result);
+    TEST_ASSERT(nullptr != result);
+    TEST_EXPECT(TWO == *result);
 
     /* dispose the array. */
     dispose(dynamic_array_disposable_handle(&array));
-}
+END_TEST_F()
 
 /**
  * Searching an array with a matching element succeeds when it is near the
  * middle.
  */
-TEST_F(dynamic_array_binary_search_test, near_middle_element)
-{
-    int ONE = 1;
-    int TWO = 2;
-    int THREE = 3;
-    int FOUR = 4;
-    dynamic_array_t array;
-
-    /* we should be able to create an array. */
-    ASSERT_EQ(VPR_STATUS_SUCCESS,
-        dynamic_array_init(&options, &array, 4, 0, NULL));
-
-    /* append each element. */
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &ONE));
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &TWO));
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &THREE));
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &FOUR));
-
-    /* search for the TWO element. */
-    int* result = (int*)dynamic_array_linear_search(&array, 0, &TWO);
-    ASSERT_NE(nullptr, result);
-    EXPECT_EQ(TWO, *result);
-
-    /* dispose the array. */
-    dispose(dynamic_array_disposable_handle(&array));
-}
-
-/**
- * Searching an array with a matching element succeeds when it is near the
- * middle.
- */
-TEST_F(dynamic_array_binary_search_test, near_middle_element2)
-{
+BEGIN_TEST_F(near_middle_element)
     int ONE = 1;
     int TWO = 2;
     int THREE = 3;
     int FOUR = 4;
-    int FIVE = 5;
     dynamic_array_t array;
 
     /* we should be able to create an array. */
-    ASSERT_EQ(VPR_STATUS_SUCCESS,
-        dynamic_array_init(&options, &array, 5, 0, NULL));
+    TEST_ASSERT(
+        VPR_STATUS_SUCCESS
+            == dynamic_array_init(&fixture.options, &array, 4, 0, NULL));
 
     /* append each element. */
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &ONE));
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &TWO));
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &THREE));
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &FOUR));
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &FIVE));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &ONE));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &TWO));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &THREE));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &FOUR));
 
     /* search for the TWO element. */
     int* result = (int*)dynamic_array_linear_search(&array, 0, &TWO);
-    ASSERT_NE(nullptr, result);
-    EXPECT_EQ(TWO, *result);
+    TEST_ASSERT(nullptr != result);
+    TEST_EXPECT(TWO == *result);
 
     /* dispose the array. */
     dispose(dynamic_array_disposable_handle(&array));
-}
+END_TEST_F()
 
 /**
  * Searching an array with a matching element succeeds when it is near the
  * middle.
  */
-TEST_F(dynamic_array_binary_search_test, near_middle_element3)
-{
+BEGIN_TEST_F(near_middle_element2)
     int ONE = 1;
     int TWO = 2;
     int THREE = 3;
@@ -259,22 +234,55 @@ TEST_F(dynamic_array_binary_search_test, near_middle_element3)
     dynamic_array_t array;
 
     /* we should be able to create an array. */
-    ASSERT_EQ(VPR_STATUS_SUCCESS,
-        dynamic_array_init(&options, &array, 5, 0, NULL));
+    TEST_ASSERT(
+        VPR_STATUS_SUCCESS
+            == dynamic_array_init(&fixture.options, &array, 5, 0, NULL));
 
     /* append each element. */
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &ONE));
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &TWO));
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &THREE));
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &FOUR));
-    ASSERT_EQ(VPR_STATUS_SUCCESS, dynamic_array_append(&array, &FIVE));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &ONE));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &TWO));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &THREE));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &FOUR));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &FIVE));
+
+    /* search for the TWO element. */
+    int* result = (int*)dynamic_array_linear_search(&array, 0, &TWO);
+    TEST_ASSERT(nullptr != result);
+    TEST_EXPECT(TWO == *result);
+
+    /* dispose the array. */
+    dispose(dynamic_array_disposable_handle(&array));
+END_TEST_F()
+
+/**
+ * Searching an array with a matching element succeeds when it is near the
+ * middle.
+ */
+BEGIN_TEST_F(near_middle_element3)
+    int ONE = 1;
+    int TWO = 2;
+    int THREE = 3;
+    int FOUR = 4;
+    int FIVE = 5;
+    dynamic_array_t array;
+
+    /* we should be able to create an array. */
+    TEST_ASSERT(
+        VPR_STATUS_SUCCESS
+            == dynamic_array_init(&fixture.options, &array, 5, 0, NULL));
+
+    /* append each element. */
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &ONE));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &TWO));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &THREE));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &FOUR));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == dynamic_array_append(&array, &FIVE));
 
     /* search for the TWO element. */
     int* result = (int*)dynamic_array_linear_search(&array, 0, &FOUR);
-    ASSERT_NE(nullptr, result);
-    EXPECT_EQ(FOUR, *result);
+    TEST_ASSERT(nullptr != result);
+    TEST_EXPECT(FOUR == *result);
 
     /* dispose the array. */
     dispose(dynamic_array_disposable_handle(&array));
-}
-#endif
+END_TEST_F()
