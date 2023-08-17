@@ -3,17 +3,19 @@
  *
  * Unit tests for vpr_uuid_from_string.
  *
- * \copyright 2020 Velo Payments, Inc.  All rights reserved.
+ * \copyright 2020-2023 Velo Payments, Inc.  All rights reserved.
  */
 
+#include <minunit/minunit.h>
+#include <string.h>
 #include <vpr/uuid.h>
 
-/* DISABLED GTEST */
-#if 0
+TEST_SUITE(vpr_uuid_from_string);
+
 /**
  * Test that a basic UUID can be read from a string.
  */
-TEST(vpr_uuid_from_string, basic_uuid)
+TEST(basic_uuid)
 {
     const char* INPUT_STRING = "a99b994a-36e3-4d13-98ba-74748a1f5e89";
     const vpr_uuid EXPECTED_UUID = {
@@ -26,7 +28,7 @@ TEST(vpr_uuid_from_string, basic_uuid)
     int retval = vpr_uuid_from_string(&value, INPUT_STRING);
 
     /* verify results. */
-    ASSERT_EQ(VPR_STATUS_SUCCESS, retval);
-    EXPECT_EQ(0, memcmp(EXPECTED_UUID.data, value.data, sizeof(value.data)));
+    TEST_ASSERT(VPR_STATUS_SUCCESS == retval);
+    TEST_EXPECT(
+        0 == memcmp(EXPECTED_UUID.data, value.data, sizeof(value.data)));
 }
-#endif
